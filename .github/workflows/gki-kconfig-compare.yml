@@ -1,0 +1,94 @@
+name: HONOR ANB GKI 5.10.236 provenance comparison
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/gki-kconfig-compare.yml
+      - tools/compare_gki_config.py
+
+permissions:
+  contents: write
+
+jobs:
+  compare:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout research archive
+        uses: actions/checkout@v4
+
+      - name: Install Google GKI Kconfig host prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            git make bc bison flex libssl-dev libelf-dev clang lld python3
+
+      - name: Preserve actual device config and source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p reports out
+          gzip -t evidence/device/honor-anb-config.gz
+          echo '76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3  evidence/device/honor-anb-config.gz' | sha256sum --check
+          gzip -dc evidence/device/honor-anb-config.gz > reports/original.config
+          cp reports/original.config out/.config
+          clang --version | head -3 | tee reports/runner-clang-version.txt
+
+      - name: Fetch Google 5.10.236 exact public tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 900 git clone --depth 1 --single-branch \
+            --branch android12-5.10-2025-05_r1 \
+            https://android.googlesource.com/kernel/common \
+            public-gki 2>&1 | tee reports/source-clone.log
+          git -C public-gki rev-parse HEAD | tee reports/source-commit.txt
+          test "$(cat reports/source-commit.txt)" = "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e"
+          grep -q '^VERSION = 5$' public-gki/Makefile
+          grep -q '^PATCHLEVEL = 10$' public-gki/Makefile
+          grep -q '^SUBLEVEL = 236$' public-gki/Makefile
+
+      - name: Evaluate original P780-independent ANB Kconfig in Google source
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C public-gki O="$GITHUB_WORKSPACE/out" ARCH=arm64 LLVM=1 \
+            olddefconfig 2>&1 | tee reports/gki-olddefconfig.log
+          cp out/.config reports/resolved.config
+          diff -u reports/original.config reports/resolved.config > reports/raw-config.diff || true
+
+      - name: Classify and preserve configuration drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/compare_gki_config.py \
+            reports/original.config reports/resolved.config \
+            evidence/reports/anb-gki-config-delta.json docs/GKI_CONFIG_COMPARISON.md
+          cp evidence/reports/anb-gki-config-delta.json reports/config-delta.json
+          cp docs/GKI_CONFIG_COMPARISON.md reports/config-comparison.md
+          cat docs/GKI_CONFIG_COMPARISON.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Persist analysis reports
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/GKI_CONFIG_COMPARISON.md evidence/reports/anb-gki-config-delta.json
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence: compare ANB original config with Google GKI 5.10.236 source"
+            git push origin HEAD:main
+          fi
+
+      - name: Upload source provenance and original Kconfig reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: honor-anb-public-gki-5.10.236-audit
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 30
