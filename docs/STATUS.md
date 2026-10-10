@@ -18,3 +18,7 @@
 | Bootloader 解锁、Root、修改分区 | **均未达成** | 无成功记录 |
 
 **优先任务：** 提取并检验设备自身的 /proc/config.gz，寻找与该版本匹配的源码；继续离线工作，不使用未经适配的刷机文件。详见 [下一步](NEXT_STEPS.md)。
+
+## 2026-10-11 内核配置采集进度
+
+用户已提供 honor-anb-config.gz 聊天附件（文件服务报告 **42,277 字节**），与实体机基线记录的文件大小相同。由于当前文件执行环境异常，尚未核实内容/哈希，**状态为“附件已接收、原件未入 Git、配置项未验证”**。GitHub 的 [只读分析工具](../tools/analyze_kernel_config.py) 和 [自动工作流](../.github/workflows/kernel-config-audit.yml) 已就绪，上传原件后触发审计。不得将 CONFIG_FUTEX_PI、CONFIG_CFI_CLANG 等项写成已知 y/n，除非实际报告产生。
