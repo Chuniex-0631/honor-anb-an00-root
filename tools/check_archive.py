@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-"""Read-only evidence and Markdown link check for the public research archive."""
+"""Read-only checks of baseline, archive links and immutable evidence ledger."""
 from pathlib import Path
+import gzip
+import hashlib
+import json
 import re
 
 root = Path(__file__).resolve().parent.parent
@@ -35,3 +38,32 @@ for path in markdown:
             bad.append((str(path.relative_to(root)), relative))
 assert not bad, f"Broken local links: {bad}"
 print(f"PASS: {len(markdown)} Markdown files, {checked} links checked; model and OS baseline verified")
+
+
+# Regression guard for the original device capture and preserved old experiments.
+gz_path = root / "evidence/device/honor-anb-config.gz"
+assert gz_path.is_file(), "Missing original device config.gz"
+compressed = gz_path.read_bytes()
+assert len(compressed) == 42277, "Original gzip byte size changed"
+digest = hashlib.sha256(compressed).hexdigest()
+assert digest == "76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3", "Original gzip SHA256 changed"
+raw_config = gzip.decompress(compressed)
+assert len(raw_config) == 191897, "Original uncompressed Kconfig length changed"
+config_items = re.findall(rb"^(?:CONFIG_[A-Z0-9_]+=|# CONFIG_[A-Z0-9_]+ is not set)", raw_config, re.M)
+assert len(config_items) == 5672, "Original Kconfig parsed item count changed"
+delta = json.loads((root / "evidence/reports/anb-gki-config-delta.json").read_text())
+assert delta["original_symbols"] == 5672 and delta["resolved_symbols"] == 5351
+assert delta["removed_count"] == 329 and delta["removed_active_count"] == 208
+assert delta["changed_count"] == 5 and delta["added_count"] == 8
+assert delta["source_commit_expected"] == "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e"
+assert delta["source_is_honor_production_tree"] is False
+assert delta["toolchain_is_device_exact"] is False
+triage = json.loads((root / "evidence/reports/anb-vendor-delta-triage.json").read_text())
+assert triage["total"] == 208
+assert sum(len(group["keys"]) for group in triage["groups"]) == 208
+assert (root / "docs/GKI_SYMBOL_PROVENANCE.md").is_file()
+status = (root / "docs/STATUS.md").read_text(encoding="utf-8")
+assert "云端实验中；尚无成功结果" not in status, "Stale experimental status returned"
+manifest = (root / "docs/EVIDENCE_MANIFEST.md").read_text(encoding="utf-8")
+assert "仓库目前是 **Public**" not in manifest, "Incorrect present-tense privacy claim"
+print("PASS: evidence SHA256, 5672 original symbols, pinned GKI delta and 208 triaged entries")
