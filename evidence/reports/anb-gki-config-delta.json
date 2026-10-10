@@ -1,0 +1,1458 @@
+{
+  "source": "Google android/kernel/common; android12-5.10-2025-05_r1; 5.10.236",
+  "source_commit_expected": "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e",
+  "source_is_honor_production_tree": false,
+  "toolchain_is_device_exact": false,
+  "original_symbols": 5672,
+  "resolved_symbols": 5351,
+  "shared_symbols": 5343,
+  "unchanged_shared_symbols": 5338,
+  "changed_count": 5,
+  "removed_count": 329,
+  "added_count": 8,
+  "removed_active_count": 208,
+  "added_active_count": 5,
+  "changed_active_count": 1,
+  "changed": [
+    {
+      "key": "CONFIG_AS_VERSION",
+      "device": "120005",
+      "candidate": "23800"
+    },
+    {
+      "key": "CONFIG_CC_VERSION_TEXT",
+      "device": "\"Android (7284624, based on r416183b) clang version 12.0.5 (https://android.googlesource.com/toolchain/llvm-project c935d99d7cf2016289302412d708641d52d2f7ee)\"",
+      "candidate": "\"Ubuntu clang version 14.0.0-1ubuntu1.1\""
+    },
+    {
+      "key": "CONFIG_CLANG_VERSION",
+      "device": "120005",
+      "candidate": "140000"
+    },
+    {
+      "key": "CONFIG_LLD_VERSION",
+      "device": "120005",
+      "candidate": "140000"
+    },
+    {
+      "key": "CONFIG_LTO_NONE",
+      "device": "n",
+      "candidate": "y"
+    }
+  ],
+  "removed": [
+    {
+      "key": "CONFIG_ALLOC_STACK_PAGE_ON_DEMAND",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_APP_ACCELERATOR",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_ARCH_SUPPORTS_SHADOW_CALL_STACK",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ARCH_USES_HIGH_VMA_FLAGS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ARM64_AS_HAS_MTE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ARM64_BTI_KERNEL",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ARM64_LSE_ATOMICS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ARM64_MTE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ARM64_PTR_AUTH",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ARM64_TLB_RANGE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_AS_HAS_ARMV8_4",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_AS_HAS_ARMV8_5",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_AS_HAS_LDAPR",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_AS_HAS_LSE_ATOMICS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_AS_HAS_PAC",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_AS_IS_LLVM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_AUX_RTG_BOOST_UTIL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_BINDER_HONOR_TRANSACTION_BRIEF",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_BLK_CGROUP_IOSMART",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_BLK_SCH_BIGDATA",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_BOOT_DETECTOR",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_BOOT_DETECTOR_GKI",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_BOOT_DETECTOR_MTK",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_BOOT_DETECTOR_QCOM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_BOOT_DETECTOR_SPRD",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_BOOT_RECOVERY",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_BOOT_TIME",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_BUDDY_INFO_REPORT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_CC_HAS_BRANCH_PROT_PAC_RET",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CC_HAS_BRANCH_PROT_PAC_RET_BTI",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CC_HAS_SIGN_RETURN_ADDRESS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CC_HAVE_SHADOW_CALL_STACK",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CFI_CLANG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CFI_CLANG_SHADOW",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CFI_PERMISSIVE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_CFS_BANDWIDTH_DATA_STAT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CGROUP_IOLIMIT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CHR_MTK_NETLINK",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_CHR_NETLINK_MODULE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CLOSE_SHMEM_HYPERHOLD_OUT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CLUSTER_NORMALIZED_UTIL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_CMA_REPORT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CPU_FREQ_POWER_STAT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CRYPTO_FIPS140_MOD",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_CSS_RELEASE_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_CVE_2023_52340",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CVE_2023_5717",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_CVE_2024_26882",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_DIRECT_SWAPPINESS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_DISABLE_SUPPLIER_CHECK",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_DMA_BUF_INFO",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_DMA_BUF_REPORT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_DM_HONOR_OPT_PARAMETER",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_F2FS_BIGDATA",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_F2FS_BLKFRAG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_F2FS_BLK_INFO",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_F2FS_FS_COMPRESSION_OPTM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_F2FS_FS_COMPRESSION_OPTM_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_F2FS_FS_SIS_DISK",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_F2FS_GRADING_SSR",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_F2FS_HYPER_PREALLOC",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_F2FS_SMART_DISCARD",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_F2FS_SMART_GC",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_F2FS_TIRM_INTERRUPT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_FACTORY_STOPALARM",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_FD_IDENTITY",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_FILE_REFAULTS_OPT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_FS_TOPIO_TRACE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_GCMA",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_GKI_HACKS_FOR_CONSOLIDATE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_GPU_MEM_REPORT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HANDSET_SYSRQ_RESET",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HAS_LTO_CLANG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HAVE_ARCH_KASAN_HW_TAGS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HIDESYMS_CFI_JT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HIVIEW_SELINUX",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_ASYNC_BINDER_REALSEBUF_THREAD_PRIO_RT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_ASYNC_BINDER_THREAD_PRIO_RT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_BINDER_FG_REQ_FIRST",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_BINDER_SCHED",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_BOOSTER",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_CGROUP_WORKINGSET",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_CHR_TCP_SMALL_WIN_MONITOR",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_CPUACCT_BUILDIN",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_DIE_CATCH",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_DPIMARK_MODULE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_EMCOM_NSTACK",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_KERNEL_STP",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_KERNEL_STP_ENG_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_LOCKDUMP_V3",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_MEMCHECK",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_MICRODUMP",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_MICRODUMP_DEFAULT_ENABLE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_NETFILTER_MODULE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_NETWORK_AWARE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_NETWORK_MEASUREMENT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_NETWORK_QOE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_NSTACK_FI",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_PACKET_FILTER_BYPASS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_PERF_EVENT_MUX_INTERVAL_WRITE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_QOS_THREAD",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_ROOT_SCAN",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_ROOT_SCAN_ENG_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_ROOT_SCAN_KCODE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_RW_SEM_DEBUG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_SCHED_TRACE_ENHANCEMENT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_SET_ASYNC_BINDER_RT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_SLUB_SANITIZE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_SMARTCARE_FI",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_SYN_LINEAR_RETRY",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_VIP_THREAD_BUILDIN",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_VIP_TO_TA_BUILDIN",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_VIP_WQ_BUILDIN",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_VSIM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_WIFI",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_WIFIPRO",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_WIFIPRO_PROC",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HN_WIFI_TEMP",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HN_ZEROHUNG_ENHANCEMENT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_ALLOC_STATS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_BASTET_QCOM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_BOOT_FREQ_FACTORY",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_CACHE_DISK",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_CFI",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_CFI_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_CFI_POINTER_INFO",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_DDR_PERF_CTRL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_DMABUF_MEMINFO",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_DOUBLE_FREE_CHECK_DEBUGFS",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_DUBAI_COMMON",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_DUBAI_GPU_COMMON",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_EIMA",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_EIMA_ACCESS_CONTROL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_EIMA_FS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_EIMA_GKI",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_EIMA_STATIC_MEASURE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_EMCOM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_EMCOM_CHANNEL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_EMMC_VENDOR_MODE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_ENG_EIMA",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_ENHANCE_ONOFF_PERF_V2",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_F2FS_DSM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_FEATURE_PRINT_PID_NAME",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_FILEMAP_TRACE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_FREELIST_RANDOM_DEBUGFS",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_HARDEN_DOUBLE_FREE_CHECK_DEBUGFS",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_HIDESYMS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_HIDESYMS_DEBUGFS",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_HOTFILE_DETECT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_HOTFILE_DETECT_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_HW_DEV_DCT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_IO_MEASURE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_KASLR_DEBUGFS",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_KERNEL_MODULE_RANDOMIZE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_KERNEL_STACK_NX",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_KERNEL_STACK_RANDOMIZE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_KERNEL_STACK_RANDOMIZE_STRONG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_MSS_AUTO_CHANGE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_MTK_RTG_SCHED",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_NWEVAL",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_OPMP",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_PERF_CTRL",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_PGO_CLANG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_PGPRESS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_PGPRESS_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_PROC_CHECK_ROOT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_PSI",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_QOS_INTF_PERF_V1",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_QOS_INTF_PERF_V2",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RA",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RPHONE_DEBUG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTC_WAKEUP_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_AUX",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_BOOST",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_CUSTOM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_DEBUG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_FOCUS_CHANGE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_FRAME",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_FRAME_NO_FORCE_FAST_DOWN",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_FRAME_RME",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_INTF_PERF_V1",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_INTF_PERF_V2",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_KEY_LIST",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_NORMAL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_NORMALIZED_UTIL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_PERF_CTRL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_PSEUDO_TICK",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_TRACE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RTG_WALT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RT_ACTIVE_LB",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_RT_CAS",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_RWLOG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_SCHED_GKI_VER",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_SCHED_PARROT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_SCHED_STAT_YIELD",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_SCHED_WAIPIO",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_SCM",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_SCM_BUILDIN",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_SCM_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_SCSI_UFS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_SDCARD_DSM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_SD_HEALTH_DETECT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_SPF",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_TASK_RAVG_SUM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_THERMAL",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_THERMAL_PERF_CTRL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HONOR_UFS_DSM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_XENGINE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_ZONE_ISOLATE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HONOR_ZONE_ISOLATE_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HUGEPAGE_DMA_BUF",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HUGEPAGE_DMA_BUF_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HUGEPAGE_POOL",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HUGEPAGE_POOL_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HW_DC_MODULE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HW_FAVOR_SMALL_CAP",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HW_ICMP_PING_DETECT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HW_NETWORK_SLICE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HW_PACKET_TRACKER",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HW_SCHED_CLUSTER",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HW_SCHED_CLUSTER_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HW_SNIFFER",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HW_STEADY_SPEED_STATS",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HW_WAUDIO_MODULE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_CONCURRENT_OPT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_CORE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_CRYPT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_DEBUG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_DEBUG_FS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_FILE_ARCHIVAL",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_FILE_LRU",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_GKI",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_UFS",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_HYPERHOLD_ZSWAPD",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_KERNEL_HARDEN_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_KERNFS_RWSEM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_KGSL_PAGE_ALLOC_INFO",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_KMALLOC_REPORT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_KSHRINK_OPT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_KSTATE_COMMON",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LIBC_SEC",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LOGGER",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LOGGER_EXTEND",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_LOGGER_LEGACY",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_LOGGER_TEST",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_LOGGER_VH",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LOG_EXCEPTION",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LOG_JANK",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LOG_KERNEL",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LTO",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LTO_CLANG",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LTO_CLANG_FULL",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_LTO_CLANG_THIN",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_MAS_BLK",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_MEMCG_FINE_GRANULARITY_PROTECT_LRU",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_MEMCG_PROTECT_LRU",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_MEM_CGROUP_ALLOC_STAT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_MEM_DETECT",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_MEM_PREPARE_TOUCHDOWN",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_MEM_REPORT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_MEM_STATS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_MM_COMMON",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_NO_DISABLE_SELINUX_IN_PERF",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_OPT_KERNEL_MEMORY_USAGE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_OPT_KERNEL_SLAB_USAGE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_PAGE_FAULT_STATS",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_PLACEHOLDER_SANITIZE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_PRINTK_DEVKMSG_RATELIMIT_OFF",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_PRINTK_META",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_PRINTK_PREFIX",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_PROACTIVITY_COMPACT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_PROCESS_MADVISE_CHECK_ADJ",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_PROCESS_MADVISE_CHECK_LOCK",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_PROCESS_RECLAIM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_PROC_IO_INFO",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_PSI_MEM_DIRECT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_QCOM_CPUINFO",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_RAINBOW",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_RAINBOW_GKI",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_RAINBOW_HIMNTN",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_RAINBOW_REASON",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_RAINBOW_TRACE",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_RECLAIM_OPT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_RELR",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_RENDER_RT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_RENDER_RT_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_RMAP_OPT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_RMAP_OPT_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_RUNMODE_TYPE_PARSE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_SCHED_PERF_CTRL",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_SCHED_TASK_UTIL_CLAMP",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_SECRETMEM",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_SET_REGULATOR_STATE_FACTORY",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_SHADOW_CALL_STACK",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_SHRINKER_OPT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_SHRINK_PROTECT_PAGE_OPT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_SLUB_RECLAIM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_STORAGE_DSM_IOMT_EMMC_HOST",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_STORAGE_DSM_IOMT_HOST",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_STORAGE_DSM_IOMT_UFS_HOST",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_STREAM_DETECT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_SYSFS_STATS_SETUP_ASYNC",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_TCP_ARGO",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_TCP_CONG_ALGO_CTRL",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_TOOLS_SUPPORT_RELR",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_UNMOVABLE_ISOLATE",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_UNMOVABLE_ISOLATE1_SIZE_MBYTES",
+      "device": "512"
+    },
+    {
+      "key": "CONFIG_UNMOVABLE_ISOLATE2_MAX_ORDER",
+      "device": "4"
+    },
+    {
+      "key": "CONFIG_UNMOVABLE_ISOLATE2_MIN_ORDER",
+      "device": "1"
+    },
+    {
+      "key": "CONFIG_UNMOVABLE_ISOLATE2_SIZE_MBYTES",
+      "device": "128"
+    },
+    {
+      "key": "CONFIG_USB_HONOR_ACC",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_USB_HONOR_NCM",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_USE_RTG_FRAME_SCHED",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_VIP_PAGE_CACHE_BUILDIN",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_VMALLOC_OPT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_VMALLOC_OPT_DEBUG",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_VMAP_ALLOC_PAGE_ON_DEMAND",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_WAIT_DEVICE_PROBE_TIMEOUT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_WIFI_DELAY_STATISTIC",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_XRECLAIMER",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_XRECLAIMER_LOCK_BYPASS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ZRAM_EXT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ZRAM_NON_COMPRESS",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ZRAM_WRITEBACK_EXT",
+      "device": "y"
+    },
+    {
+      "key": "CONFIG_ZSWAPD_GKI",
+      "device": "n"
+    },
+    {
+      "key": "CONFIG_ZS_MALLOC_EXT",
+      "device": "y"
+    }
+  ],
+  "added": [
+    {
+      "key": "CONFIG_AS_IS_GNU",
+      "candidate": "y"
+    },
+    {
+      "key": "CONFIG_BROKEN_GAS_INST",
+      "candidate": "y"
+    },
+    {
+      "key": "CONFIG_CC_CAN_LINK",
+      "candidate": "y"
+    },
+    {
+      "key": "CONFIG_CC_CAN_LINK_STATIC",
+      "candidate": "y"
+    },
+    {
+      "key": "CONFIG_CC_HAS_ASM_GOTO_TIED_OUTPUT",
+      "candidate": "y"
+    },
+    {
+      "key": "CONFIG_CPU_BIG_ENDIAN",
+      "candidate": "n"
+    },
+    {
+      "key": "CONFIG_SCSI_DPT_I2O",
+      "candidate": "n"
+    },
+    {
+      "key": "CONFIG_UAPI_HEADER_TEST",
+      "candidate": "n"
+    }
+  ],
+  "important": {
+    "CONFIG_FUTEX": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_FUTEX_PI": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_RT_MUTEXES": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_CFI_CLANG": {
+      "device": "y",
+      "candidate": "(missing)"
+    },
+    "CONFIG_LTO_CLANG_FULL": {
+      "device": "y",
+      "candidate": "(missing)"
+    },
+    "CONFIG_SHADOW_CALL_STACK": {
+      "device": "y",
+      "candidate": "(missing)"
+    },
+    "CONFIG_ARM64_PTR_AUTH": {
+      "device": "y",
+      "candidate": "(missing)"
+    },
+    "CONFIG_ARM64_BTI": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_RANDOMIZE_BASE": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_MODULES": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_MODULE_SIG_FORCE": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_KALLSYMS": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_KPROBE_EVENTS": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_PANIC_ON_OOPS": {
+      "device": "y",
+      "candidate": "y"
+    },
+    "CONFIG_ARCH_QCOM": {
+      "device": "y",
+      "candidate": "y"
+    }
+  },
+  "conclusion": "olddefconfig is only a source-tree compatibility test, NOT an OEM kernel reconstruction, vulnerability finding or symbol layout proof."
+}
