@@ -78,14 +78,14 @@ def main():
             "caveat": "Definition anywhere does not guarantee reachability in ARCH=arm64 Kconfig.",
         })
         lines = ["# Google GKI 参考源码符号定义扫描", "",
-                 f"固定源码 \`{commit}\`；共扫描 {files} 个 Kconfig 文件。",
+                 f"固定源码 `{commit}`；共扫描 {files} 个 Kconfig 文件。",
                  f"原始启用而旧求解结果缺失 208 项中：全树有定义 **{found}**，全树未找到定义 **{208-found}**。",
                  "有定义不代表当前 ARM64 Kconfig 图可达；无定义不证明荣耀独家拥有该符号。", "",
                  "## 有定义（但旧求解结果缺失）", ""]
-        lines += [f"- \`{x['symbol']}\`: {', '.join(x['definition_paths'][:3])}"
+        lines += [f"- `{x['symbol']}`: {', '.join(x['definition_paths'][:3])}"
                   for x in entries if x["definition_paths"]]
         lines += ["", "## 未找到定义", ""]
-        lines += [f"- \`{x['symbol']}\`" for x in entries if not x["definition_paths"]]
+        lines += [f"- `{x['symbol']}`" for x in entries if not x["definition_paths"]]
     else:
         if not a.resolved or not a.version_file:
             raise ValueError("resolved and version-file required")
@@ -109,12 +109,12 @@ def main():
             "caveat": "Toolchain matching does not mean kernel source or binary matching.",
         })
         lines = ["# Android Clang r416183b Google GKI 对照", "",
-                 f"固定源码：\`{commit}\`。",
-                 f"Clang: \`{version.splitlines()[0]}\`。",
+                 f"固定源码：`{commit}`。",
+                 f"Clang: `{version.splitlines()[0]}`。",
                  f"原始配置 {len(original)}；重新求解 {len(resolved)}；共享值变化 {len(changed)}；缺失 {len(removed)}（启用 {len(active_removed)}）；新增 {len(added)}。",
                  f"旧 Ubuntu Clang14 对照中原已启用而缺失：{delta['removed_active_count']}。",
                  "", "## 取值变动", ""]
-        lines += [f"- \`{k}\`: \`{original[k]}\` → \`{resolved[k]}\`" for k in changed]
+        lines += [f"- `{k}`: `{original[k]}` → `{resolved[k]}`" for k in changed]
         lines += ["", "仅公共 GKI 控制实验，不证明 HONOR 生产内核代码、Root 或 Bootloader 解锁。"]
     out = Path(a.output)
     out.parent.mkdir(parents=True, exist_ok=True)
