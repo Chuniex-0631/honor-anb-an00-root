@@ -1,0 +1,49 @@
+name: HONOR ANB-AN00 config.gz audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - evidence/device/honor-anb-config.gz
+      - tools/analyze_kernel_config.py
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect original config
+        id: input
+        shell: bash
+        run: |
+          if test -s evidence/device/honor-anb-config.gz; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            echo 'Pending original ANB config.gz upload.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Decompress and inspect real kernel config
+        if: steps.input.outputs.ready == 'true'
+        run: python3 tools/analyze_kernel_config.py
+      - name: Save checked summary to Git
+        if: steps.input.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/KERNEL_CONFIG_REPORT.md
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence: summarize ANB-AN00 kernel config"
+            git push origin HEAD:main
+          fi
+      - name: Upload audit result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: honor-anb-config-report
+          path: docs/KERNEL_CONFIG_REPORT.md
+          if-no-files-found: ignore
+          retention-days: 30
