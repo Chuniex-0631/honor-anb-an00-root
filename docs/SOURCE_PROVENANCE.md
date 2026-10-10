@@ -17,7 +17,9 @@
 |---|---|---|
 | [MagicOS 8.0.0.150](https://club.honor.com/cn/thread-28854024-1-1.html) | 2024-09-21 | ANB/ANP/ANN 在支持型号内 |
 | [MagicOS 9.0.0.120](https://club.honor.com/cn/thread-29163791-1-1.html) | 2025-01-16/17 | 明确说明从 8.0.0.160/161 到 9.0.0.120 的官方升级路径 |
+| [MagicOS 9.0.0.157](https://club.honor.com/cn/thread-29245413-1-1.html) | 2025-02-24 | 官方发布说明列出 ANB-AN00；9.0.0.120→157 |
 | [MagicOS 9.0.0.175](https://club.honor.com/thread-29483449-1-1.html) | 2025-06-11 | 支持 ANN/ANP/**ANB**，从 9.0.0.165 升到 175 |
+| [MagicOS 9.0.0.187](https://club.honor.com/cn/thread-29639896-1-1.html) | 2025-08-28 | 官方维护发布，支持 ANB-AN00 |
 | [MagicOS 9.0.0.200](https://club.honor.com/cn/thread-29882734-1-1.html) | 2025-12-02 | 厂商官方发布说明列出 ANN/ANP/**ANB** |
 | 9.0.0.230（本机） | 实机属性报告 2026-10-11 | **已实际运行**；本轮未找到能独立复核的对应官方发布帖/下载文件 |
 
