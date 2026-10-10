@@ -1,0 +1,72 @@
+name: Preserve verified ANB Google GKI comparison evidence
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/archive-gki-comparison.yml
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  preserve:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exact successful experiment artifact
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p original-reports evidence/reports
+          gh run download 38073022058 \
+            --repo Chuniex-0631/honor-anb-an00-research \
+            --name honor-anb-public-gki-5.10.236-audit \
+            --dir original-reports
+          test -s original-reports/config-delta.json
+          test -s original-reports/config-comparison.md
+          test -s original-reports/original.config
+          test -s original-reports/resolved.config
+          test "$(cat original-reports/source-commit.txt)" = "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e"
+          grep -qx 'CONFIG_FUTEX_PI=y' original-reports/original.config
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('original-reports/config-delta.json').read_text())
+          assert p['source_commit_expected']=='b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e'
+          assert p['source_is_honor_production_tree'] is False
+          assert p['original_symbols']==5672
+          assert p['resolved_symbols']==5351
+          assert p['removed_count']==329 and p['removed_active_count']==208
+          assert p['changed_count']==5 and p['added_count']==8
+          print('Verified experiment: original 5672; resolved 5351; changed 5; removed 329 (enabled 208); added 8')
+          PY
+          cp original-reports/config-delta.json evidence/reports/anb-gki-config-delta.json
+          {
+            echo '> 实验原始来源：[Actions #38073022058](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073022058)。该运行 Kconfig 对比成功，仅在最终 Git 提交时因并发修改而未推送。'
+            echo
+            cat original-reports/config-comparison.md
+          } > docs/GKI_CONFIG_COMPARISON.md
+      - name: Commit verified report without overwriting concurrent edits
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/GKI_CONFIG_COMPARISON.md evidence/reports/anb-gki-config-delta.json
+          if git diff --cached --quiet; then
+            echo 'The verified reports are already archived.'
+            exit 0
+          fi
+          git commit -m 'evidence: preserve verified 5.10.236 GKI Kconfig comparison'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then exit 0; fi
+          done
+          exit 1
