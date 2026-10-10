@@ -1,5 +1,10 @@
 # 下一阶段的最小必要操作
 
+## 2026-10-11 最新说明：不用重新运行 ADB
+
+用户**已经**在对话提供 honor-anb-config.gz（文件服务大小 42,277 B）。当前缺口不再是采集，而是将**已经取得的同一份原件**保存到 GitHub 的 evidence/device/honor-anb-config.gz。上传后 [配置审计工作流](../.github/workflows/kernel-config-audit.yml) 会自动校验并保存摘要。请勿重复执行此前的 ADB 提取命令，除非现有原件被证明损坏。
+
+
 ## P0：读取真实内核配置
 
 真机报告显示 **/proc/config.gz（42,277 字节）**，但并未读取其内容。这是目前最直接、最值得补齐的证据。
