@@ -38,3 +38,7 @@
 - [Google 官方 5.10.236 GKI 发布表](https://source.android.com/docs/core/architecture/kernel/gki-android12-5_10-deprecated-builds) 指明参考源标签 `android12-5.10-2025-05_r1` 对应 SHA `b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e`。
 - 官方 [android12-5.10 build.config.common](https://android.googlesource.com/kernel/common/+/refs/heads/android12-5.10/build.config.common) 对应 KMI generation 9 与 Clang `r416183b`；这不代表当前 HONOR 二进制使用原样 Google 源码。
 - **用户实际 9.0.0.230** 的对应官方下载包及可验证的 HONOR 完整内核源码仍未取得。具体文献证据参见 [SOURCE_PROVENANCE](SOURCE_PROVENANCE.md)。
+
+## 补充官方版本轨迹（2026-10-11）
+
+检索到荣耀官方 [9.0.0.157（2025-02-24）](https://club.honor.com/cn/thread-29245413-1-1.html) 和 [9.0.0.187（2025-08-28）](https://club.honor.com/cn/thread-29639896-1-1.html) 发布说明，两者均列出 ANB-AN00；这是 9.0.0.120→175→200 之间的官方版本线索，**不是 9.0.0.230 完整 OTA 或 OEM 源码下载证据**。
