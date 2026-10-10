@@ -9,8 +9,8 @@ import subprocess
 from pathlib import Path
 
 DEFINE = re.compile(r"^\s*(?:menuconfig|config)\s+([A-Za-z0-9_]+)\b")
-SET = re.compile(r"^(CONFIG_[A-Za-z0-9_]+)=(.*)$")
-UNSET = re.compile(r"^# (CONFIG_[A-Za-z0-9_]+) is not set$")
+SET = re.compile(r"^(CONFIG_[A-Z0-9_]+)=(.*)$")
+UNSET = re.compile(r"^# (CONFIG_[A-Z0-9_]+) is not set$")
 
 
 def parse_config(path):
@@ -47,7 +47,8 @@ def main():
         raise ValueError("Source ref mismatch " + commit)
     delta = json.loads(Path(a.delta).read_text())
     original = parse_config(a.original)
-    assert len(original) == 5672 and delta["source_commit_expected"] == expected
+    if len(original) != 5672 or delta["source_commit_expected"] != expected:
+        raise ValueError(f"Baseline mismatch: parsed={len(original)} expected=5672; delta_source={delta.get('source_commit_expected')}")
     active = sorted(x["key"] for x in delta["removed"] if x["device"] in ("y", "m"))
     assert len(active) == 208
     payload = {
