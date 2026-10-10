@@ -67,3 +67,32 @@ assert "云端实验中；尚无成功结果" not in status, "Stale experimental
 manifest = (root / "docs/EVIDENCE_MANIFEST.md").read_text(encoding="utf-8")
 assert "仓库目前是 **Public**" not in manifest, "Incorrect present-tense privacy claim"
 print("PASS: evidence SHA256, 5672 original symbols, pinned GKI delta and 208 triaged entries")
+
+
+# Regression guard for successfully archived controlled Google GKI experiments.
+symbol_report = json.loads((root / "evidence/reports/anb-gki-symbol-definitions.json").read_text())
+clang12_report = json.loads((root / "evidence/reports/anb-gki-clang12-comparison.json").read_text())
+pinned_google_commit = "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e"
+for report in (symbol_report, clang12_report):
+    assert report["source_sha"] == pinned_google_commit
+    assert report["device_config_sha256"] == digest
+    assert report["honor_production_source"] is False
+assert symbol_report["kconfig_files_scanned"] == 1580
+assert symbol_report["active_removed_count"] == 208
+assert symbol_report["declared_anywhere"] == 28
+assert symbol_report["not_declared_anywhere"] == 180
+assert len(symbol_report["entries"]) == 208
+assert clang12_report["original_symbols"] == 5672
+assert clang12_report["resolved_symbols"] == 5366
+assert clang12_report["changed_count"] == 0
+assert clang12_report["removed_count"] == 311
+assert clang12_report["removed_active_count"] == 193
+assert clang12_report["added_count"] == 5
+assert "r416183b" in clang12_report["compiler"] and "12.0.5" in clang12_report["compiler"]
+old_missing = {x["symbol"] for x in symbol_report["entries"]}
+new_missing = set(clang12_report["removed_active"])
+assert len(old_missing - new_missing) == 16
+assert new_missing - old_missing == {"CONFIG_AS_HAS_CFI_NEGATE_RA_STATE"}
+assert (root / "docs/GKI_SYMBOL_DEFINITIONS.md").is_file()
+assert (root / "docs/GKI_CLANG12_COMPARISON.md").is_file()
+print("PASS: controlled GKI source definitions 28/180 and exact Clang12 delta 5366, 0, 311, 193, 5")
