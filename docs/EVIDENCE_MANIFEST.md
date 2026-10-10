@@ -22,6 +22,12 @@
 - `ro.oem_unlock_supported` 为空结果、Bootloader 仍 locked；配置可读取不是 Root 或解锁证据。
 
 
+## 2026-10-11 GKI 真实差异输出与新资料
+
+- 已保存 [Google 5.10.236 对照报告](GKI_CONFIG_COMPARISON.md)、[完整配置差异 JSON](../evidence/reports/anb-gki-config-delta.json)、[208 项名称归类](VENDOR_DELTA_TRIAGE.md) 与 [可机读分类数据](../evidence/reports/anb-vendor-delta-triage.json)。后续若重跑不同 Clang 或源码 tag，应新增独立版本记录，不覆盖原始证据来源而不留痕。
+- [首次实算 CI](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073022058) 产生配置差异，后由成功的 [Artifact 归档 CI](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073491737) 永久保存。
+- 三个以 CVE 编号命名的配置键及其可能的公开问题属于离线线索，不等于原厂安全补丁状态；见 [CVE_CONFIG_FLAGS](CVE_CONFIG_FLAGS.md)。
+
 ## 2026-10-11 官方开源来源与待完成实验
 
 - [Google 官方 `android12-5.10-2025-05_r1`](https://android.googlesource.com/kernel/common/+/refs/tags/android12-5.10-2025-05_r1)：源码公开的固定 SHA 已从 Android 官方 release 文档独立核实；**尚未把整个内核源码复制到本仓库**。

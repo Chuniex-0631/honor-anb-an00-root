@@ -33,6 +33,9 @@
 | [KERNEL_CONFIG_REPORT](docs/KERNEL_CONFIG_REPORT.md) | 原始 gzip 自动生成的 Kconfig 状态摘要 |
 | [FIRMWARE_AND_SOURCES](docs/FIRMWARE_AND_SOURCES.md) | 官方开源渠道与第三方 ANB 历史固件索引 |
 | [SOURCE_PROVENANCE](docs/SOURCE_PROVENANCE.md) | 官方 5.10.236 GKI 精确版本、HONOR 更新记录与出处 |
+| [GKI_CONFIG_COMPARISON](docs/GKI_CONFIG_COMPARISON.md) | 实机 5,672 项与 Google GKI 5,351 项的真实差异结果 |
+| [VENDOR_DELTA_TRIAGE](docs/VENDOR_DELTA_TRIAGE.md) | 208 项启用而参考树缺失的符号分类与重要厂商开关 |
+| [CVE_CONFIG_FLAGS](docs/CVE_CONFIG_FLAGS.md) | 三个 CVE 命名开关的真实配置与公开漏洞记录，不是可利用性结论 |
 | [GKI_COMPARISON_METHOD](docs/GKI_COMPARISON_METHOD.md) | 使用真实配置与 Google 固定源码的离线测试方法 |
 | [SOURCE_REQUEST_DRAFT](docs/SOURCE_REQUEST_DRAFT.md) | 向荣耀官方请求匹配版本开源代码的邮件草稿（未发送） |
 | [HISTORY](docs/HISTORY.md) | 本项目成立前后的研究时间线 |

@@ -8,6 +8,14 @@
 - 保留重要阴性/未知情况：ro.oem_unlock_supported 输出为空；/proc/config.gz 存在但未取得内容；未采集 Fastboot/EDL；未实现 Root 或 Bootloader 解锁。
 - 设置文档链接与基线数据自动校验；开始按 P780 的研究规范长期同步 GitHub。
 
+## 2026-10-11 — v0.5：Google 5.10.236 公共源码对照与厂商差异筛查
+
+- Google GKI `android12-5.10-2025-05_r1` 精确源码克隆和版本核对成功；对实机 5,672 项运行 `olddefconfig`，得到 Google 参考树配置 5,351 项。
+- **共享值变化 5 项、缺失 329 项（其中 208 项原本启用）、新增 8 项**。第一次实算 CI 因 Git 并发提交冲突推送失败，后通过独立 Artifact 恢复工作流完成数据永久归档。
+- 208 项按命名规则分类：84 个 HONOR/HN 命名、3 个 CVE 命名、26 个编译安全/ARM64、4 个 Qualcomm/平台、29 个内存/IO、10 个启动/诊断、52 个其它；不将此归类当作源代码已分析的结果。
+- 新增 [GKI 实验报告](docs/GKI_CONFIG_COMPARISON.md)、[厂商差异索引](docs/VENDOR_DELTA_TRIAGE.md)、[三个 CVE 标志研究](docs/CVE_CONFIG_FLAGS.md)。参考源码和 Ubuntu Clang 14 均不能证明 HONOR 生产内核代码身份。
+- **没有取得 Root、Bootloader 解锁、原厂 boot.img 或真正匹配的完整荣耀源码**。
+
 ## 2026-10-11 — v0.4：官方 GKI 源码溯源与离线配置对照
 
 - 用户确认仓库已改为 **Private**，GitHub API 实际核实为私有。

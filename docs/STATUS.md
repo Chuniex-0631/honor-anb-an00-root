@@ -32,6 +32,12 @@
 - **未验证**：原厂二进制代码是否含特定漏洞、Bootloader 解锁途径、无 Root 的动态调试权限、可被第三方签名模块加载的实际状态。
 
 
+## 208 项缺失配置的新归类
+
+[厂商差异报告](VENDOR_DELTA_TRIAGE.md) 已从真实 diff 中分类 **208 项原本启用却未保留在 Google GKI 参考树求解配置中的符号**：荣耀/HN 命名 84 项、CVE 命名 3 项、编译器/内存/ARM64 26 项、Qualcomm/平台 4 项、内存/IO 29 项、启动/诊断 10 项、其它 52 项。**分类仅凭名称，不是源代码实现确认**。
+
+具体三个 CVE 开关与公开漏洞公告的关系见 [CVE 配置线索](CVE_CONFIG_FLAGS.md)。无任何配置项本身能证明该机型可提权或已可绕过厂商安全机制。
+
 ## 最新源码调查
 
 详见 [官方出处、更新历史与请求路径](SOURCE_PROVENANCE.md)，以及 [Google GKI 配置对照方法](GKI_COMPARISON_METHOD.md)。本阶段不把公共参考树当作厂商内核，也不将 Google 的原生 GKI boot.img 用于 ANB 真机。
