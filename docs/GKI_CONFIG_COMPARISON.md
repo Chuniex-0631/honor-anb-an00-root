@@ -1,5 +1,3 @@
-> 实验原始来源：[Actions #38073022058](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073022058)。该运行 Kconfig 对比成功，仅在最终 Git 提交时因并发修改而未推送。
-
 # ANB-AN00：真实 Kconfig 与 Google 5.10.236 GKI 的对照
 
 > **候选源码验证实验，而不是 HONOR ANB-AN00 出厂内核重建。**
