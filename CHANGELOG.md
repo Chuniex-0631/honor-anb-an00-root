@@ -54,3 +54,7 @@
 - 本地文件执行环境异常，尚不能计算该附件的 SHA-256 或解压内容；不能据此声明任何 CONFIG 项已验证。
 - 已准备 GitHub 端解压、检查和生成摘要的分析脚本与 Actions；原件进入仓库后方可开始实际分析。
 - README、STATUS 与 EVIDENCE_MANIFEST 已同步标注缺口。
+
+## 2026-10-11 — 官方开源源码请求发出
+
+- 按 HONOR 开源中心正式渠道向 `support@hihonor.com` 发送 ANB-AN00 9.0.0.230 内核及许可范围内相关源代码申请；Gmail 反馈 SENT，目前待回复。详情见 `docs/OFFICIAL_SOURCE_REQUEST_LOG.md`。
