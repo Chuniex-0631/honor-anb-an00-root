@@ -12,9 +12,16 @@
 
 **不能复用：** P780 的 QAS/TZ/PFM 测试结果、Tinno 旧代码、EDL loader、内核偏移、GhostLock exploit 适配参数、P780 Fastboot 错误响应。ANB-AN00 是完全不同的 OEM 和代码基线。
 
+## 从真实配置新增的结论
+
+- **已有 Futex PI / RT Mutex** 只说明对应内核机制存在，不证明 GhostLock 或任意漏洞能在该内核触发。
+- **CFI、Full LTO、PAC、BTI、Shadow Call Stack、KASLR 均启用**，研究必须尊重实际编译器/防护差异，不能复用 P780 的地址。
+- **`CONFIG_MODULE_SIG_FORCE=y`** 代表编译配置要求强制模块签名；`CONFIG_KALLSYMS_ALL=y` 和 `CONFIG_KPROBE_EVENTS=y` 是内核功能开关，非 shell 权限保证。
+- **`CONFIG_PANIC_ON_OOPS=y`**：优先离线分析，避免未经适配的 crash/UAF 实机试验。
+
 ## 当前核心阻断点
 
-1. /proc/config.gz 目前**只确认存在**；尚未分析 CONFIG_FUTEX_PI、CFI、LTO、模块等实际配置。
+1. 已取得 [原厂配置 gzip](../evidence/device/honor-anb-config.gz) 和 [安全特性分类报告](KERNEL_SECURITY_PROFILE.md)：Futex PI/RT Mutex、CFI、Full LTO、Shadow Call Stack、KASLR、模块签名均有真实状态。**这不等于漏洞补丁状态已明**。
 2. 还没有找到与 ANB-AN00 9.0.0.230 匹配的厂商内核源码与原厂 vmlinux/boot.img。
 3. 仅凭 Android 补丁日期或 5.10 分支号**不能证明任何 CVE 可利用**；需要按修复状态与真实设备行为验证。
 4. 历史固件的下载索引不等于可用于锁定 Bootloader 的刷机包，也不说明安全回滚是否允许。

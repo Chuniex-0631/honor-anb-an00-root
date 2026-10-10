@@ -25,11 +25,11 @@
 - uname 及 /proc/version：Linux **5.10.236-android12-9-gd671cf8c2b02**；ARM64 / SMP PREEMPT。
 - 内核构建字符串时间：**2026-08-11 02:55:06 UTC**，不是系统 OTA 推送时间。
 - 编译器：Android (7284624, based on r416183b) **clang version 12.0.5**；LLD 12.0.5。
-- /proc/config.gz：列表显示 **42,277 B**，权限模式 -r--r--r--；是否受 SELinux 或其它限制，还需实际读取验证。
+- /proc/config.gz：列表显示 **42,277 B**，权限模式 -r--r--r--；用户已成功将 gzip 导出并上传至 [仓库](../evidence/device/honor-anb-config.gz)，解压检查成功，见 [配置报告](KERNEL_CONFIG_REPORT.md)。
 - /sys/kernel/config.gz：不存在。
 
 **注意：** 名称含 android12-9 的 kernel 与 Android 15 用户空间并不矛盾；不能仅凭内核命名假定设备运行 Android 12。
 
 ## 未取得
 
-尚无原始 config.gz 内容、Fastboot getvar、分区映射、原厂 boot.img、完整 OTA、官方对应源码或可用于本机的符号布局。
+已归档原始 config.gz 内容；仍缺 Fastboot getvar、分区映射、原厂 boot.img、完整 OTA、官方对应源码或可用于本机的符号布局。

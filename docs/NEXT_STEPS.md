@@ -1,39 +1,25 @@
-# 下一阶段的最小必要操作
+# 接下来研究什么（已取得内核 config.gz）
 
-## 2026-10-11 最新说明：不用重新运行 ADB
+## 已完成：原始配置采集
 
-用户**已经**在对话提供 honor-anb-config.gz（文件服务大小 42,277 B）。当前缺口不再是采集，而是将**已经取得的同一份原件**保存到 GitHub 的 evidence/device/honor-anb-config.gz。上传后 [配置审计工作流](../.github/workflows/kernel-config-audit.yml) 会自动校验并保存摘要。请勿重复执行此前的 ADB 提取命令，除非现有原件被证明损坏。
+[evidence/device/honor-anb-config.gz](../evidence/device/honor-anb-config.gz) 已由用户上传，gzip 解压及 SHA-256 验证成功。**不需要重新运行 ADB 提取命令或再次上传配置。**
 
+查看 [配置摘要](KERNEL_CONFIG_REPORT.md)、[安全特性报告](KERNEL_SECURITY_PROFILE.md) 和 [研究状态](STATUS.md)。
 
-## P0：读取真实内核配置
+## P1：精确来源的内核源码（当前首要阻断点）
 
-真机报告显示 **/proc/config.gz（42,277 字节）**，但并未读取其内容。这是目前最直接、最值得补齐的证据。
+实机固件为 `ANB-AN00 9.0.0.230(CHNC00E230R2P5)`，Linux `5.10.236-android12-9-gd671cf8c2b02`，编译器 Clang `12.0.5`。
 
-用户已配置 Windows ADB。可以从 **Windows CMD** 运行：
+- 核对 [HONOR 开源中心](https://www.honor.com/global/opensource/) 是否存在**型号与固件匹配**的源码和构建脚本。公开 GKI 或其它机型 5.10 源码仅作差异参考。
+- 如取得源码，在 GitHub Actions 做原生 `olddefconfig`、严格记录原始/求解后配置变更、尝试编译单一对象、保存源码 commit 与编译器版本；不编造原厂内核二进制一致性。
+- 针对 CVE 使用精确修复 commit 与设备实际构建对照，不用泛化版本号代替证据。
 
-~~~bat
-adb devices
-adb exec-out cat /proc/config.gz > honor-anb-config.gz
-~~~
+## P2：验证可用的只读接口
 
-如果在 **Windows PowerShell** 中操作，建议使用：
+配置显示 Kprobe/Ftrace/DebugFS 等选项启用，**但 Shell 的实际访问权限尚未知**。下一步如确实需要只读检查，可设计最小 ADB 审计；不会尝试内核崩溃触发测试。模块强制签名和 PANIC_ON_OOPS 更要求保持谨慎。
 
-~~~powershell
-cmd /c "adb exec-out cat /proc/config.gz > honor-anb-config.gz"
-~~~
+## P3：官方固件真实性与启动链
 
-以上只读取文件并写到电脑，不修改手机分区。注意旧版 PowerShell 的二进制重定向可能破坏 gzip 字节，因此推荐经 CMD 处理。**如果 permission denied 或文件为空，保留错误消息，不强行绕过权限。**
+已有 BL locked 和 AVB green 记录，但无 Fastboot、EDL 成功研究。第三方历史 ANB OTA 索引尚未通过包签名/来源检查，不建议刷机或降级。
 
-文件获取后，要验证 gzip 是否可解压、大小/哈希、真实内核 CONFIG 配置、与当前源码/工具链是否匹配，再进行其它实验。
-
-## P1：查找原厂代码
-
-通过 [荣耀开源中心](https://www.honor.com/global/opensource/) 查找 ANB/ HNANB / MagicOS 9.0.0.230 匹配源码。尚未找到之前不要给当前手机套用其它型号的 Kconfig、结构体偏移或固件文件。
-
-## P2：固件来源与漏洞补丁
-
-离线核对第三方 ANB 历史固件的包类型与签名，不进行强制降级或 Fastboot/EDL 写入。对当前 Linux 5.10.236 的公开修复仅先做源码级比较。
-
-## 不需要现在做
-
-无需安装 WSL/Linux，无需解锁 OEM，无需刷机，也无需发送 IMEI/SN。**第一份缺失的关键文件仅是 honor-anb-config.gz**。
+**你目前无需采取任何额外操作。** 等需要新的实机证据时再提供针对性的只读命令。

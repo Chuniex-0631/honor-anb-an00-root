@@ -8,6 +8,14 @@
 - 保留重要阴性/未知情况：ro.oem_unlock_supported 输出为空；/proc/config.gz 存在但未取得内容；未采集 Fastboot/EDL；未实现 Root 或 Bootloader 解锁。
 - 设置文档链接与基线数据自动校验；开始按 P780 的研究规范长期同步 GitHub。
 
+## 2026-10-11 — v0.3：实机 Kconfig 验证成功
+
+- 用户把 `honor-anb-config.gz` 上传至 `evidence/device/`，实际文件 **42,277 B**；解压 **191,897 B**，SHA-256 `76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3`。
+- GitHub Actions [#38072192104](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38072192104) 成功从原始压缩文件中解析 **5,672** 项 Kconfig，生成 `docs/KERNEL_CONFIG_REPORT.md`。
+- 第二轮自动审计分类检查 Futex/锁机制、Clang 安全缓解、隔离与诊断接口、模块签名及 Qualcomm 架构，生成 `docs/KERNEL_SECURITY_PROFILE.md` 和 `evidence/reports/anb-config-audit.json`。
+- 更新 README、STATUS、DEVICE_BASELINE、KERNEL_AND_BOOT、EVIDENCE_MANIFEST、CONFIG_INTAKE、HISTORY、NEXT_STEPS，消除原先“未上传/未读取配置”的过期描述。
+- 研究结果依然是：**未 Root、Bootloader locked、尚无匹配的原厂源码/完整固件，不声称存在可利用 CVE**。
+
 ## 2026-10-11 — v0.2：内核配置接收与审计准备
 
 - 用户将 honor-anb-config.gz 上传至对话，文件服务记录大小 42,277 字节。

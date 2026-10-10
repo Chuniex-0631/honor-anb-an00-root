@@ -17,7 +17,7 @@
 | 编译器 | Android Clang 12.0.5 / LLD 12.0.5 |
 | Verified Boot | **green** |
 | Flash / VBMeta | **locked / locked** |
-| 内核配置 | /proc/config.gz **存在，显示 42,277 B；尚未提取原始内容** |
+| 内核配置 | [config.gz 原件](evidence/device/honor-anb-config.gz) **已校验**：42,277 B、5,672 项 |
 
 原始文本：[evidence/device/honor80pro-flat-baseline.txt](evidence/device/honor80pro-flat-baseline.txt)。
 设备属性的空返回值 ro.oem_unlock_supported **不能当作支持或不支持解锁的证明**。
@@ -29,6 +29,8 @@
 | [STATUS](docs/STATUS.md) | 已确认、待确认、已失败、未开始的事实状态 |
 | [DEVICE_BASELINE](docs/DEVICE_BASELINE.md) | 对用户实机记录的逐项整理与解释 |
 | [KERNEL_AND_BOOT](docs/KERNEL_AND_BOOT.md) | 内核、AVB、Bootloader 与 P780 经验边界 |
+| [KERNEL_SECURITY_PROFILE](docs/KERNEL_SECURITY_PROFILE.md) | 真实 Kconfig 防护、诊断接口、内核模块与限制 |
+| [KERNEL_CONFIG_REPORT](docs/KERNEL_CONFIG_REPORT.md) | 原始 gzip 自动生成的 Kconfig 状态摘要 |
 | [FIRMWARE_AND_SOURCES](docs/FIRMWARE_AND_SOURCES.md) | 官方开源渠道与第三方 ANB 历史固件索引 |
 | [HISTORY](docs/HISTORY.md) | 本项目成立前后的研究时间线 |
 | [EVIDENCE_MANIFEST](docs/EVIDENCE_MANIFEST.md) | 已上传原件和仍缺材料 |
@@ -38,7 +40,7 @@
 
 ## 当前值得研究的三条路线
 
-1. **内核配置：** /proc/config.gz 出现在真实设备的文件列表中。下一步首先获取其原始 gzip 字节并核实是否可解压，再分析 Futex、CFI、LTO、模块、调试等选项。
+1. **内核配置：已取得并分析。** 原始 gzip 已保存，确定 Futex PI、CFI、Full LTO、KASLR、Kprobe 和模块签名等配置。下一步寻找**同一固件版本**的真实源码、编译参数及补丁身份。
 2. **可信源码：** 荣耀提供官方开源发行中心，但尚未取得匹配 ANB 的 9.0.0.230 和实际 5.10.236 构建的源码。公开通用内核或其它荣耀机型代码不能冒充原厂二进制。
 3. **历史固件出处：** 第三方公开索引列有 ANB-AN00 的 MagicOS 7/8 版本。这仅是追踪线索，并不证明下载链接仍有效，也不代表完整 OTA、可解锁或可降级。
 
@@ -51,6 +53,11 @@
 
 **隐私：** GitHub 创建时此仓库为 **Public**，因此目前只提交不含 IMEI、序列号、SIM、账号和令牌的资料。未来要存 Bugreport 或全量日志请先改为 Private 并审查文件。参见 [SECURITY](SECURITY.md)。
 
-## 内核配置原件接收进展（2026-10-11）
+## 内核配置里程碑（2026-10-11）
 
-用户已经在对话上传 honor-anb-config.gz，文件服务显示 **42,277 B**，与 ADB 基线中的 /proc/config.gz 文件大小一致。**原件尚未写入 GitHub；尚未完成 GZIP/哈希/CONFIG 逐项核验。** 接收限制与已准备的 [GitHub 配置分析工作流](docs/CONFIG_INTAKE.md) 已记录。下一步只需将同一原件上传至仓库的 evidence/device/ 目录；CI 将自动核验并生成配置报告，不需要再运行 ADB。
+- **原件已入仓**：[honor-anb-config.gz](evidence/device/honor-anb-config.gz)；gzip **42,277 B**，解压 **191,897 B**；5,672 个配置项。
+- SHA-256：`76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3`。
+- **实际核验结果**：`FUTEX_PI=y`、`RT_MUTEXES=y`、`CFI_CLANG=y`、`LTO_CLANG_FULL=y`、`RANDOMIZE_BASE=y`、`PANIC_ON_OOPS=y`、`MODULE_SIG_FORCE=y`。
+- [逐项内核配置报告](docs/KERNEL_CONFIG_REPORT.md) · [安全与诊断特性分析](docs/KERNEL_SECURITY_PROFILE.md) · [可机读摘要](evidence/reports/anb-config-audit.json)。
+- 这些配置**不证明当前内核存在 GhostLock 或其它可利用漏洞**。仍缺匹配 ANB-AN00 9.0.0.230 的原厂源码、补丁和二进制证据。
+

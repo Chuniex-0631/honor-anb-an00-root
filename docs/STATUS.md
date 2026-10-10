@@ -8,17 +8,23 @@
 | MagicOS 9.0.0.230、Android 15、补丁 2026-08-01 | **实机确认** | A |
 | 内核 Linux 5.10.236、Android Clang 12.0.5 | **实机确认** | A |
 | Flash locked、VBMeta locked、AVB green | **实机确认** | A，不代表任何已解锁能力 |
-| /proc/config.gz 存在，大小 42,277 B | **文件列表确认** | A，内容尚未读取 |
+| /proc/config.gz 原件 | **已入仓、gzip 解压成功、SHA-256 已存档** | A，42,277 B、5,672 项；[报告](KERNEL_CONFIG_REPORT.md) |
 | ro.oem_unlock_supported 的结果为空 | **实机确认** | A，不能解释为空 false |
-| 能否读取 config.gz 原始字节 | **待实验** | 未获得 gzip 本体 |
+| Futex PI / RT Mutex | **均启用** | A，`CONFIG_FUTEX_PI=y`、`CONFIG_RT_MUTEXES=y`；**非漏洞证据** |
 | 荣耀官方开源发行渠道存在 | **确认** | B，未确认有匹配本机版本的源码 |
 | 第三方 ANB 历史固件索引 | **发现** | C，未验证下载、签名、包类型 |
 | 适用于当前系统的 Root 提权漏洞 | **未知** | 无精确修补/运行证据 |
 | Fastboot 与 EDL / Sahara 交互 | **尚未测试** | 不能挪用 P780 的测试结果 |
 | Bootloader 解锁、Root、修改分区 | **均未达成** | 无成功记录 |
 
-**优先任务：** 提取并检验设备自身的 /proc/config.gz，寻找与该版本匹配的源码；继续离线工作，不使用未经适配的刷机文件。详见 [下一步](NEXT_STEPS.md)。
+**优先任务：** 配置采集已完成；寻找当前版本匹配源码和补丁，核实真正的启动链及可复现性。继续离线优先，不使用未经适配的刷机文件。详见 [下一步](NEXT_STEPS.md)。
 
-## 2026-10-11 内核配置采集进度
+## 2026-10-11 配置分析的实际成果
 
-用户已提供 honor-anb-config.gz 聊天附件（文件服务报告 **42,277 字节**），与实体机基线记录的文件大小相同。由于当前文件执行环境异常，尚未核实内容/哈希，**状态为“附件已接收、原件未入 Git、配置项未验证”**。GitHub 的 [只读分析工具](../tools/analyze_kernel_config.py) 和 [自动工作流](../.github/workflows/kernel-config-audit.yml) 已就绪，上传原件后触发审计。不得将 CONFIG_FUTEX_PI、CONFIG_CFI_CLANG 等项写成已知 y/n，除非实际报告产生。
+- 原始文件：[honor-anb-config.gz](../evidence/device/honor-anb-config.gz)，**42,277 B**；解压 **191,897 B**；SHA-256 `76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3`。
+- 解析 **5,672** 个 Kconfig 符号（y=2,044、m=0、n=3,525、其它取值=103），不把缺失符号自动等同于 n。
+- **运行机制**：Futex PI/RT Mutex 启用；**现代缓解**：CFI、Full LTO、Shadow Call Stack、Pointer Authentication、BTI、KASLR、Strong Stack Protector、SELinux/SECCOMP 均启用。
+- **其它重要设置**：`CONFIG_MODULE_SIG_FORCE=y`、`CONFIG_DEBUG_INFO_DWARF4=y`、`CONFIG_KPROBE_EVENTS=y`、`CONFIG_KALLSYMS_ALL=y`、`CONFIG_PANIC_ON_OOPS=y`；这些只能说明配置或编译条件，不代表 Shell 可任意读取符号或载入模块。
+- [真实配置摘要](KERNEL_CONFIG_REPORT.md)、[分类研究报告](KERNEL_SECURITY_PROFILE.md) 与 [JSON 证据](../evidence/reports/anb-config-audit.json) 均在 GitHub Actions 中生成并保存。
+- **未验证**：原厂二进制代码是否含特定漏洞、Bootloader 解锁途径、无 Root 的动态调试权限、可被第三方签名模块加载的实际状态。
+

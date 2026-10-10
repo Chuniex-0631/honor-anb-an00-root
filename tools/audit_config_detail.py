@@ -108,28 +108,28 @@ def main():
         "> 2026-10-11 | 基于本仓库真实 gzip 文件，由 GitHub Actions 自动解析；不是其他机型的 Kconfig。",
         "",
         "- 设备：HONOR ANB-AN00 / HNANB；MagicOS 9.0.0.230，Android 15；Linux 5.10.236。",
-        f"- 原始 gzip：**{len(raw)} B**；解压后：**{len(uncompressed)} B**；SHA-256：\`{h}\`。",
-        f"- 配置总数：**{len(values)}**；\`y={totals['y']}\`、\`m={totals['m']}\`、\`n={totals['n']}\`、其它非布尔值 \`{totals['other']}\`。",
-        "- \`not present\` 表示该名称不在配置中，**不等于** \`n\`；非布尔值不向公共报告复制具体字符串。",
+        f"- 原始 gzip：**{len(raw)} B**；解压后：**{len(uncompressed)} B**；SHA-256：`{h}`。",
+        f"- 配置总数：**{len(values)}**；`y={totals['y']}`、`m={totals['m']}`、`n={totals['n']}`、其它非布尔值 `{totals['other']}`。",
+        "- `not present` 表示该名称不在配置中，**不等于** `n`；非布尔值不向公共报告复制具体字符串。",
         "",
     ]
     for name,keys in GROUPS.items():
         lines += [f"## {name}","","| Kconfig key | 实际状态 |","|---|---|"]
-        for key in keys: lines.append(f"| \`{key}\` | \`{selected[key]}\` |")
+        for key in keys: lines.append(f"| `{key}` | `{selected[key]}` |")
         lines.append("")
     lines += [
         "## 研究结论（严格限定范围）","",
         "- 配置中是否开启 Futex PI、RT Mutex 是判断候选漏洞的**必要前提之一**，不是漏洞存在或能利用的证明。必须取得与此固件匹配的内核源码和补丁证据。",
         "- CFI、Full LTO、Shadow Call Stack、指针认证、BTI、KASLR、SELinux 等开关只描述**编译配置**，不能从此推导每个内核运行路径的保护是否可绕过。",
-        "- \`CONFIG_PANIC_ON_OOPS=y\` 时，未验证的内核崩溃触发测试可能造成系统重启或不稳定。优先进行离线研究。",
-        "- \`CONFIG_MODULES=y\` 与配置中 \`=m\` 计数为 0 可以同时成立，不能推断设备不存在动态加载的 vendor 模块。",
-        "- \`CONFIG_KALLSYMS\` / \`CONFIG_KPROBES\` / \`CONFIG_FTRACE\` 被设置不代表非 Root ADB shell 一定能够读取受限制的信息。",
+        "- `CONFIG_PANIC_ON_OOPS=y` 时，未验证的内核崩溃触发测试可能造成系统重启或不稳定。优先进行离线研究。",
+        "- `CONFIG_MODULES=y` 与配置中 `=m` 计数为 0 可以同时成立，不能推断设备不存在动态加载的 vendor 模块。",
+        "- `CONFIG_KALLSYMS` / `CONFIG_KPROBES` / `CONFIG_FTRACE` 被设置不代表非 Root ADB shell 一定能够读取受限制的信息。",
         "- 目前**没有真实原厂 boot.img、vmlinux、System.map 或本机可用的 CVE 利用证据**；Root 和 Bootloader 均未解锁。",
         "",
         "## 后续建议","",
         "1. 获取本机固件完全匹配的 HONOR 内核源码和构建描述，比较源码身份、修复补丁、具体 Clang 12.0.5 工具链。",
         "2. 对任何候选 CVE，先确认源码位置、修补状态、编译开关和运行触发条件，再决定是否值得进一步验证。",
-        "3. 保留完整原始 gzip 文件而不是依赖文字统计；\`evidence/reports/anb-config-audit.json\` 提供自动化的已脱敏精选开关摘要。",
+        "3. 保留完整原始 gzip 文件而不是依赖文字统计；`evidence/reports/anb-config-audit.json` 提供自动化的已脱敏精选开关摘要。",
         "",
     ]
     REPORT.write_text("\n".join(lines),encoding="utf-8")
