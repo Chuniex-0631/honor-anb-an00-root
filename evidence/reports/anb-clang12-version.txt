@@ -1,0 +1,4 @@
+Android (7284624, based on r416183b) clang version 12.0.5 (https://android.googlesource.com/toolchain/llvm-project c935d99d7cf2016289302412d708641d52d2f7ee)
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /home/runner/work/honor-anb-an00-research/honor-anb-an00-research/clang-src/clang-r416183b/bin

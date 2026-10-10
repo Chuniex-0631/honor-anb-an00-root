@@ -1,0 +1,902 @@
+{
+  "device_config_sha256": "76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3",
+  "reference": "android12-5.10-2025-05_r1",
+  "source_sha": "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e",
+  "honor_production_source": false,
+  "mode": "symbols",
+  "kconfig_files_scanned": 1580,
+  "active_removed_count": 208,
+  "declared_anywhere": 28,
+  "not_declared_anywhere": 180,
+  "entries": [
+    {
+      "symbol": "CONFIG_ALLOC_STACK_PAGE_ON_DEMAND",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_ARCH_SUPPORTS_SHADOW_CALL_STACK",
+      "definition_paths": [
+        "arch/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_ARCH_USES_HIGH_VMA_FLAGS",
+      "definition_paths": [
+        "mm/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_ARM64_AS_HAS_MTE",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_ARM64_BTI_KERNEL",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_ARM64_LSE_ATOMICS",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_ARM64_MTE",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_ARM64_PTR_AUTH",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_ARM64_TLB_RANGE",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_AS_HAS_ARMV8_4",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_AS_HAS_ARMV8_5",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_AS_HAS_LDAPR",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_AS_HAS_LSE_ATOMICS",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_AS_HAS_PAC",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_AS_IS_LLVM",
+      "definition_paths": [
+        "init/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_BINDER_HONOR_TRANSACTION_BRIEF",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_BLK_CGROUP_IOSMART",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_BLK_SCH_BIGDATA",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_BOOT_DETECTOR",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_BOOT_DETECTOR_QCOM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_BOOT_RECOVERY",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_BOOT_TIME",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_CC_HAS_BRANCH_PROT_PAC_RET",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_CC_HAS_BRANCH_PROT_PAC_RET_BTI",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_CC_HAS_SIGN_RETURN_ADDRESS",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_CC_HAVE_SHADOW_CALL_STACK",
+      "definition_paths": [
+        "arch/arm64/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_CFI_CLANG",
+      "definition_paths": [
+        "arch/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_CFI_CLANG_SHADOW",
+      "definition_paths": [
+        "arch/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_CFS_BANDWIDTH_DATA_STAT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_CGROUP_IOLIMIT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_CHR_NETLINK_MODULE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_CLOSE_SHMEM_HYPERHOLD_OUT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_CMA_REPORT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_CPU_FREQ_POWER_STAT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_CVE_2023_52340",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_CVE_2023_5717",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_CVE_2024_26882",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_DIRECT_SWAPPINESS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_DMA_BUF_INFO",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_DMA_BUF_REPORT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_DM_HONOR_OPT_PARAMETER",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_F2FS_BLKFRAG",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_F2FS_FS_COMPRESSION_OPTM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_F2FS_FS_SIS_DISK",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_F2FS_HYPER_PREALLOC",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_F2FS_SMART_DISCARD",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_F2FS_SMART_GC",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_F2FS_TIRM_INTERRUPT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_FS_TOPIO_TRACE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_GCMA",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_GPU_MEM_REPORT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HANDSET_SYSRQ_RESET",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HAS_LTO_CLANG",
+      "definition_paths": [
+        "arch/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_HAVE_ARCH_KASAN_HW_TAGS",
+      "definition_paths": [
+        "lib/Kconfig.kasan"
+      ]
+    },
+    {
+      "symbol": "CONFIG_HIDESYMS_CFI_JT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_ASYNC_BINDER_THREAD_PRIO_RT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_BOOSTER",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_CGROUP_WORKINGSET",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_DIE_CATCH",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_DPIMARK_MODULE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_EMCOM_NSTACK",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_KERNEL_STP",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_LOCKDUMP_V3",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_MEMCHECK",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_NETFILTER_MODULE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_NETWORK_AWARE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_NETWORK_MEASUREMENT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_NETWORK_QOE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_NSTACK_FI",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_PACKET_FILTER_BYPASS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_PERF_EVENT_MUX_INTERVAL_WRITE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_QOS_THREAD",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_ROOT_SCAN",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_ROOT_SCAN_KCODE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_RW_SEM_DEBUG",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_SCHED_TRACE_ENHANCEMENT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_SET_ASYNC_BINDER_RT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_SMARTCARE_FI",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_SYN_LINEAR_RETRY",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_VIP_THREAD_BUILDIN",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_VIP_TO_TA_BUILDIN",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_VIP_WQ_BUILDIN",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_VSIM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_WIFI",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_WIFIPRO",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_WIFIPRO_PROC",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HN_ZEROHUNG_ENHANCEMENT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_ALLOC_STATS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_BASTET_QCOM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_CACHE_DISK",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_CFI_POINTER_INFO",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_DUBAI_COMMON",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_DUBAI_GPU_COMMON",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_EIMA",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_EIMA_FS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_EIMA_GKI",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_EIMA_STATIC_MEASURE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_EMCOM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_EMMC_VENDOR_MODE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_F2FS_DSM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_FEATURE_PRINT_PID_NAME",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_FILEMAP_TRACE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_HIDESYMS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_HOTFILE_DETECT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_IO_MEASURE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_MSS_AUTO_CHANGE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_NWEVAL",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_PERF_CTRL",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_PGO_CLANG",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_PGPRESS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_PROC_CHECK_ROOT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_PSI",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_QOS_INTF_PERF_V1",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_QOS_INTF_PERF_V2",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RPHONE_DEBUG",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RTG",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RTG_AUX",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RTG_CUSTOM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RTG_DEBUG",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RTG_FOCUS_CHANGE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RTG_FRAME",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RTG_INTF_PERF_V1",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RTG_INTF_PERF_V2",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RTG_TRACE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RT_ACTIVE_LB",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_RWLOG",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_SCHED_STAT_YIELD",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_SCHED_WAIPIO",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_SCSI_UFS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_SDCARD_DSM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_SD_HEALTH_DETECT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_SPF",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_TASK_RAVG_SUM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_THERMAL",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_UFS_DSM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_XENGINE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HONOR_ZONE_ISOLATE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HUGEPAGE_DMA_BUF",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HUGEPAGE_POOL",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HW_SCHED_CLUSTER",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HYPERHOLD",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HYPERHOLD_CONCURRENT_OPT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HYPERHOLD_CORE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HYPERHOLD_CRYPT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HYPERHOLD_DEBUG",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HYPERHOLD_DEBUG_FS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HYPERHOLD_FILE_ARCHIVAL",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HYPERHOLD_FILE_LRU",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_HYPERHOLD_ZSWAPD",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_KERNFS_RWSEM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_KGSL_PAGE_ALLOC_INFO",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_KSHRINK_OPT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_KSTATE_COMMON",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_LIBC_SEC",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_LOGGER",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_LOGGER_VH",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_LOG_EXCEPTION",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_LOG_JANK",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_LOG_KERNEL",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_LTO",
+      "definition_paths": [
+        "arch/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_LTO_CLANG",
+      "definition_paths": [
+        "arch/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_LTO_CLANG_FULL",
+      "definition_paths": [
+        "arch/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_MEMCG_PROTECT_LRU",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_MEM_PREPARE_TOUCHDOWN",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_MEM_REPORT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_MEM_STATS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_MM_COMMON",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_NO_DISABLE_SELINUX_IN_PERF",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_OPT_KERNEL_SLAB_USAGE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_PRINTK_META",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_PRINTK_PREFIX",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_PROACTIVITY_COMPACT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_PROCESS_MADVISE_CHECK_ADJ",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_PROCESS_MADVISE_CHECK_LOCK",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_PROCESS_RECLAIM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_PSI_MEM_DIRECT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_QCOM_CPUINFO",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_RAINBOW",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_RAINBOW_HIMNTN",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_RAINBOW_REASON",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_RECLAIM_OPT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_RELR",
+      "definition_paths": [
+        "arch/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_RENDER_RT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_RMAP_OPT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_RUNMODE_TYPE_PARSE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_SCHED_PERF_CTRL",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_SHADOW_CALL_STACK",
+      "definition_paths": [
+        "arch/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_SHRINKER_OPT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_SHRINK_PROTECT_PAGE_OPT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_SLUB_RECLAIM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_STORAGE_DSM_IOMT_HOST",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_STORAGE_DSM_IOMT_UFS_HOST",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_STREAM_DETECT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_SYSFS_STATS_SETUP_ASYNC",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_TOOLS_SUPPORT_RELR",
+      "definition_paths": [
+        "init/Kconfig"
+      ]
+    },
+    {
+      "symbol": "CONFIG_UNMOVABLE_ISOLATE",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_USB_HONOR_ACC",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_USB_HONOR_NCM",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_VIP_PAGE_CACHE_BUILDIN",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_VMALLOC_OPT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_VMAP_ALLOC_PAGE_ON_DEMAND",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_WAIT_DEVICE_PROBE_TIMEOUT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_XRECLAIMER",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_XRECLAIMER_LOCK_BYPASS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_ZRAM_EXT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_ZRAM_NON_COMPRESS",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_ZRAM_WRITEBACK_EXT",
+      "definition_paths": []
+    },
+    {
+      "symbol": "CONFIG_ZS_MALLOC_EXT",
+      "definition_paths": []
+    }
+  ],
+  "caveat": "Definition anywhere does not guarantee reachability in ARCH=arm64 Kconfig."
+}

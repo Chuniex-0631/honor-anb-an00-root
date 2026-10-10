@@ -1,0 +1,1 @@
+LLD 12.0.5 (/buildbot/src/android/llvm-toolchain/out/llvm-project/lld c935d99d7cf2016289302412d708641d52d2f7ee) (compatible with GNU linkers)
