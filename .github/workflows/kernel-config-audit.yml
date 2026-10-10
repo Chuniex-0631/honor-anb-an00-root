@@ -6,6 +6,7 @@ on:
     paths:
       - evidence/device/honor-anb-config.gz
       - tools/analyze_kernel_config.py
+      - tools/audit_config_detail.py
 permissions:
   contents: write
 jobs:
@@ -27,6 +28,9 @@ jobs:
       - name: Decompress and inspect real kernel config
         if: steps.input.outputs.ready == 'true'
         run: python3 tools/analyze_kernel_config.py
+      - name: Analyze protective controls and research prerequisites
+        if: steps.input.outputs.ready == 'true'
+        run: python3 tools/audit_config_detail.py
       - name: Save checked summary to Git
         if: steps.input.outputs.ready == 'true'
         shell: bash
@@ -34,7 +38,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/KERNEL_CONFIG_REPORT.md
+          git add docs/KERNEL_CONFIG_REPORT.md docs/KERNEL_SECURITY_PROFILE.md evidence/reports/anb-config-audit.json
           if ! git diff --cached --quiet; then
             git commit -m "evidence: summarize ANB-AN00 kernel config"
             git push origin HEAD:main
@@ -44,6 +48,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: honor-anb-config-report
-          path: docs/KERNEL_CONFIG_REPORT.md
+          path: |
+            docs/KERNEL_CONFIG_REPORT.md
+            docs/KERNEL_SECURITY_PROFILE.md
+            evidence/reports/anb-config-audit.json
           if-no-files-found: ignore
           retention-days: 30
