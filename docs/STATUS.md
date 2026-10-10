@@ -14,13 +14,15 @@
 | 荣耀官方开源发行渠道存在 | **确认** | B，官网指定 `Open Source Codes Issue` 主题可请求源码，尚无 ANB 当前版本的源码包 |
 | Google 公共 GKI `android12-5.10-2025-05_r1` | **官方源码身份与版本已验证** | B，5.10.236，源码固定 SHA `b97c62c4...`；**不是厂商生产内核证据** |
 | Google Clang `r416183b` | **官方工具链存在且标识相符** | B + A，不能推出二进制完全一致 |
-| Google 公共 Kconfig 与 HONOR 配置匹配程度 | **已有成功离线实验** | 官方 GKI 参考树 5672→5351，变化 5、缺失 329（原启用 208）、新增 8；使用 Ubuntu Clang14，不等于 OEM 构建 |
+| Google GKI 公共 Kconfig（宿主 Clang14 历史实验） | **成功、原始证据保留** | 5672→5351，变化 5、缺失 329（原启用 208）、新增 8；非 OEM 源码 |
+| Google GKI 公共 Kconfig（匹配 Android Clang12.0.5 r416183b） | **成功、JSON 永久归档** | 5672→5366，变化 0、缺失 311（原启用 193）、新增 5；仍非 OEM 源码 |
+| 旧实验 208 项已启用缺失符号的 Google 参考树声明扫描 | **成功、JSON 永久归档** | 扫描 1580 个 Kconfig：28 项有定义，180 项未找到定义；不证明全部为 HONOR 独有 |
 | 第三方 ANB 历史固件索引 | **发现** | C，未验证下载、签名、包类型 |
 | 适用于当前系统的 Root 提权漏洞 | **未知** | 无精确修补/运行证据 |
 | Fastboot 与 EDL / Sahara 交互 | **尚未测试** | 不能挪用 P780 的测试结果 |
 | Bootloader 解锁、Root、修改分区 | **均未达成** | 无成功记录 |
 
-**续接核验：** GitHub API 确认仓库为 Private；Actions #38073627910（GKI 对照）与 #38073733732（归档审计）均为 success。新的“符号是否在源码中定义”与“Android Clang12 是否改变求解”实验详见 [GKI_SYMBOL_PROVENANCE](GKI_SYMBOL_PROVENANCE.md)，结果以实际 CI 为准。
+**续接核验：** GitHub API 确认仓库为 Private；Actions #38073627910（GKI 对照）与 #38073733732（归档审计）均为 success。新的符号定义与 Clang12 实验已由 Actions #38076177418 **成功**、#38076601768 **归档成功**。完整数据和旧实验差异见 [GKI_SYMBOL_PROVENANCE](GKI_SYMBOL_PROVENANCE.md)。
 
 **优先任务：** 配置采集已完成；寻找当前版本匹配源码和补丁，核实真正的启动链及可复现性。继续离线优先，不使用未经适配的刷机文件。详见 [下一步](NEXT_STEPS.md)。
 

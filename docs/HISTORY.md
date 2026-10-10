@@ -10,4 +10,6 @@
 | 2026-10-11 | 完成 Google GKI 5.10.236 官方源码的 Kconfig 对照：共享值变化 5，缺失 329（其中实机启用 208），新增 8；从 208 项识别 HONOR/HN 命名 84、CVE 命名 3。证据与报告已归档。 | 原厂精确源码缺失；三项 CVE 配置不能证明仍有漏洞，BL 和 Root 状态没有变化。 |
 | 2026-10-11 | 新会话核验 Private 仓库、成功 Actions 和原始 JSON，新增 GKI Kconfig 定义扫描与 Clang12 控制实验，并查证三项 CVE 的上游补丁。 | 新的 CI 结果待复核，生产 OEM 源码/完整 OTA 仍缺；Root/BL 未实现。 |
 
+| 2026-10-11 | 固定 Google GKI 的符号定义扫描完成：旧 208 项中公共树 28 项有定义、180 项无定义；Google 官方 Android Clang r416183b / LLD 12.0.5 控制实验 5,672→5,366、共享变化 0、原启用缺失 193。Actions #38076177418 与永久证据归档 #38076601768 均成功。 | 新结果不代表 HONOR OEM 源码匹配；Bootloader/Root 仍未成功。 |
+
 早期 [P780 研究仓库](https://github.com/Chuniex-0631/p780-kernel-research) 只作工作方法参考；其设备证据不归入本机历史。

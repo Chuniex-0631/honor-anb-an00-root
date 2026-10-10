@@ -34,7 +34,7 @@
 | [FIRMWARE_AND_SOURCES](docs/FIRMWARE_AND_SOURCES.md) | 官方开源渠道与第三方 ANB 历史固件索引 |
 | [SOURCE_PROVENANCE](docs/SOURCE_PROVENANCE.md) | 官方 5.10.236 GKI 精确版本、HONOR 更新记录与出处 |
 | [GKI_CONFIG_COMPARISON](docs/GKI_CONFIG_COMPARISON.md) | 实机 5,672 项与 Google GKI 5,351 项的历史差异（宿主 Clang14） |
-| [GKI_SYMBOL_PROVENANCE](docs/GKI_SYMBOL_PROVENANCE.md) | 新增的符号定义检查与 Android Clang12 控制实验 |
+| [GKI_SYMBOL_PROVENANCE](docs/GKI_SYMBOL_PROVENANCE.md) | **已成功**的参考树符号定义检查与精确 Android Clang12 工具链求解，归档 JSON |
 | [VENDOR_DELTA_TRIAGE](docs/VENDOR_DELTA_TRIAGE.md) | 208 项启用而参考树缺失的符号分类与重要厂商开关 |
 | [CVE_CONFIG_FLAGS](docs/CVE_CONFIG_FLAGS.md) | 三个 CVE 命名开关的真实配置与公开漏洞记录，不是可利用性结论 |
 | [GKI_CVE_SOURCE_CHECK](docs/GKI_CVE_SOURCE_CHECK.md) | 固定 Google GKI 源码的三处补丁特征、原始 Blob SHA 和严格解释边界 |
@@ -45,6 +45,8 @@
 | [NEXT_STEPS](docs/NEXT_STEPS.md) | 最有价值的下一步实验 |
 | [RESEARCH_RULES](docs/RESEARCH_RULES.md) | 如何同步更新、如何判断证据级别 |
 | [CHANGELOG](CHANGELOG.md) | 阶段更新日志 |
+
+**最新实验（2026-10-11）：** 通过 Android Clang12 r416183b 重新求解后，Google 参考树配置 5,366 项、共享值变化 **0**、原先启用而缺失 **193** 项；旧实验 208 项中 **28 项**可在 Google 参考源码中找到定义。原始产物已由成功的 CI 归档，参见 [GKI_SYMBOL_PROVENANCE](docs/GKI_SYMBOL_PROVENANCE.md)。**这不是 HONOR 原厂源码一致性证明。**
 
 ## 当前值得研究的三条路线
 

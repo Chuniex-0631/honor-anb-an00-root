@@ -1,5 +1,12 @@
 # HONOR ANB-AN00 研究更新日志
 
+## 2026-10-11 — v0.6.1：Android Clang12 成功复算并永久归档
+
+- GitHub Actions [#38076177418](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38076177418) 成功运行 Google 固定 GKI Kconfig 定义扫描和匹配 Android Clang12.0.5 / r416183b / LLD12 工具链复算，结果已通过 [#38076601768](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38076601768) 校验并永久归档。源码公共 GKI commit 未改变，未接触实体机。
+- 208 项旧启用缺失符号中有 **28 项**在 Google 参考树有定义、**180 项**全树未找到定义；扫描 1,580 Kconfig 文件。
+- 精确工具链复算：5,672→**5,366**，共享变化 **0**，缺失 **311**（原已启用 **193**），新增 **5**；旧版 208 项中有 16 项恢复、1 项新缺失（净减少 15）。全套 JSON、报告、官方编译器版本和源 commit 已归档；旧版结果未覆盖。
+- 早期 CI 失败 #38076018784 / #38076037276：脚本 Kconfig 正则过宽、Artifact 文件名转义错误；后修复并成功，保留失败记录。仍缺精准 HONOR 原厂源码/OTA，未实现 Root/BL 解锁。
+
 ## 2026-10-11 — v0.6：仓库续接、证据分层与 Clang12 控制实验
 
 - 核实 GitHub 仓库实际 Private、main 的所有证据及近期 Actions；修正 STATUS 的 GKI 比较状态、README/manifest 的隐私说明及 HISTORY 时间线格式。

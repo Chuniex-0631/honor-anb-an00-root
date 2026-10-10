@@ -37,9 +37,16 @@
 
 ## v0.6 新实验登记（待证据入库）
 
-- 新增只读工作流 [GKI symbols / Clang12](../.github/workflows/gki-symbol-toolchain.yml)，产物为 `symbol-definitions.json`、`clang12-comparison.json` 和环境日志；写入 Git 前必须验收实际 CI 结果。旧 GKI JSON 继续保留。
+- 新增只读工作流 [GKI symbols / Clang12](../.github/workflows/gki-symbol-toolchain.yml)，产物为 `symbol-definitions.json`、`clang12-comparison.json` 和环境日志；已经由 [Actions #38076177418](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38076177418) 验证成功，并经 [归档 #38076601768](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38076601768) 检验后永久入 Git；旧 GKI JSON 继续保留。
 - 之前成功运行：[GKI #38073627910](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073627910)、[archive audit #38073733732](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073733732)。
 
 ## v0.6 GKI 源码定位记录
 
 - [GKI 参考树 CVE 代码特征 JSON](../evidence/reports/anb-gki-cve-static-markers.json) 与 [分析报告](GKI_CVE_SOURCE_CHECK.md)：来源为已固定公共镜像提交，包含四个 Git blob SHA、匹配特征及解释边界；**不包含设备 OEM 源码，也没有声称已验证任何真实设备 CVE**。
+
+### 精确 Clang12 和符号定义已归档数据
+
+- [符号定义 JSON](../evidence/reports/anb-gki-symbol-definitions.json)：1,580 个 Kconfig 文件，208 项中 28 项有定义、180 项无定义；[逐项源码声明路径](GKI_SYMBOL_DEFINITIONS.md)。
+- [Android Clang12 配置比较 JSON](../evidence/reports/anb-gki-clang12-comparison.json)：5,672→5,366，变化 0、缺失 311（原启用 193）、新增 5；[报告](GKI_CLANG12_COMPARISON.md)。
+- [Clang 版本文本](../evidence/reports/anb-clang12-version.txt)、[LLD 版本文本](../evidence/reports/anb-lld12-version.txt)、[工具链 Git 源 SHA](../evidence/reports/anb-toolchain-source-commit.txt)。本次克隆源代码为 Google 公共源码与官方编译器，**不是生产 OEM 源码**。
+- 原始 CI Artifact ID 11678900920；归档时验证源提交和设备哈希。历史失败 #38076018784、#38076037276 均保留。
