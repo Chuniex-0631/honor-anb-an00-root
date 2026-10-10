@@ -1,0 +1,24 @@
+Honor 80 Pro Flat - Read Only Audit
+ro.product.model = ANB-AN00
+ro.product.device = HNANB
+ro.product.board = taro
+ro.board.platform = taro
+ro.build.display.id = ANB-AN00 9.0.0.230(CHNC00E230R2P5)
+ro.build.fingerprint = HONOR/ANB-AN00/HNANB:15/HONORANB-AN00/9DLDLD230CHNC00E230:user/release-keys
+ro.build.version.release = 15
+ro.build.version.sdk = 35
+ro.build.version.security_patch = 2026-08-01
+ro.vendor.build.security_patch = 2026-08-01
+ro.build.version.emui = MagicOS_9.0.0
+ro.boot.verifiedbootstate = green
+ro.boot.flash.locked = 1
+ro.boot.vbmeta.device_state = locked
+ro.oem_unlock_supported = 
+
+=== Kernel ===
+Linux localhost 5.10.236-android12-9-gd671cf8c2b02 #1 SMP PREEMPT Tue Aug 11 02:55:06 UTC 2026 aarch64 Toybox
+Linux version 5.10.236-android12-9-gd671cf8c2b02 (build-user@build-host) (Android (7284624, based on r416183b) clang version 12.0.5 (https://android.googlesource.com/toolchain/llvm-project c935d99d7cf2016289302412d708641d52d2f7ee), LLD 12.0.5 (/buildbot/src/android/llvm-toolchain/out/llvm-project/lld c935d99d7cf2016289302412d708641d52d2f7ee)) #1 SMP PREEMPT Tue Aug 11 02:55:06 UTC 2026
+
+=== Kernel Config Availability ===
+ls: /sys/kernel/config.gz: No such file or directory
+-r--r--r-- 1 root root 42277 2026-10-11 00:59 /proc/config.gz
