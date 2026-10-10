@@ -45,3 +45,7 @@
 ## 最新源码调查
 
 详见 [官方出处、更新历史与请求路径](SOURCE_PROVENANCE.md)，以及 [Google GKI 配置对照方法](GKI_COMPARISON_METHOD.md)。本阶段不把公共参考树当作厂商内核，也不将 Google 的原生 GKI boot.img 用于 ANB 真机。
+
+## 2026-10-11 厂商源码申请
+
+已通过 Gmail 实际向 `support@hihonor.com` 发送 `Open Source Codes Issue` 请求，状态为已发出、尚无回复。详见 [联络记录](OFFICIAL_SOURCE_REQUEST_LOG.md)。发送成功不意味着源码已获取，亦不改变 Root/BL 状态。
