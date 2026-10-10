@@ -1,0 +1,84 @@
+name: Archive verified ANB GKI symbol and Clang12 evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/archive-gki-control-results.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and validate pinned successful run
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p original-reports evidence/reports docs
+          gh run download 38076177418 --repo Chuniex-0631/honor-anb-an00-research \
+            --name anb-gki-symbol-clang12-38076177418 --dir original-reports
+          python3 - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+          r = Path("original-reports")
+          source = "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e"
+          device_hash = "76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3"
+          sym = json.loads((r / "symbol-definitions.json").read_text())
+          c = json.loads((r / "clang12-comparison.json").read_text())
+          assert (r / "reference-commit.txt").read_text().strip() == source
+          assert (r / "toolchain-source-commit.txt").read_text().strip() == "2e72cd026daa0cac35883ba23c78ad1dcfa15cf4"
+          assert sym["source_sha"] == source and c["source_sha"] == source
+          assert sym["device_config_sha256"] == c["device_config_sha256"] == device_hash
+          assert sym["honor_production_source"] is False and c["honor_production_source"] is False
+          assert sym["active_removed_count"] == 208
+          assert sym["kconfig_files_scanned"] == 1580
+          assert sym["declared_anywhere"] == 28 and sym["not_declared_anywhere"] == 180
+          assert len(sym["entries"]) == 208
+          assert c["original_symbols"] == 5672 and c["resolved_symbols"] == 5366
+          assert c["changed_count"] == 0 and c["removed_count"] == 311
+          assert c["removed_active_count"] == 193 and c["added_count"] == 5
+          assert "r416183b" in c["compiler"] and "12.0.5" in c["compiler"]
+          assert "clang version 12.0.5" in (r / "android-clang-version.txt").read_text()
+          assert "LLD 12.0.5" in (r / "android-lld-version.txt").read_text()
+          assert hashlib.sha256((r / "original.config").read_bytes()).hexdigest() == hashlib.sha256(__import__('gzip').decompress(Path('evidence/device/honor-anb-config.gz').read_bytes())).hexdigest()
+          print("PASS: pinned Google GKI commit; Android Clang/LLD12; symbols 28/180; 5366 resolved and 193 active removed")
+          PY
+          cp original-reports/symbol-definitions.json evidence/reports/anb-gki-symbol-definitions.json
+          cp original-reports/clang12-comparison.json evidence/reports/anb-gki-clang12-comparison.json
+          cp original-reports/symbol-definitions.md docs/GKI_SYMBOL_DEFINITIONS.md
+          cp original-reports/clang12-comparison.md docs/GKI_CLANG12_COMPARISON.md
+          cp original-reports/android-clang-version.txt evidence/reports/anb-clang12-version.txt
+          cp original-reports/android-lld-version.txt evidence/reports/anb-lld12-version.txt
+          cp original-reports/toolchain-source-commit.txt evidence/reports/anb-toolchain-source-commit.txt
+          {
+            echo "## Verified pinned GKI+Clang12 experiment"
+            echo "Run: 38076177418. 28 defined / 180 not defined in Google source. Clang12: 5672 -> 5366, changed 0, removed 311 (193 active), added 5."
+            echo "These are NOT HONOR OEM source/vulnerability/Root findings."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Commit verified reports with retry after concurrent main updates
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/GKI_SYMBOL_DEFINITIONS.md docs/GKI_CLANG12_COMPARISON.md evidence/reports/anb-gki-symbol-definitions.json evidence/reports/anb-gki-clang12-comparison.json evidence/reports/anb-clang12-version.txt evidence/reports/anb-lld12-version.txt evidence/reports/anb-toolchain-source-commit.txt
+          if git diff --cached --quiet; then
+            echo "Already archived"
+            exit 0
+          fi
+          git commit -m "evidence: permanently archive verified GKI symbols and Android Clang12 experiment"
+          for i in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then exit 0; fi
+          done
+          exit 1
