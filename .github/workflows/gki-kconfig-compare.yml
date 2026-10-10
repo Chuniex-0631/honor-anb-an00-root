@@ -42,16 +42,33 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout 900 git clone --depth 1 --single-branch \
-            --branch android12-5.10-2025-05_r1 \
+          # Retry transient HTTP 502 through two official Gitiles hostnames.
+          success=0
+          for source in \
             https://android.googlesource.com/kernel/common \
-            public-gki 2>&1 | tee reports/source-clone.log
+            https://android.git.googlesource.com/kernel/common; do
+            for attempt in 1 2; do
+              rm -rf public-gki
+              echo "Attempt ${attempt} at Google source host: ${source}"
+              if timeout 480 git -c http.version=HTTP/1.1 clone \
+                --depth 1 --filter=blob:none \
+                --branch android12-5.10-2025-05_r1 \
+                "$source" public-gki > reports/source-clone.log 2>&1; then
+                success=1
+                break 2
+              fi
+              tail -15 reports/source-clone.log
+            done
+          done
+          if test "$success" -ne 1; then
+            echo "All 4 Google source download attempts failed (network, not device result)."
+            exit 2
+          fi
           git -C public-gki rev-parse HEAD | tee reports/source-commit.txt
           test "$(cat reports/source-commit.txt)" = "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e"
           grep -q '^VERSION = 5$' public-gki/Makefile
           grep -q '^PATCHLEVEL = 10$' public-gki/Makefile
           grep -q '^SUBLEVEL = 236$' public-gki/Makefile
-
       - name: Evaluate original P780-independent ANB Kconfig in Google source
         shell: bash
         run: |
