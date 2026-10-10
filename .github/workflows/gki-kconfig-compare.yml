@@ -69,7 +69,7 @@ jobs:
           grep -q '^VERSION = 5$' public-gki/Makefile
           grep -q '^PATCHLEVEL = 10$' public-gki/Makefile
           grep -q '^SUBLEVEL = 236$' public-gki/Makefile
-      - name: Evaluate original P780-independent ANB Kconfig in Google source
+      - name: Evaluate real ANB-AN00 Kconfig in Google source
         shell: bash
         run: |
           set -euo pipefail
@@ -98,7 +98,15 @@ jobs:
           git add docs/GKI_CONFIG_COMPARISON.md evidence/reports/anb-gki-config-delta.json
           if ! git diff --cached --quiet; then
             git commit -m "evidence: compare ANB original config with Google GKI 5.10.236 source"
-            git push origin HEAD:main
+            for attempt in 1 2 3; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                exit 0
+              fi
+              echo "Commit raced with another documentation update, retrying: $attempt"
+            done
+            exit 1
           fi
 
       - name: Upload source provenance and original Kconfig reports
