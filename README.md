@@ -50,3 +50,7 @@
 - CHANGELOG.md —— 每阶段同步维护。
 
 **隐私：** GitHub 创建时此仓库为 **Public**，因此目前只提交不含 IMEI、序列号、SIM、账号和令牌的资料。未来要存 Bugreport 或全量日志请先改为 Private 并审查文件。参见 [SECURITY](SECURITY.md)。
+
+## 内核配置原件接收进展（2026-10-11）
+
+用户已经在对话上传 honor-anb-config.gz，文件服务显示 **42,277 B**，与 ADB 基线中的 /proc/config.gz 文件大小一致。**原件尚未写入 GitHub；尚未完成 GZIP/哈希/CONFIG 逐项核验。** 接收限制与已准备的 [GitHub 配置分析工作流](docs/CONFIG_INTAKE.md) 已记录。下一步只需将同一原件上传至仓库的 evidence/device/ 目录；CI 将自动核验并生成配置报告，不需要再运行 ADB。
