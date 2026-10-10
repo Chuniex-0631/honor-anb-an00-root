@@ -12,3 +12,6 @@ We import the **real owner's ANB-AN00 /proc/config.gz** and run the candidate pu
 **This does not use the owner's exact Clang 12.0.5** for the first trial. Compiler version drift is therefore not considered evidence of OEM divergence. This is a **Kconfig vocabulary coverage** test only; all enabled settings absent from the public tree require separate investigation.
 
 No real handset is accessed. No images are built for flashing, no kernel vulnerabilities tested, no symbol offsets claimed.
+## 2026-10-11 continued experiments
+
+[Symbol and Clang12 workflow](../.github/workflows/gki-symbol-toolchain.yml) scans Kconfig definitions separately from resolved values, then retries on the pinned public Google source with official Android Clang r416183b. Result artifacts are separate from the original host-Clang14 comparison, which remains immutable. All new conclusions require a successful run and checked outputs.

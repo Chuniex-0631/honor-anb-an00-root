@@ -17,9 +17,9 @@ P780 的实验结论只能作为方法论，不自动作为 ANB 的 A 级证据�
 4. 更新 HISTORY、CHANGELOG 与 README；必要时**修改旧结论或重组文件**，不要单纯追加。
 5. 新增 CI 测试时保留运行编号、源码 commit、编译器、Kconfig diff、错误日志；编译成功不等于原厂固件二进制或漏洞成功。
 
-## Public 仓库隐私界线
+## Private 仓库和历史公开风险
 
-首次初始化时仓库为 Public，因此不提交 IMEI、SN、SIM、MAC、通讯记录、私有 OTA token、完整 bugreport。即使以后删除，旧 Git history 也可能保留这些信息。对于敏感数据应先选择 Private 仓库并且主动脱敏。
+目前仓库为 Private，但首次初始化时曾是 Public。始终不提交 IMEI、SN、SIM、MAC、通讯记录、私有 OTA token 或未经检查的完整 bugreport。删除文件或修改可见性无法保证抹除过去的公开历史，必须先脱敏。
 
 ## 实机安全
 

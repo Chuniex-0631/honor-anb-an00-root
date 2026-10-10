@@ -12,7 +12,7 @@
 
 ### 隐私
 
-仓库目前是 **Public**，所以不归档 IMEI、序列号、SIM/运营商账号、完整系统 Bugreport、含认证令牌的 OTA URL 或未经筛查的全量设备日志。未来若要保存这些原件，需要先确认私人存储方案并对 Git 历史保密。
+仓库目前是 **Private**（实际核实），但首次初始化时曾是 Public。仍不归档 IMEI、序列号、SIM/运营商账号、含认证令牌的 OTA URL 或未经筛查的完整 Bugreport；改变仓库可见性不能消除旧公开历史可能造成的泄露。
 
 ## 2026-10-11 配置的实物验收与历史状态修正
 
@@ -34,3 +34,8 @@
 - [Google 构建配置](https://android.googlesource.com/kernel/common/+/refs/heads/android12-5.10/build.config.common) 与 [Clang r416183b](https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/android12L-d2-s2-release/clang-r416183b/) 是公开可用的来源信息，不是 ANB OEM 专有源码。
 - [本项目 CI 工作流](../.github/workflows/gki-kconfig-compare.yml) 对照的是**真实 gzip 与 Google 公共源码**。首次 clone 遇 HTTP 502，仅表示网络下载失败；有效 Kconfig 结果须以成功的 Actions 产物为准。
 - HONOR 当前版本的完整内核源码/补丁、`boot.img`、`vmlinux`、`System.map` **依旧没有取得**，不得由 Google GKI 源文件代替。
+
+## v0.6 新实验登记（待证据入库）
+
+- 新增只读工作流 [GKI symbols / Clang12](../.github/workflows/gki-symbol-toolchain.yml)，产物为 `symbol-definitions.json`、`clang12-comparison.json` 和环境日志；写入 Git 前必须验收实际 CI 结果。旧 GKI JSON 继续保留。
+- 之前成功运行：[GKI #38073627910](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073627910)、[archive audit #38073733732](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073733732)。

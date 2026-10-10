@@ -51,3 +51,9 @@ Google 官方的 [android12-5.10 build.config.common](https://android.googlesour
 ## 本阶段交付
 
 已建立 [Google 官方候选源码的 Kconfig 比对工作流](../.github/workflows/gki-kconfig-compare.yml)，使用真实设备 config.gz 进行离线配置兼容性评估。原件与自动比较结果将分开保存。实验成功即说明符号能否在 Google 参考树中得到解释，**不是 Root/Bootloader 解锁或厂商二进制一致的结论**。
+
+## F. 2026-10-11 续接检索记录
+
+对 `ANB-AN00` / `HNANB` / `9.0.0.230` / `CONFIG_HONOR_EIMA_GKI` 等再次检索，本轮未取得可核对的精确 HONOR 厂商内核源码、对应 OTA 或完整 boot 镜像。网络上的 [XDA ANB 帐号/EDL 提问](https://xdaforums.com/t/remove-honor-id-on-honor-80-pro-flat-anb-an00.4633271/) 只是求助帖子，不是 EDL/BL 解锁成功证据。
+
+官方 [HONOR Open Source Release Center](https://www.honor.com/global/opensource/) 仍给出 `Open Source Codes Issue` 与 `support@hihonor.com` 的源码请求路径；项目未发送邮件。另已确认 Google [Android Clang r416183b 预编译目录](https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/android12L-gsi/clang-r416183b/) 对外可读；[新工作流](GKI_SYMBOL_PROVENANCE.md) 会单独验证实际下载、Clang 版本与 Kconfig 结果，未成功前不称已复现。

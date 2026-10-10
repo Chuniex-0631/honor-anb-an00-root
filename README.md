@@ -33,7 +33,8 @@
 | [KERNEL_CONFIG_REPORT](docs/KERNEL_CONFIG_REPORT.md) | 原始 gzip 自动生成的 Kconfig 状态摘要 |
 | [FIRMWARE_AND_SOURCES](docs/FIRMWARE_AND_SOURCES.md) | 官方开源渠道与第三方 ANB 历史固件索引 |
 | [SOURCE_PROVENANCE](docs/SOURCE_PROVENANCE.md) | 官方 5.10.236 GKI 精确版本、HONOR 更新记录与出处 |
-| [GKI_CONFIG_COMPARISON](docs/GKI_CONFIG_COMPARISON.md) | 实机 5,672 项与 Google GKI 5,351 项的真实差异结果 |
+| [GKI_CONFIG_COMPARISON](docs/GKI_CONFIG_COMPARISON.md) | 实机 5,672 项与 Google GKI 5,351 项的历史差异（宿主 Clang14） |
+| [GKI_SYMBOL_PROVENANCE](docs/GKI_SYMBOL_PROVENANCE.md) | 新增的符号定义检查与 Android Clang12 控制实验 |
 | [VENDOR_DELTA_TRIAGE](docs/VENDOR_DELTA_TRIAGE.md) | 208 项启用而参考树缺失的符号分类与重要厂商开关 |
 | [CVE_CONFIG_FLAGS](docs/CVE_CONFIG_FLAGS.md) | 三个 CVE 命名开关的真实配置与公开漏洞记录，不是可利用性结论 |
 | [GKI_COMPARISON_METHOD](docs/GKI_COMPARISON_METHOD.md) | 使用真实配置与 Google 固定源码的离线测试方法 |
@@ -57,7 +58,7 @@
 - tools/ 和 .github/workflows/ —— 文档与证据的自动检查。
 - CHANGELOG.md —— 每阶段同步维护。
 
-**隐私：** GitHub 创建时此仓库为 **Public**，因此目前只提交不含 IMEI、序列号、SIM、账号和令牌的资料。未来要存 Bugreport 或全量日志请先改为 Private 并审查文件。参见 [SECURITY](SECURITY.md)。
+**隐私：** 仓库实际为 **Private**，但创建初期曾是 Public。仍不应提交未经筛查的 IMEI、序列号、SIM、账号、令牌或 Bugreport。过去公开过的 Git 历史可能已被外部复制；参见 [SECURITY](SECURITY.md)。
 
 ## 内核配置里程碑（2026-10-11）
 

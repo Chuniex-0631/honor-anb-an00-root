@@ -1,5 +1,12 @@
 # HONOR ANB-AN00 研究更新日志
 
+## 2026-10-11 — v0.6：仓库续接、证据分层与 Clang12 控制实验
+
+- 核实 GitHub 仓库实际 Private、main 的所有证据及近期 Actions；修正 STATUS 的 GKI 比较状态、README/manifest 的隐私说明及 HISTORY 时间线格式。
+- 旧成功 GKI 结果 5672→5351、329 缺失（原启用 208）继续保留。5 项共享值变化中四项为版本字段、一项为 `LTO_NONE`；观察到旧求解 `AS_IS_GNU=y`，不能把全部差异归为厂商源码。
+- 新增只读的 `tools/audit_gki_provenance.py`、`gki-symbol-toolchain.yml`，独立检查 208 项在 Google 参考树是否有 Kconfig 声明，以及 Android Clang 12.0.5 (r416183b) 的第二次求解。结果须以实际 Actions 及 Artifact 为准，未验证前不报成功。
+- CVE 专题登记三个公开上游修补的 commit/代码位置；检索 ANB 9.0.0.230 固件与 OEM 源码未获得可信匹配件。无手机侧操作，无 Root 或 BL 解锁。
+
 ## 2026-10-11 — v0.1 初始化
 
 - 通过用户授权的 GitHub 验证新仓库可读可写，同时发现仓库目前为 **Public**。

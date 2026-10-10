@@ -7,6 +7,8 @@
 - 候选源码：[Google android12-5.10-2025-05_r1](https://android.googlesource.com/kernel/common/+/refs/tags/android12-5.10-2025-05_r1)，SHA `b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e`。
 - **构建环境是 GitHub Runner 的编译器**，非实机 Android Clang 12.0.5，所以编译器版本相关 Kconfig 项的变更不代表设备原厂配置错误。
 
+**术语校正：** “消失/不识别”仅指旧 `olddefconfig` 的输出中缺失，不能由此推断 Google 源码从未定义该符号。另须注意该实验的 `CONFIG_AS_IS_GNU=y`，尚未控制 Android Clang12 / LLVM integrated assembler。独立验证见 [新实验](GKI_SYMBOL_PROVENANCE.md)，旧 JSON 保留原样。
+
 ## olddefconfig 配置对照
 
 | 指标 | 数量 |

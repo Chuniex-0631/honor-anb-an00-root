@@ -30,3 +30,10 @@
 ## 为什么优先研究它们？
 
 这三项命名为 CVE 的实机 Kconfig 为源码溯源提供了明确搜索目标，也能检验厂商补丁是否与公共 GKI 不同。然而它们更可能帮助我们**确认保护/修复路径**，而不是直接给出 Root 或 Bootloader 解锁方案。
+## 新一轮上游修复位置索引（2026-10-11）
+
+- [CVE-2023-52340 的 Red Hat 记录](https://bugzilla.redhat.com/show_bug.cgi?id=2257979) 指向 Linux 主线修复 [`af6d10345ca76670c1b7c37799f0d5576ccef277`](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=af6d10345ca76670c1b7c37799f0d5576ccef277)：IPv6 路由缓存回收与 ICMPv6 Packet Too Big 资源耗尽；待比对 `net/ipv6/route.c` 厂商修改。
+- [CVE-2023-5717](https://www.cve.org/CVERecord?id=CVE-2023-5717) 的上游修复为 [`32671e3799ca2e4590773fd0e63aaa4229e50c06`](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=32671e3799ca2e4590773fd0e63aaa4229e50c06)。[5.10-stable 补丁队列](https://www.spinics.net/lists/stable-commits/msg321171.html) 指出变更 `kernel/events/core.c`、`include/linux/perf_event.h`，利用 `group_generation` 避免继承事件组不一致；仍需与实际 HONOR 源码对照。
+- [CVE-2024-26882 的 NVD 资料](https://nvd.nist.gov/vuln/detail/CVE-2024-26882) 与 [Red Hat](https://bugzilla.redhat.com/show_bug.cgi?id=2275686) 将 5.10.214 列为 Linux 5.10 稳定分支修复边界；问题是 `net/ipv4/ip_tunnel.c` 内层报文头的读取。ANB 报告 5.10.236，高于通用稳定分支修复版本，但厂商源码内容及该宏的实际语义**均未独立验证**。
+
+三个配置开关均不是 Root、Bootloader 解锁或补丁实际缺失的证据；补丁追踪应比较真实源码/二进制实现，而非运行高风险触发程序。
