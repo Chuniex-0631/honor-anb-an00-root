@@ -1,5 +1,7 @@
 # HONOR 80 Pro 直屏版（ANB-AN00）研究档案
 
+**官方源码申请（2026-10-11）：** 已向 HONOR `support@hihonor.com` 发送开源代码请求，Gmail 返回 SENT；尚待厂商回复。详情见 [官方联络记录](docs/OFFICIAL_SOURCE_REQUEST_LOG.md)。
+
 **研究对象：HONOR 80 Pro Flat / ANB-AN00 / HNANB。** 本仓库记录用户真实手机的只读取证、官方及第三方固件来源调查、内核分析计划和研究结果。独立于 [Rakuten Hand 5G P780](https://github.com/Chuniex-0631/p780-kernel-research)：借用研究方法，**不移植其它机型的内核地址、签名或刷机文件**。
 
 **目前没有获得 Root，没有解锁 Bootloader，也未发现对 ANB-AN00 9.0.0.230 已经实机验证的提权路径。**
