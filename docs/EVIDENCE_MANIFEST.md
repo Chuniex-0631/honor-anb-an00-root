@@ -39,3 +39,7 @@
 
 - 新增只读工作流 [GKI symbols / Clang12](../.github/workflows/gki-symbol-toolchain.yml)，产物为 `symbol-definitions.json`、`clang12-comparison.json` 和环境日志；写入 Git 前必须验收实际 CI 结果。旧 GKI JSON 继续保留。
 - 之前成功运行：[GKI #38073627910](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073627910)、[archive audit #38073733732](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073733732)。
+
+## v0.6 GKI 源码定位记录
+
+- [GKI 参考树 CVE 代码特征 JSON](../evidence/reports/anb-gki-cve-static-markers.json) 与 [分析报告](GKI_CVE_SOURCE_CHECK.md)：来源为已固定公共镜像提交，包含四个 Git blob SHA、匹配特征及解释边界；**不包含设备 OEM 源码，也没有声称已验证任何真实设备 CVE**。

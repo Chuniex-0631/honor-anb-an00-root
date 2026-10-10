@@ -37,6 +37,7 @@
 | [GKI_SYMBOL_PROVENANCE](docs/GKI_SYMBOL_PROVENANCE.md) | 新增的符号定义检查与 Android Clang12 控制实验 |
 | [VENDOR_DELTA_TRIAGE](docs/VENDOR_DELTA_TRIAGE.md) | 208 项启用而参考树缺失的符号分类与重要厂商开关 |
 | [CVE_CONFIG_FLAGS](docs/CVE_CONFIG_FLAGS.md) | 三个 CVE 命名开关的真实配置与公开漏洞记录，不是可利用性结论 |
+| [GKI_CVE_SOURCE_CHECK](docs/GKI_CVE_SOURCE_CHECK.md) | 固定 Google GKI 源码的三处补丁特征、原始 Blob SHA 和严格解释边界 |
 | [GKI_COMPARISON_METHOD](docs/GKI_COMPARISON_METHOD.md) | 使用真实配置与 Google 固定源码的离线测试方法 |
 | [SOURCE_REQUEST_DRAFT](docs/SOURCE_REQUEST_DRAFT.md) | 向荣耀官方请求匹配版本开源代码的邮件草稿（未发送） |
 | [HISTORY](docs/HISTORY.md) | 本项目成立前后的研究时间线 |

@@ -5,6 +5,7 @@
 - 核实 GitHub 仓库实际 Private、main 的所有证据及近期 Actions；修正 STATUS 的 GKI 比较状态、README/manifest 的隐私说明及 HISTORY 时间线格式。
 - 旧成功 GKI 结果 5672→5351、329 缺失（原启用 208）继续保留。5 项共享值变化中四项为版本字段、一项为 `LTO_NONE`；观察到旧求解 `AS_IS_GNU=y`，不能把全部差异归为厂商源码。
 - 新增只读的 `tools/audit_gki_provenance.py`、`gki-symbol-toolchain.yml`，独立检查 208 项在 Google 参考树是否有 Kconfig 声明，以及 Android Clang 12.0.5 (r416183b) 的第二次求解。结果须以实际 Actions 及 Artifact 为准，未验证前不报成功。
+- 对 Google 公共参考树 SHA `b97c62c4` 的四个源码文件进行了源码级补丁标志检查，并归档 Git blob 身份：CVE-2023-5717 的 perf group_generation 检查存在，另两项的对应旧代码/修复标志需要进一步 diff；不把参考树结果外推为 OEM 漏洞。
 - CVE 专题登记三个公开上游修补的 commit/代码位置；另外补充发现 ANB 适配的 9.0.0.157 与 9.0.0.187 荣耀官方版本帖。检索 9.0.0.230 固件与 OEM 源码仍未获得可信匹配件。无手机侧操作，无 Root 或 BL 解锁。
 
 ## 2026-10-11 — v0.1 初始化

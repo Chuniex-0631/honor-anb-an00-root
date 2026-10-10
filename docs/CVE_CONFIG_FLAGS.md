@@ -37,3 +37,7 @@
 - [CVE-2024-26882 的 NVD 资料](https://nvd.nist.gov/vuln/detail/CVE-2024-26882) 与 [Red Hat](https://bugzilla.redhat.com/show_bug.cgi?id=2275686) 将 5.10.214 列为 Linux 5.10 稳定分支修复边界；问题是 `net/ipv4/ip_tunnel.c` 内层报文头的读取。ANB 报告 5.10.236，高于通用稳定分支修复版本，但厂商源码内容及该宏的实际语义**均未独立验证**。
 
 三个配置开关均不是 Root、Bootloader 解锁或补丁实际缺失的证据；补丁追踪应比较真实源码/二进制实现，而非运行高风险触发程序。
+
+## Google 固定参考树的实际代码复查
+
+已直接读取 Google 公共镜像在 `b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e` 的 `kernel/events/core.c`、`include/linux/perf_event.h`、`net/ipv4/ip_tunnel.c`、`net/ipv6/route.c`，建立 [源码特征检查报告](GKI_CVE_SOURCE_CHECK.md) 和 [含 Blob SHA 的 JSON](../evidence/reports/anb-gki-cve-static-markers.json)。perf 的 `group_generation` 修复特征存在；IPv4 tunnel 的 `pskb_inet_may_pull` 特征缺失；IPv6 GC 仍有 `rt_max_size` 路径。**这仅是 Google 参考树的代码差异，不可将其称为 ANB 生产内核漏洞。**

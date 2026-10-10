@@ -59,3 +59,7 @@ Google 官方的 [android12-5.10 build.config.common](https://android.googlesour
 对 `ANB-AN00` / `HNANB` / `9.0.0.230` / `CONFIG_HONOR_EIMA_GKI` 等再次检索，本轮未取得可核对的精确 HONOR 厂商内核源码、对应 OTA 或完整 boot 镜像。网络上的 [XDA ANB 帐号/EDL 提问](https://xdaforums.com/t/remove-honor-id-on-honor-80-pro-flat-anb-an00.4633271/) 只是求助帖子，不是 EDL/BL 解锁成功证据。
 
 官方 [HONOR Open Source Release Center](https://www.honor.com/global/opensource/) 仍给出 `Open Source Codes Issue` 与 `support@hihonor.com` 的源码请求路径；项目未发送邮件。另已确认 Google [Android Clang r416183b 预编译目录](https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/android12L-gsi/clang-r416183b/) 对外可读；[新工作流](GKI_SYMBOL_PROVENANCE.md) 会单独验证实际下载、Clang 版本与 Kconfig 结果，未成功前不称已复现。
+
+## G. 参考树补丁特征核查
+
+新建 [GKI_CVE_SOURCE_CHECK](GKI_CVE_SOURCE_CHECK.md)：直接在固定 SHA 的 Google GKI 源文件里检查三个公开漏洞修复的代码特征，保留原始 Git blob SHA。注意 Android 的补丁分支与 Linux stable 分支不可由版本号直接视为等价。本检查不是厂商补丁状态证明。
