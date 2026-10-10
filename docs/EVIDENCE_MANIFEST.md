@@ -13,3 +13,10 @@
 ### 隐私
 
 仓库目前是 **Public**，所以不归档 IMEI、序列号、SIM/运营商账号、完整系统 Bugreport、含认证令牌的 OTA URL 或未经筛查的全量设备日志。未来若要保存这些原件，需要先确认私人存储方案并对 Git 历史保密。
+
+## 2026-10-11 新上传但尚未转移至 Git 的附件
+
+- 原始文件名：honor-anb-config.gz；聊天附件 MIME 为 application/x-gzip，报告大小 42,277 B，与 2026-10-11 ADB 目录显示相符。
+- 当前状态：**仍在本次聊天附件中，尚未提交 GitHub**；由于文件执行环境错误，未取得可信 SHA-256 或成功解压的核验。
+- 预定入库路径：evidence/device/honor-anb-config.gz。
+- 备好的 [配置校验程序](../tools/analyze_kernel_config.py) 及 [CI](../.github/workflows/kernel-config-audit.yml) 会在原件进入仓库后生成核验报告。请勿将准备好的程序或文档误认作分析结果已经完成。
