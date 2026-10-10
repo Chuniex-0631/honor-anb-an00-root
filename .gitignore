@@ -1,0 +1,15 @@
+# Files which must not be pushed unreviewed to a PUBLIC device-research repository.
+*.img
+*.bin
+*.mbn
+*.elf
+*.raw
+*.apk
+*.zip
+*bugreport*
+*getprop-full*
+*fastboot-all*
+*.pem
+*.key
+*credentials*
+*token*

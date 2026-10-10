@@ -1,0 +1,26 @@
+name: HONOR ANB-AN00 archive audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - README.md
+      - CHANGELOG.md
+      - SECURITY.md
+      - docs/**
+      - evidence/device/**
+      - tools/check_archive.py
+      - .github/workflows/archive-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate device baseline and Markdown links
+        run: python3 tools/check_archive.py
