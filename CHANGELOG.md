@@ -8,6 +8,15 @@
 - 保留重要阴性/未知情况：ro.oem_unlock_supported 输出为空；/proc/config.gz 存在但未取得内容；未采集 Fastboot/EDL；未实现 Root 或 Bootloader 解锁。
 - 设置文档链接与基线数据自动校验；开始按 P780 的研究规范长期同步 GitHub。
 
+## 2026-10-11 — v0.4：官方 GKI 源码溯源与离线配置对照
+
+- 用户确认仓库已改为 **Private**，GitHub API 实际核实为私有。
+- 官方 Google `android12-5.10-2025-05_r1` 对应 5.10.236 的完整 SHA 确认为 `b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e`；Google build config 中 KMI generation 9 和 Clang `r416183b` 与设备内核编译器修订对应。
+- 查到 HONOR ANB-AN00 适配的官方 8.0.0.150/9.0.0.120/9.0.0.175/9.0.0.200 更新公告；未找到对应实机 9.0.0.230 的可验证完整 OTA。
+- 创建 [SOURCE_PROVENANCE](docs/SOURCE_PROVENANCE.md)、[SOURCE_REQUEST_DRAFT](docs/SOURCE_REQUEST_DRAFT.md)、[GKI_COMPARISON_METHOD](docs/GKI_COMPARISON_METHOD.md)。
+- 配置了使用实机 config.gz、Google 固定源代码、源 SHA 核对和 Kconfig 差异统计的 GitHub Actions。首次 Google Git 下载因 HTTP 502 失败（**不代表配置不兼容**），已追加下载重试与备用官方 Gitiles 地址。
+- 原厂 `vmlinux`/boot.img、完整厂商源码仍未获得；GhostLock、Root 和 BL 解锁均**未被证明可行**。
+
 ## 2026-10-11 — v0.3：实机 Kconfig 验证成功
 
 - 用户把 `honor-anb-config.gz` 上传至 `evidence/device/`，实际文件 **42,277 B**；解压 **191,897 B**，SHA-256 `76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3`。

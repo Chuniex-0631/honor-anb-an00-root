@@ -31,3 +31,10 @@
 ## 独立研究顺序
 
 首先获取实机配置，再比对官方源码与当前补丁，之后才考虑离线镜像解析、内核对象编译或漏洞适用性。锁定 Bootloader 的设备不应直接测试不可信固件。
+
+## 本轮新增的官方验证来源（2026-10-11）
+
+- [HONOR 官方发布说明 8.0.0.150](https://club.honor.com/cn/thread-28854024-1-1.html)（2024-09-21）、[9.0.0.120](https://club.honor.com/cn/thread-29163791-1-1.html)（2025-01-16/17）、[9.0.0.175](https://club.honor.com/thread-29483449-1-1.html)（2025-06-11）、[9.0.0.200](https://club.honor.com/cn/thread-29882734-1-1.html)（2025-12-02）均列出 ANB-AN00 为适配机型。
+- [Google 官方 5.10.236 GKI 发布表](https://source.android.com/docs/core/architecture/kernel/gki-android12-5_10-deprecated-builds) 指明参考源标签 `android12-5.10-2025-05_r1` 对应 SHA `b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e`。
+- 官方 [android12-5.10 build.config.common](https://android.googlesource.com/kernel/common/+/refs/heads/android12-5.10/build.config.common) 对应 KMI generation 9 与 Clang `r416183b`；这不代表当前 HONOR 二进制使用原样 Google 源码。
+- **用户实际 9.0.0.230** 的对应官方下载包及可验证的 HONOR 完整内核源码仍未取得。具体文献证据参见 [SOURCE_PROVENANCE](SOURCE_PROVENANCE.md)。

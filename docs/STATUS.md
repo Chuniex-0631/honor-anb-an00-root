@@ -11,7 +11,10 @@
 | /proc/config.gz 原件 | **已入仓、gzip 解压成功、SHA-256 已存档** | A，42,277 B、5,672 项；[报告](KERNEL_CONFIG_REPORT.md) |
 | ro.oem_unlock_supported 的结果为空 | **实机确认** | A，不能解释为空 false |
 | Futex PI / RT Mutex | **均启用** | A，`CONFIG_FUTEX_PI=y`、`CONFIG_RT_MUTEXES=y`；**非漏洞证据** |
-| 荣耀官方开源发行渠道存在 | **确认** | B，未确认有匹配本机版本的源码 |
+| 荣耀官方开源发行渠道存在 | **确认** | B，官网指定 `Open Source Codes Issue` 主题可请求源码，尚无 ANB 当前版本的源码包 |
+| Google 公共 GKI `android12-5.10-2025-05_r1` | **官方源码身份与版本已验证** | B，5.10.236，源码固定 SHA `b97c62c4...`；**不是厂商生产内核证据** |
+| Google Clang `r416183b` | **官方工具链存在且标识相符** | B + A，不能推出二进制完全一致 |
+| Google 公共 Kconfig 与 HONOR 配置匹配程度 | **云端实验中；尚无成功结果** | 第一次源码下载 HTTP 502；重试结果以 CI 为准 |
 | 第三方 ANB 历史固件索引 | **发现** | C，未验证下载、签名、包类型 |
 | 适用于当前系统的 Root 提权漏洞 | **未知** | 无精确修补/运行证据 |
 | Fastboot 与 EDL / Sahara 交互 | **尚未测试** | 不能挪用 P780 的测试结果 |
@@ -28,3 +31,7 @@
 - [真实配置摘要](KERNEL_CONFIG_REPORT.md)、[分类研究报告](KERNEL_SECURITY_PROFILE.md) 与 [JSON 证据](../evidence/reports/anb-config-audit.json) 均在 GitHub Actions 中生成并保存。
 - **未验证**：原厂二进制代码是否含特定漏洞、Bootloader 解锁途径、无 Root 的动态调试权限、可被第三方签名模块加载的实际状态。
 
+
+## 最新源码调查
+
+详见 [官方出处、更新历史与请求路径](SOURCE_PROVENANCE.md)，以及 [Google GKI 配置对照方法](GKI_COMPARISON_METHOD.md)。本阶段不把公共参考树当作厂商内核，也不将 Google 的原生 GKI boot.img 用于 ANB 真机。

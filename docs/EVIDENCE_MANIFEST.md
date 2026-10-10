@@ -21,3 +21,10 @@
 - 经过 SHA-256 对仓库**当前原件**的完整性核查；尚未和机主本地未改动的备份单独做 SHA 比对，不声称存在多个独立来源认证。
 - `ro.oem_unlock_supported` 为空结果、Bootloader 仍 locked；配置可读取不是 Root 或解锁证据。
 
+
+## 2026-10-11 官方开源来源与待完成实验
+
+- [Google 官方 `android12-5.10-2025-05_r1`](https://android.googlesource.com/kernel/common/+/refs/tags/android12-5.10-2025-05_r1)：源码公开的固定 SHA 已从 Android 官方 release 文档独立核实；**尚未把整个内核源码复制到本仓库**。
+- [Google 构建配置](https://android.googlesource.com/kernel/common/+/refs/heads/android12-5.10/build.config.common) 与 [Clang r416183b](https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/android12L-d2-s2-release/clang-r416183b/) 是公开可用的来源信息，不是 ANB OEM 专有源码。
+- [本项目 CI 工作流](../.github/workflows/gki-kconfig-compare.yml) 对照的是**真实 gzip 与 Google 公共源码**。首次 clone 遇 HTTP 502，仅表示网络下载失败；有效 Kconfig 结果须以成功的 Actions 产物为准。
+- HONOR 当前版本的完整内核源码/补丁、`boot.img`、`vmlinux`、`System.map` **依旧没有取得**，不得由 Google GKI 源文件代替。

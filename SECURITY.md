@@ -1,6 +1,6 @@
 # Research security & privacy
 
-This repository was initialized as **Public**. Do not commit IMEI, serial number, SIM identifiers, MAC addresses, account credentials, unreviewed bugreports, or full device logs. The archived baseline only records non-unique model, OS, build, compiler and boot-state properties.
+This repository was initialized as Public but is now confirmed **Private** (2026-10-11). Do not commit IMEI, serial number, SIM identifiers, MAC addresses, account credentials, unreviewed bugreports, or full device logs. The archived baseline only records non-unique model, OS, build, compiler and boot-state properties.
 
 There is currently **no verified root or bootloader unlock** for this device in this project. Do not flash cross-device firmware or images; the HONOR ANB-AN00 is distinct from the curved ANP-AN00 and from Rakuten P780.
 
