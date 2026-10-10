@@ -1,0 +1,109 @@
+name: ANB controlled GKI symbols and Clang12
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/gki-symbol-toolchain.yml
+      - tools/audit_gki_provenance.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools and verify device evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            git make bc bison flex libssl-dev libelf-dev libtinfo5 python3
+          mkdir -p reports
+          echo '76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3  evidence/device/honor-anb-config.gz' | sha256sum -c
+          gzip -dc evidence/device/honor-anb-config.gz > reports/original.config
+
+      - name: Fetch pinned public Google GKI reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          success=0
+          for attempt in 1 2 3; do
+            rm -rf public-gki
+            if timeout 600 git -c http.version=HTTP/1.1 clone \
+                --depth 1 --filter=blob:none \
+                --branch android12-5.10-2025-05_r1 \
+                https://android.googlesource.com/kernel/common public-gki; then
+              success=1
+              break
+            fi
+          done
+          test "$success" -eq 1
+          test "$(git -C public-gki rev-parse HEAD)" = 'b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e'
+          git -C public-gki rev-parse HEAD > reports/reference-commit.txt
+
+      - name: Inventory Kconfig definitions before changing toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/audit_gki_provenance.py symbols \
+            --source public-gki \
+            --delta evidence/reports/anb-gki-config-delta.json \
+            --original reports/original.config \
+            --output reports/symbol-definitions.json \
+            --markdown reports/symbol-definitions.md
+          cat reports/symbol-definitions.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fetch official Android Clang r416183b prebuilt
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -c http.version=HTTP/1.1 clone \
+            --depth 1 --filter=blob:none --no-checkout \
+            --branch android12L-d2-s2-release \
+            https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 clang-src
+          git -C clang-src sparse-checkout init --cone
+          git -C clang-src sparse-checkout set \
+            clang-r416183b/bin clang-r416183b/lib clang-r416183b/lib64 \
+            clang-r416183b/libexec clang-r416183b/share
+          git -C clang-src checkout
+          git -C clang-src rev-parse HEAD > reports/toolchain-source-commit.txt
+          export PATH="$GITHUB_WORKSPACE/clang-src/clang-r416183b/bin:$PATH"
+          clang --version | tee reports/android-clang-version.txt
+          ld.lld --version | tee reports/android-lld-version.txt
+          grep -q 'clang version 12.0.5' reports/android-clang-version.txt
+          grep -q 'r416183b' reports/android-clang-version.txt
+
+      - name: Evaluate config with Android Clang 12.0.5 and integrated assembler
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$GITHUB_WORKSPACE/clang-src/clang-r416183b/bin:$PATH"
+          mkdir -p out-clang12
+          cp reports/original.config out-clang12/.config
+          make -C public-gki O="$GITHUB_WORKSPACE/out-clang12" ARCH=arm64 \
+            LLVM=1 LLVM_IAS=1 olddefconfig 2>&1 | tee reports/clang12-olddefconfig.log
+          cp out-clang12/.config reports/resolved-clang12.config
+          python3 tools/audit_gki_provenance.py toolchain \
+            --source public-gki \
+            --delta evidence/reports/anb-gki-config-delta.json \
+            --original reports/original.config \
+            --resolved reports/resolved-clang12.config \
+            --version-file reports/android-clang-version.txt \
+            --output reports/clang12-comparison.json \
+            --markdown reports/clang12-comparison.md
+          cat reports/clang12-comparison.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Preserve successful and failed experiment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anb-gki-symbol-clang12-\${{ github.run_id }}
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 90
