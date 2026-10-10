@@ -1,0 +1,48 @@
+# 实机 ANB-AN00 内核配置审计
+
+本报告由 GitHub Actions 读取真实 config.gz 后自动生成。仅证明配置项，不证明漏洞可利用或 Bootloader 解锁。
+
+- GZIP 文件大小：42277 bytes
+- 解压后：191897 bytes
+- SHA-256：76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3
+- CONFIG 配置总数：5672
+- 状态计数：y=2044, m=0, n=3525
+
+| 配置符号 | 实机状态 |
+|---|---|
+| CONFIG_FUTEX | y |
+| CONFIG_FUTEX_PI | y |
+| CONFIG_RT_MUTEXES | y |
+| CONFIG_CFI_CLANG | y |
+| CONFIG_CFI_PERMISSIVE | n |
+| CONFIG_LTO_CLANG | y |
+| CONFIG_LTO_CLANG_THIN | n |
+| CONFIG_LTO_CLANG_FULL | y |
+| CONFIG_RANDOMIZE_BASE | y |
+| CONFIG_STACKPROTECTOR_STRONG | y |
+| CONFIG_SHADOW_CALL_STACK | y |
+| CONFIG_ARM64_PTR_AUTH | y |
+| CONFIG_ARM64_BTI | y |
+| CONFIG_HARDENED_USERCOPY | y |
+| CONFIG_FORTIFY_SOURCE | 未出现 |
+| CONFIG_SECURITY_SELINUX | y |
+| CONFIG_SECCOMP | y |
+| CONFIG_PANIC_ON_OOPS | y |
+| CONFIG_IKCONFIG | y |
+| CONFIG_IKCONFIG_PROC | y |
+| CONFIG_KALLSYMS | y |
+| CONFIG_DEBUG_INFO | y |
+| CONFIG_FTRACE | y |
+| CONFIG_KPROBES | y |
+| CONFIG_KASAN | n |
+| CONFIG_MODULES | y |
+| CONFIG_MODVERSIONS | y |
+| CONFIG_MODULE_SIG | y |
+| CONFIG_BPF | y |
+| CONFIG_BPF_SYSCALL | y |
+| CONFIG_BPF_JIT | y |
+| CONFIG_ARCH_QCOM | y |
+| CONFIG_ARCH_LAHAINA | 未出现 |
+| CONFIG_ARCH_TARO | 未出现 |
+
+未出现的键并不等同于 n。其它机型源码不能当作本机私有固件。
