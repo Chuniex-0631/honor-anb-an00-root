@@ -47,7 +47,6 @@ public final class MainActivity extends Activity {
     private final Handler main=new Handler(Looper.getMainLooper());
     private ScrollView contentScroll;
     private LinearLayout actionFooter, progressCard;
-    private LinearLayout actionFooter, progressCard;
     private TextView statusIcon, statusTitle, statusMessage, statusBadge;
     private TextView deviceValue, shizukuValue, ksuValue, environmentValue;
     private TextView progressText, recordTitle, recordMessage, logText, shellDescription;
