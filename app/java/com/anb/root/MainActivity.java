@@ -298,7 +298,7 @@ public final class MainActivity extends Activity {
             final int index=i;
             LinearLayout item=column();
             item.setGravity(Gravity.CENTER);
-            item.setMinHeight(dp(60));
+            item.setMinimumHeight(dp(60));
             ImageView symbol=new ImageView(this);
             symbol.setImageResource(getResources().getIdentifier(icons[i],"drawable",getPackageName()));
             symbol.setColorFilter(secondary);
