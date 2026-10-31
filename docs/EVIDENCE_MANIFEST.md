@@ -2,7 +2,7 @@
 
 > 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
 
-当前 App 发行证据：公开 [发行元数据](../release/v2.1.0.json)、[核心文件哈希](../release/core-files.json)、[APK 校验值](../release/SHA256SUMS.txt) 和 [验证摘要](VALIDATION.md)。原始私人运行日志仅本地保存。
+当前 App 发行证据：公开 [发行元数据](../release/current.json)、[核心文件哈希](../release/v2.3.0-core-files.json)、[APK 校验值](../release/SHA256SUMS.txt) 和 [验证摘要](VALIDATION.md)。原始私人运行日志仅本地保存。
 
 | 文件/资料 | 目前状态 | 说明 |
 |---|---|---|

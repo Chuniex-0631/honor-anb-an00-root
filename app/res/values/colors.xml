@@ -1,4 +1,28 @@
 <resources>
+    <!-- Fixed brand colour for the launcher icon; never night-shifted. -->
     <color name="brand_primary">#087F67</color>
+
+    <!-- Semantic palette (light). values-night overrides these by name; Java reads only names. -->
+    <color name="bg">#F3F6F2</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="line">#E5ECE6</color>
+    <color name="text">#17372F</color>
+    <color name="text_muted">#55655E</color>
+    <color name="brand">#087F67</color>
+    <color name="brand_soft">#E1EDE5</color>
+    <color name="brand_tint">#E8F1EB</color>
+    <color name="on_brand">#FFFFFF</color>
+    <color name="warn">#8A5A0F</color>
+    <color name="warn_soft">#F6EEDC</color>
+    <color name="hero_from">#123F35</color>
+    <color name="hero_to">#14634E</color>
+    <color name="hero_text">#FFFFFF</color>
+    <color name="hero_muted">#CFE7DA</color>
+    <color name="hero_badge">#B8E4CF</color>
+    <color name="ripple">#1F087F67</color>
+    <color name="ripple_on_brand">#33FFFFFF</color>
+    <color name="nav_bg">#FFFFFF</color>
+
+    <!-- Kept for compatibility with existing references. -->
     <color name="app_background">#F3F6F2</color>
 </resources>

@@ -1,0 +1,26 @@
+<resources>
+    <!-- Dark palette. Kept deliberately low-chroma: the hero gradient stays the only accent. -->
+    <color name="brand_primary">#087F67</color>
+
+    <color name="bg">#0E1513</color>
+    <color name="surface">#17201D</color>
+    <color name="line">#26332E</color>
+    <color name="text">#E7F0EA</color>
+    <color name="text_muted">#A6B8B0</color>
+    <color name="brand">#4FD1A5</color>
+    <color name="brand_soft">#1C352D</color>
+    <color name="brand_tint">#1A2C26</color>
+    <color name="on_brand">#06231B</color>
+    <color name="warn">#E0B063</color>
+    <color name="warn_soft">#2E2617</color>
+    <color name="hero_from">#10241E</color>
+    <color name="hero_to">#17473A</color>
+    <color name="hero_text">#F2F8F4</color>
+    <color name="hero_muted">#BBD6C9</color>
+    <color name="hero_badge">#9AD8BC</color>
+    <color name="ripple">#33FFFFFF</color>
+    <color name="ripple_on_brand">#33000000</color>
+    <color name="nav_bg">#121B18</color>
+
+    <color name="app_background">#0E1513</color>
+</resources>
