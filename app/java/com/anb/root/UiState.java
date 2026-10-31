@@ -1,7 +1,7 @@
 package com.anb.root;
 
 /**
- * Pure, deterministic presentation state for the three-tab recovery UI.
+ * Pure, deterministic presentation state for the single-page recovery UI.
  * No Android dependencies: JVM tests cover precedence and CTA safety.
  */
 public final class UiState {
