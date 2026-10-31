@@ -84,8 +84,8 @@ public final class UiState {
             return state("等待 Root 授权","在 KernelSU 中允许 ANB Root 使用 Root，再返回验证。",
                     "待授权","验证 Root 授权",Action.RECOVER_OR_VERIFY,Tone.WARNING);
         if("FAILED".equals(phase))
-            return state("尚未确认恢复成功","不会自动重复启动本次恢复；可查看已有任务状态并保存诊断。",
-                    "需确认","查看本次状态",Action.RECOVER_OR_VERIFY,Tone.WARNING);
+            return state("尚未确认恢复成功","请先保存诊断、重新检查环境；此处不会自动重新启动提权。",
+                    "需确认","重新检查环境",Action.CHECK_ENVIRONMENT,Tone.WARNING);
         if(modulePresent)
             return state("检测到 KernelSU","模块已加载，下一步验证 Root 权限与 SELinux 状态。",
                     "待验证","验证当前 Root",Action.RECOVER_OR_VERIFY,Tone.NEUTRAL);
