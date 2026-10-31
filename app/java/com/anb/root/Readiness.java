@@ -2,6 +2,13 @@ package com.anb.root;
 
 /** Shared by the UI and worker. Every prerequisite is rechecked before execution. */
 public final class Readiness {
+    /** Exact confirmed production build. Never infer compatibility from kernel alone. */
+    public static final String MODEL="ANB-AN00";
+    public static final String KERNEL="5.10.236-android12-9-gd671cf8c2b02";
+    public static final String FINGERPRINT="HONOR/ANB-AN00/HNANB:15/HONORANB-AN00/9DLDLD230CHNC00E230:user/release-keys";
+    public static boolean compatible(String model,String kernel,int sdk,String fingerprint) {
+        return MODEL.equals(model) && KERNEL.equals(kernel) && sdk==35 && FINGERPRINT.equals(fingerprint);
+    }
     public enum Gate { DEVICE, SHIZUKU_INSTALL, KSU_INSTALL, SHIZUKU_START, SHIZUKU_VERSION, SHIZUKU_PERMISSION, SHELL_MODE, ENVIRONMENT, READY }
     public static Gate gate(boolean compatible, boolean shizukuInstalled, boolean ksuInstalled,
                             boolean alive, boolean modern, boolean granted, boolean shell, boolean environment) {
