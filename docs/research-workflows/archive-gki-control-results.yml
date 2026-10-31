@@ -24,7 +24,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p original-reports evidence/reports docs
-          gh run download 38076177418 --repo Chuniex-0631/honor-anb-an00-research \
+          gh run download 38076177418 --repo Chuniex-0631/honor-anb-an00-root \
             --name anb-gki-symbol-clang12-38076177418 --dir original-reports
           python3 - <<'PY'
           import json, hashlib

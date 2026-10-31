@@ -1,0 +1,16 @@
+{
+  "version": "2.1.0",
+  "version_code": 5,
+  "package": "com.anb.root",
+  "artifact": "ANB-Root-2.1.0.apk",
+  "sha256": "ff559f3a74f392c247137e531bece63ed0e63a5922bd7ef92f19d449ce17c0d5",
+  "signing_certificate_sha256": "933e0a448cd3328beb33f0cebeba6d45b3ed937bbfc1eadae2ba400782f3c408",
+  "model": "ANB-AN00",
+  "firmware": "9.0.0.230",
+  "kernel": "5.10.236-android12-9-gd671cf8c2b02",
+  "transport": "Shizuku UserService",
+  "persistent_root": false,
+  "bootloader_unlock": false,
+  "minimum_shizuku_api": 13,
+  "recommended_kernelsu_manager": "v3.3.0"
+}

@@ -1,0 +1,31 @@
+name: 问题反馈 / Bug report
+description: 提供版本和脱敏步骤，不上传完整私人日志。
+title: "[Bug] "
+body:
+  - type: checkboxes
+    attributes:
+      label: 提交前检查
+      options:
+        - label: 已核对支持型号、固件、内核，未并发恢复。
+          required: true
+        - label: 无序列号、IMEI、账号、私钥或完整设备日志。
+          required: true
+  - type: input
+    attributes:
+      label: 型号 / 固件 / 内核
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: App / Shizuku / KernelSU 版本
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 复现步骤、预期与实际结果
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 相关脱敏片段（可选）
+      description: 只提供必要片段，先去除个人标识和凭据。

@@ -1,7 +1,11 @@
-# Research security & privacy
+# Security and privacy
 
-This repository was initialized as Public but is now confirmed **Private** (2026-10-11). Do not commit IMEI, serial number, SIM identifiers, MAC addresses, account credentials, unreviewed bugreports, or full device logs. The archived baseline only records non-unique model, OS, build, compiler and boot-state properties.
+ANB Root is a temporary-root tool for one verified device/firmware combination. A successful test is not universal compatibility or permanent root.
 
-There is currently **no verified root or bootloader unlock** for this device in this project. Do not flash cross-device firmware or images; the HONOR ANB-AN00 is distinct from the curved ANP-AN00 and from Rakuten P780.
+Do not post private keys, signing keystores, credentials, serials, IMEI/SIM/account details or complete device logs in public issues. Public research keeps compatibility facts and hashes, not operator-specific telemetry.
 
-Git history retains data after it is deleted from the latest branch. Before uploading private device records, change repository visibility to Private and scrub sensitive data.
+For a sensitive vulnerability or privacy omission, use GitHub private vulnerability reporting if available in the Security tab, or first open an issue containing only a non-sensitive request for a private contact channel. Do not include the secret itself.
+
+A rewritten Git history does not recall copies, forks or cached historical objects. The audit and its limitations are documented in [PRIVACY](docs/PRIVACY.md).
+
+The app has no fixed-port ADB client or Internet permission. It requires Shizuku authorization and validates its target. Signing keys are not stored here.

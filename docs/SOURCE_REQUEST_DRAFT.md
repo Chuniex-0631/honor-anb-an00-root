@@ -1,5 +1,7 @@
 # 荣耀 ANB-AN00 开源代码请求草稿（未发送）
 
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+
 按 [HONOR 官方开源中心](https://www.honor.com/global/opensource/) 的说明，若网站没有对应设备源码，可发送主题为 **Open Source Codes Issue** 的邮件至 **support@hihonor.com**。
 
 ## Recommended English email

@@ -1,5 +1,7 @@
 # ANB-AN00：真实 Kconfig 与 Google 5.10.236 GKI 的对照
 
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+
 > **候选源码验证实验，而不是 HONOR ANB-AN00 出厂内核重建。**
 
 - 设备：HONOR ANB-AN00 / MagicOS 9.0.0.230 / Linux 5.10.236-android12-9。

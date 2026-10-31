@@ -1,5 +1,7 @@
 # 实机 ANB-AN00 内核配置审计
 
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+
 本报告由 GitHub Actions 读取真实 config.gz 后自动生成。仅证明配置项，不证明漏洞可利用或 Bootloader 解锁。
 
 - GZIP 文件大小：42277 bytes

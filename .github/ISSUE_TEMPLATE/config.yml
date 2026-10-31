@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 使用指南 / User guide
+    url: https://github.com/Chuniex-0631/honor-anb-an00-root/blob/main/docs/USER_GUIDE.md
+    about: 检查安装、授权和兼容范围。
+  - name: 敏感安全问题 / Sensitive report
+    url: https://github.com/Chuniex-0631/honor-anb-an00-root/security
+    about: 不要在公开 Issue 粘贴秘密或设备标识。

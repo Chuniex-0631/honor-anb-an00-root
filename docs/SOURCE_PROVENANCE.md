@@ -1,5 +1,7 @@
 # ANB-AN00 原厂源码与公开 GKI 出处调查（2026-10-11）
 
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+
 ## A. 已有的厂商/设备事实
 
 | 判断 | 可靠来源 | 内容 |
@@ -52,7 +54,7 @@ Google 官方的 [android12-5.10 build.config.common](https://android.googlesour
 
 ## 本阶段交付
 
-已建立 [Google 官方候选源码的 Kconfig 比对工作流](../.github/workflows/gki-kconfig-compare.yml)，使用真实设备 config.gz 进行离线配置兼容性评估。原件与自动比较结果将分开保存。实验成功即说明符号能否在 Google 参考树中得到解释，**不是 Root/Bootloader 解锁或厂商二进制一致的结论**。
+已建立 [Google 官方候选源码的 Kconfig 比对工作流](research-workflows/gki-kconfig-compare.yml)，使用真实设备 config.gz 进行离线配置兼容性评估。原件与自动比较结果将分开保存。实验成功即说明符号能否在 Google 参考树中得到解释，**不是 Root/Bootloader 解锁或厂商二进制一致的结论**。
 
 ## F. 2026-10-11 续接检索记录
 

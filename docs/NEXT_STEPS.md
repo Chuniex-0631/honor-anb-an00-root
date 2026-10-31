@@ -1,5 +1,7 @@
 # 接下来研究什么（已取得内核 config.gz）
 
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+
 ## 已完成：原始配置采集
 
 [evidence/device/honor-anb-config.gz](../evidence/device/honor-anb-config.gz) 已由用户上传，gzip 解压及 SHA-256 验证成功。**不需要重新运行 ADB 提取命令或再次上传配置。**
@@ -10,7 +12,7 @@
 
 实机固件为 `ANB-AN00 9.0.0.230(CHNC00E230R2P5)`，Linux `5.10.236-android12-9-gd671cf8c2b02`，编译器 Clang `12.0.5`。
 
-- 官方 Google `android12-5.10-2025-05_r1` 的 5.10.236 源码及 SHA 已确认，已经建立 [候选源码配置比对工作流](../.github/workflows/gki-kconfig-compare.yml)。该候选不是荣耀原厂内核，不生成可刷固件。
+- 官方 Google `android12-5.10-2025-05_r1` 的 5.10.236 源码及 SHA 已确认，已经建立 [候选源码配置比对工作流](research-workflows/gki-kconfig-compare.yml)。该候选不是荣耀原厂内核，不生成可刷固件。
 - [HONOR 开源中心](https://www.honor.com/global/opensource/) 明确允许按 `Open Source Codes Issue` 主题向 `support@hihonor.com` 申请源代码。本仓库准备了 [设备版本明确的英文申请草稿](SOURCE_REQUEST_DRAFT.md)；**尚未发送**。
 - 如取得源码，在 GitHub Actions 做原生 `olddefconfig`、严格记录原始/求解后配置变更、尝试编译单一对象、保存源码 commit 与编译器版本；不编造原厂内核二进制一致性。
 - 针对 CVE 使用精确修复 commit 与设备实际构建对照，不用泛化版本号代替证据。

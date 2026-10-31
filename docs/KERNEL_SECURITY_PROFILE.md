@@ -1,5 +1,7 @@
 # ANB-AN00 内核配置专题：实机证据与安全边界
 
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+
 > 2026-10-11 | 基于本仓库真实 gzip 文件，由 GitHub Actions 自动解析；不是其他机型的 Kconfig。
 
 - 设备：HONOR ANB-AN00 / HNANB；MagicOS 9.0.0.230，Android 15；Linux 5.10.236。

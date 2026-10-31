@@ -1,5 +1,7 @@
 # ANB GKI 符号定义及 Android Clang12 控制实验 — 已验证结果
 
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+
 **状态：成功，独立 GitHub Actions #38076177418，证据已永久归档。**
 
 固定 Google 公共源码 `android12-5.10-2025-05_r1` / `b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e`。设备原始配置 SHA-256 `76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3`。
@@ -31,9 +33,9 @@
 
 ## C. 实验溯源与错误历史
 
-- [Actions #38076177418：两实验全部成功](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38076177418)，Artifact `anb-gki-symbol-clang12-38076177418`（ID 11678900920），包含原始/求解后配置、编译器日志、逐项差异与 JSON，下载文件的服务器端登记摘要 `sha256:8f01c651d93415e38af44f490e765477d0c8eebafcc98c9c7320d8da8237ad12`。Artifacts 可能过期，永久摘要数据已进入 Git。
-- [归档工作流 #38076601768](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38076601768) **success**：固定源版本、工具链身份、原始 Kconfig 哈希以及新统计全部验证后，再写入上述报告。
-- 早期失败 [#38076018784](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38076018784) 和 [#38076037276](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38076037276)：Kconfig 解析器对非标准符号字符范围处理与预期不一致，初次工作流亦带入 Artifact 文件名反斜杠；后续修正、再跑成功。其失败**不是设备实验失败或 GKI 不兼容**。
+- [Actions #38076177418：两实验全部成功](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/runs/38076177418)，Artifact `anb-gki-symbol-clang12-38076177418`（ID 11678900920），包含原始/求解后配置、编译器日志、逐项差异与 JSON，下载文件的服务器端登记摘要 `sha256:8f01c651d93415e38af44f490e765477d0c8eebafcc98c9c7320d8da8237ad12`。Artifacts 可能过期，永久摘要数据已进入 Git。
+- [归档工作流 #38076601768](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/runs/38076601768) **success**：固定源版本、工具链身份、原始 Kconfig 哈希以及新统计全部验证后，再写入上述报告。
+- 早期失败 [#38076018784](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/runs/38076018784) 和 [#38076037276](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/runs/38076037276)：Kconfig 解析器对非标准符号字符范围处理与预期不一致，初次工作流亦带入 Artifact 文件名反斜杠；后续修正、再跑成功。其失败**不是设备实验失败或 GKI 不兼容**。
 
 ## D. 限制与下一步
 

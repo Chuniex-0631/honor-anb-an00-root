@@ -1,5 +1,7 @@
 # ANB-AN00：208 项启用配置差异的第一轮归类
 
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+
 > **术语修正（新结果已入档）：** 208 项是宿主 Clang14 实验中的历史缺失数量，不是“208 个荣耀独有源码定义”。全树找得到其中 28 项定义；Android Clang12 新实验仅 193 项原启用后缺失。详见 [独立符号与编译器实算](GKI_SYMBOL_PROVENANCE.md)。
 
 > 2026-10-11 | **仅凭 Google GKI 5.10.236 r1 与荣耀实机 Kconfig 的离线差异分类**，不是漏洞存在/提权验证。
@@ -8,7 +10,7 @@
 
 - [实机 Kconfig 原件](../evidence/device/honor-anb-config.gz)，42,277B，5,672 项，SHA-256 `76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3`。
 - [Google 官方参考源 `android12-5.10-2025-05_r1`](https://android.googlesource.com/kernel/common/+/refs/tags/android12-5.10-2025-05_r1)，固定提交 `b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e`。
-- [真实 Kconfig 差异 JSON](../evidence/reports/anb-gki-config-delta.json)，由 Actions [#38073022058](https://github.com/Chuniex-0631/honor-anb-an00-research/actions/runs/38073022058) 成功完成的离线 Kconfig 求解生成；[正式对照报告](GKI_CONFIG_COMPARISON.md)。
+- [真实 Kconfig 差异 JSON](../evidence/reports/anb-gki-config-delta.json)，由 Actions [#38073022058](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/runs/38073022058) 成功完成的离线 Kconfig 求解生成；[正式对照报告](GKI_CONFIG_COMPARISON.md)。
 - 参考运行时为 **Ubuntu Clang 14**；实机为 **Android Clang 12.0.5**。故符号依赖与编译器相关状态仍需匹配工具链后复核。
 
 ## 实际差异数字

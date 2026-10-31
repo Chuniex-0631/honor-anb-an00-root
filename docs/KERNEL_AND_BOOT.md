@@ -1,5 +1,7 @@
 # 内核、启动验证和漏洞研究边界
 
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+
 ## 已验证事实
 
 本机 Android 15/MagicOS 9.0.0.230，内核为 **5.10.236-android12-9-gd671cf8c2b02**，编译器为 **Android Clang 12.0.5**。ro.boot.flash.locked=1、ro.boot.vbmeta.device_state=locked、ro.boot.verifiedbootstate=green。

@@ -1,15 +1,29 @@
-# Files which must not be pushed unreviewed to a PUBLIC device-research repository.
+# Credentials and local material
+*.jks
+*.keystore
+*.pem
+*.key
+.env
+.env.*
+.local-signing/
+*adbkey*
+*credentials*
+*token*
+build/
+test-build/
+sdk/
+backups/
+private/
+*.apk
+*.zip
 *.img
-*.bin
 *.mbn
 *.elf
 *.raw
-*.apk
-*.zip
 *bugreport*
 *getprop-full*
 *fastboot-all*
-*.pem
-*.key
-*credentials*
-*token*
+__pycache__/
+deps/*.jar
+deps/*.aar
+deps/*.pom

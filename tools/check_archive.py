@@ -51,27 +51,27 @@ raw_config = gzip.decompress(compressed)
 assert len(raw_config) == 191897, "Original uncompressed Kconfig length changed"
 config_items = re.findall(rb"^(?:CONFIG_[A-Z0-9_]+=|# CONFIG_[A-Z0-9_]+ is not set)", raw_config, re.M)
 assert len(config_items) == 5672, "Original Kconfig parsed item count changed"
-delta = json.loads((root / "evidence/reports/anb-gki-config-delta.json").read_text())
+delta = json.loads((root / "evidence/reports/anb-gki-config-delta.json").read_text(encoding="utf-8"))
 assert delta["original_symbols"] == 5672 and delta["resolved_symbols"] == 5351
 assert delta["removed_count"] == 329 and delta["removed_active_count"] == 208
 assert delta["changed_count"] == 5 and delta["added_count"] == 8
 assert delta["source_commit_expected"] == "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e"
 assert delta["source_is_honor_production_tree"] is False
 assert delta["toolchain_is_device_exact"] is False
-triage = json.loads((root / "evidence/reports/anb-vendor-delta-triage.json").read_text())
+triage = json.loads((root / "evidence/reports/anb-vendor-delta-triage.json").read_text(encoding="utf-8"))
 assert triage["total"] == 208
 assert sum(len(group["keys"]) for group in triage["groups"]) == 208
 assert (root / "docs/GKI_SYMBOL_PROVENANCE.md").is_file()
 status = (root / "docs/STATUS.md").read_text(encoding="utf-8")
 assert "云端实验中；尚无成功结果" not in status, "Stale experimental status returned"
 manifest = (root / "docs/EVIDENCE_MANIFEST.md").read_text(encoding="utf-8")
-assert "仓库目前是 **Public**" not in manifest, "Incorrect present-tense privacy claim"
+assert "PRIVACY.md" in manifest, "Missing public privacy boundary"
 print("PASS: evidence SHA256, 5672 original symbols, pinned GKI delta and 208 triaged entries")
 
 
 # Regression guard for successfully archived controlled Google GKI experiments.
-symbol_report = json.loads((root / "evidence/reports/anb-gki-symbol-definitions.json").read_text())
-clang12_report = json.loads((root / "evidence/reports/anb-gki-clang12-comparison.json").read_text())
+symbol_report = json.loads((root / "evidence/reports/anb-gki-symbol-definitions.json").read_text(encoding="utf-8"))
+clang12_report = json.loads((root / "evidence/reports/anb-gki-clang12-comparison.json").read_text(encoding="utf-8"))
 pinned_google_commit = "b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e"
 for report in (symbol_report, clang12_report):
     assert report["source_sha"] == pinned_google_commit
