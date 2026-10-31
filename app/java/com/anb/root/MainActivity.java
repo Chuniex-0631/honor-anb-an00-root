@@ -392,19 +392,26 @@ public final class MainActivity extends Activity {
     }
 
     private void openKernelSuSmart() {
-        if(!engine.installed(RecoveryEngine.KSU)) {
-            openUri(KSU_URL);
-            return;
+        // The action is computed once from the current engine snapshot, while
+        // RecoveryEngine itself still serializes concurrent manager refreshes.
+        ManagerAction.Action action=ManagerAction.resolve(
+                engine.installed(RecoveryEngine.KSU),engine.busy.get(),engine.checking,
+                engine.modulePresent,engine.gate()==Readiness.Gate.READY);
+        switch(action) {
+            case DOWNLOAD:
+                openUri(KSU_URL);
+                return;
+            case OPEN:
+                openPackage(RecoveryEngine.KSU,KSU_URL);
+                return;
+            case REFRESH_AND_OPEN:
+                // refreshManagerOnly() already force-stops/relaunches the manager;
+                // do not call openPackage again or start the Root recovery chain.
+                engine.refreshManagerOnly();
+                toast("正在刷新并打开 KernelSU，不会再次执行 Root 恢复");
+                return;
+            default: return;
         }
-        // Never interrupt an active recovery or use Shizuku to force-stop an
-        // unrelated manager when the module / environment is not confirmed.
-        if(engine.busy.get() || engine.checking || !engine.modulePresent
-                || engine.gate()!=Readiness.Gate.READY) {
-            openPackage(RecoveryEngine.KSU,KSU_URL);
-            return;
-        }
-        engine.refreshManagerOnly(); // verified module path already restarts manager.
-        toast("正在刷新并打开 KernelSU，不会再次执行 Root 恢复");
     }
 
     private void buildRecords(LinearLayout root) {
