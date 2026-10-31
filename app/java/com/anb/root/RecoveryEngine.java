@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import rikka.shizuku.Shizuku;
 
 public final class RecoveryEngine {
-    public static final String KERNEL="5.10.236-android12-9-gd671cf8c2b02";
+    public static final String KERNEL=Readiness.KERNEL;
     public static final String SHIZUKU="moe.shizuku.privileged.api", KSU="me.weishu.kernelsu";
     static final String ROOT="/data/local/tmp/anb_root_runs";
     static final String[] FILES={"exploit","kernelsu.ko","ksud","magiskpolicy","load_ko","kmsg_dumper","ksu_rules","ksu_loader.tmpl"};
@@ -39,7 +39,10 @@ public final class RecoveryEngine {
         try { log.append(read(new File(context.getFilesDir(),"recovery-v2.log"))); }
         catch(Exception ignored) { }
     }
-    public boolean compatible() { return "ANB-AN00".equals(android.os.Build.MODEL) && KERNEL.equals(System.getProperty("os.version")); }
+    public boolean compatible() {
+        return Readiness.compatible(android.os.Build.MODEL,System.getProperty("os.version"),
+                android.os.Build.VERSION.SDK_INT,android.os.Build.FINGERPRINT);
+    }
     public boolean installed(String pkg) {
         try { context.getPackageManager().getPackageInfo(pkg,0);return true; }
         catch(PackageManager.NameNotFoundException e) { return false; }
@@ -79,7 +82,7 @@ public final class RecoveryEngine {
         phase=p;step=stage;title=heading;message=detail;
         record(heading+"："+detail);Progress current=progress;if(current!=null)current.changed(heading);
     }
-    public void checkEnvironment() {
+    public synchronized void checkEnvironment() {
         if(checking||busy.get())return;
         checking=true;
         new Thread(()->{
@@ -97,14 +100,16 @@ public final class RecoveryEngine {
         String output=shell.shell("id; sed -n '/^Seccomp:/p' /proc/self/status");
         record("Shizuku UserService 环境：\n"+output.trim());
         if(!Readiness.validEnvironment(output))throw new IOException("执行进程不是预期的 shell 环境；请通过无线调试重新启动 Shizuku。");
-        if(!KERNEL.equals(shell.shell("uname -r").trim()) || !"ANB-AN00".equals(shell.shell("getprop ro.product.model").trim()))
+        if(!KERNEL.equals(shell.shell("uname -r").trim())
+                || !Readiness.MODEL.equals(shell.shell("getprop ro.product.model").trim())
+                || !Readiness.FINGERPRINT.equals(shell.shell("getprop ro.build.fingerprint").trim()))
             throw new IOException("当前设备或系统版本不在支持范围内。");
         environmentReady=true;
         File ext=context.getExternalFilesDir(null);
         if(ext!=null)write(new File(ext,"environment-shizuku.txt"),"transport=Shizuku UserService\n"+output+"kernel="+KERNEL+"\n");
     }
-    public boolean start(Progress listener,Runnable finished) {
-        if(!busy.compareAndSet(false,true))return false;
+    public synchronized boolean start(Progress listener,Runnable finished) {
+        if(checking||!busy.compareAndSet(false,true))return false;
         final boolean allowShell=allowShellSelected();
         progress=listener;
         new Thread(()->{
