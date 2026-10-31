@@ -293,14 +293,14 @@ public final class MainActivity extends Activity {
         navigation.setPadding(dp(12),dp(7),dp(12),dp(7));
         navigation.setBackgroundColor(surface);
         String[] tabNames={"首页","设置","记录"};
-        int[] icons={R.drawable.nav_home,R.drawable.nav_settings,R.drawable.nav_records};
+        String[] icons={"nav_home","nav_settings","nav_records"};
         for(int i=0;i<3;i++) {
             final int index=i;
             LinearLayout item=column();
             item.setGravity(Gravity.CENTER);
             item.setMinHeight(dp(60));
             ImageView symbol=new ImageView(this);
-            symbol.setImageResource(icons[i]);
+            symbol.setImageResource(getResources().getIdentifier(icons[i],"drawable",getPackageName()));
             symbol.setColorFilter(secondary);
             LinearLayout.LayoutParams ip=new LinearLayout.LayoutParams(dp(22),dp(22));
             ip.gravity=Gravity.CENTER_HORIZONTAL;
