@@ -22,6 +22,7 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
@@ -50,6 +51,8 @@ public final class MainActivity extends Activity {
     private final LinearLayout[] pages=new LinearLayout[3];
     private final ScrollView[] scrolls=new ScrollView[3];
     private final TextView[] tabs=new TextView[3];
+    private final LinearLayout[] navItems=new LinearLayout[3];
+    private final ImageView[] navIcons=new ImageView[3];
     private LinearLayout actionFooter, progressCard;
     private TextView statusIcon, statusTitle, statusMessage, statusBadge;
     private TextView deviceValue, shizukuValue, ksuValue, environmentValue;
@@ -290,17 +293,29 @@ public final class MainActivity extends Activity {
         navigation.setPadding(dp(12),dp(7),dp(12),dp(7));
         navigation.setBackgroundColor(surface);
         String[] tabNames={"首页","设置","记录"};
+        int[] icons={R.drawable.nav_home,R.drawable.nav_settings,R.drawable.nav_records};
         for(int i=0;i<3;i++) {
             final int index=i;
-            TextView nav=label(tabNames[i],14,secondary,true);
+            LinearLayout item=column();
+            item.setGravity(Gravity.CENTER);
+            item.setMinHeight(dp(60));
+            ImageView symbol=new ImageView(this);
+            symbol.setImageResource(icons[i]);
+            symbol.setColorFilter(secondary);
+            LinearLayout.LayoutParams ip=new LinearLayout.LayoutParams(dp(22),dp(22));
+            ip.gravity=Gravity.CENTER_HORIZONTAL;
+            item.addView(symbol,ip);
+            TextView nav=label(tabNames[i],12,secondary,true);
             nav.setGravity(Gravity.CENTER);
-            nav.setMinHeight(dp(48));
-            nav.setContentDescription(tabNames[i]+"页面");
-            nav.setOnClickListener(v->selectPage(index));
+            LinearLayout.LayoutParams npLabel=new LinearLayout.LayoutParams(-1,-2);
+            npLabel.topMargin=dp(4);
+            item.addView(nav,npLabel);
+            item.setContentDescription(tabNames[i]+"页面");
+            item.setOnClickListener(v->selectPage(index));
             LinearLayout.LayoutParams np=new LinearLayout.LayoutParams(0,-2,1);
             np.leftMargin=i==0?0:dp(6);
-            navigation.addView(nav,np);
-            tabs[i]=nav;
+            navigation.addView(item,np);
+            tabs[i]=nav;navItems[i]=item;navIcons[i]=symbol;
         }
         frame.addView(navigation);
         setContentView(frame);
@@ -458,8 +473,9 @@ public final class MainActivity extends Activity {
             boolean selected=i==selectedPage;
             scrolls[i].setVisibility(selected?View.VISIBLE:View.GONE);
             tabs[i].setTextColor(selected?accent:secondary);
-            tabs[i].setBackground(selected?rounded(accentTint,16):null);
-            tabs[i].setSelected(selected);
+            navIcons[i].setColorFilter(selected?accent:secondary);
+            navItems[i].setBackground(selected?rounded(accentTint,16):null);
+            navItems[i].setSelected(selected);
         }
         actionFooter.setVisibility(selectedPage==HOME?View.VISIBLE:View.GONE);
         if(selectedPage==RECORDS)renderLogs();
