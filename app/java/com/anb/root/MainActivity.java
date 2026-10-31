@@ -530,10 +530,9 @@ public final class MainActivity extends Activity {
         boolean compatible=engine.compatible();
         setValue(deviceValue,compatible?"已适配":"不匹配",compatible);
         Readiness.Gate gate=engine.gate();
-        boolean shizukuReady=gate==Readiness.Gate.READY||gate==Readiness.Gate.ENVIRONMENT
-                ||gate==Readiness.Gate.KSU_INSTALL;
+        boolean shizukuReady=gate==Readiness.Gate.READY||gate==Readiness.Gate.ENVIRONMENT;
         String shizukuText=engine.installed(RecoveryEngine.SHIZUKU)?
-                (shizukuReady?"已连接":gate==Readiness.Gate.SHIZUKU_START?"待启动":
+                (shizukuReady?"已连接":gate==Readiness.Gate.KSU_INSTALL?"已安装":gate==Readiness.Gate.SHIZUKU_START?"待启动":
                         gate==Readiness.Gate.SHIZUKU_PERMISSION?"待授权":
                         gate==Readiness.Gate.SHELL_MODE?"模式不符":
                         gate==Readiness.Gate.SHIZUKU_VERSION?"待更新":"待检查"):"未安装";
