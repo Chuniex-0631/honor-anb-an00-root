@@ -21,6 +21,7 @@ jobs:
           python-version: '3.13'
       - run: python tools/check_public_release.py
       - run: python tools/check_archive.py
+      - run: python tools/check_single_page_ui.py
       - run: pwsh -File test.ps1
   build:
     runs-on: windows-latest
