@@ -8,6 +8,7 @@
 | 2026-10-31 手机独立恢复 | Shizuku UserService，移除固定 TCP 与私钥导入依赖 |
 | 2.0.1 | 修复管理器旧进程导致的界面状态问题 |
 | 2.1.0 | 核心保持不变，发布用户界面与说明 |
+| 2.2.0 · 2026-11-01 | 增加默认关闭的调试工具 Root 选项；模板／构建验证通过，开启模式待实机复验 |
 
 早期档案：[研究入口快照](RESEARCH_README.md)、[原历史](HISTORY.md)、[原更新日志](RESEARCH_CHANGELOG.md)、[配置报告](KERNEL_CONFIG_REPORT.md)、[GKI 来源](SOURCE_PROVENANCE.md)、[Clang12 实验](GKI_SYMBOL_PROVENANCE.md)、[证据清单](EVIDENCE_MANIFEST.md)。
 

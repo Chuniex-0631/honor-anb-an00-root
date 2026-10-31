@@ -1,7 +1,7 @@
 {
   "app/java/com/anb/root/CommandRunner.java": "3c3aedce46f3cdad61cb2301a16b1d7c0fea440d49bde37875a34ccc424cae4d",
   "app/java/com/anb/root/Readiness.java": "f2c06b2ffed2a9ea7c6c3a8b12f4489b3a02dda269dfe959a30e4814c11a2d7c",
-  "app/java/com/anb/root/RecoveryEngine.java": "fd006f48f96d9be3037a39237b2e025e4b3caa94c1cb0cb2c6808749e383a152",
+  "app/java/com/anb/root/RecoveryEngine.java": "51d426ce7034602f73994383b5a1908d83ce61787a7db967324379334dea5398",
   "app/java/com/anb/root/RecoveryService.java": "f29da5cef661b8819e196d73b7e36486105706ae3ee23dddcd78bb510e29a4d3",
   "app/java/com/anb/root/RunStatus.java": "7912fe019ee09be51c7b4401175e096c0c9fbabe49876f55826fdc7827e4be4c",
   "app/java/com/anb/root/ShellUserService.java": "7aac1d7cd7cac4d4204585527f9901eb22d5a5a4ffae3e9c7df91f82636cac29",
@@ -15,5 +15,6 @@
   "app/assets/payload/ksu_loader.tmpl": "608a079aa86f50e539c70b52a1f15818fc35db82a97bdd1c5a766f5fce79aa1f",
   "app/assets/payload/ksu_rules": "e60f0387c23967475a145f9ad56bea1fbabae6317684202e074d27af3faae757",
   "app/assets/payload/load_ko": "91cef87cc6f515e0bdde0ed7f2c1f25ca341ce75186b35b809135decf1884e84",
-  "app/assets/payload/magiskpolicy": "9837db9db475eb74b6715f081768cb6a1f2fb5a2b2ac15755686062501bace27"
+  "app/assets/payload/magiskpolicy": "9837db9db475eb74b6715f081768cb6a1f2fb5a2b2ac15755686062501bace27",
+  "app/java/com/anb/root/RecoveryOptions.java": "b29329cdc5c75b4fc09f3760c5aa7540801c76fe67249002597e854b5b3a8ccf"
 }

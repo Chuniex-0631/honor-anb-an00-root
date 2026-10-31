@@ -5,13 +5,19 @@ import json
 import re
 
 root = Path(__file__).resolve().parent.parent
-release = json.loads((root / "release/v2.1.0.json").read_text())
-assert release["version"] == "2.1.0" and release["model"] == "ANB-AN00"
+release = json.loads((root / "release/v2.2.0.json").read_text())
+assert release["version"] == "2.2.0" and release["model"] == "ANB-AN00"
 assert release["transport"] == "Shizuku UserService" and not release["persistent_root"]
 assert len(release["sha256"]) == 64
+assert not release["allow_shell_default"] and release["allow_shell_change_requires_full_reboot"]
 core = json.loads((root / "release/core-files.json").read_text())
 for name, expected in core.items():
     assert hashlib.sha256((root / name).read_bytes()).hexdigest() == expected, f"Core changed: {name}"
+baseline = json.loads((root / "release/v2.1.0-core-files.json").read_text())
+for name, expected in baseline.items():
+    if name.endswith("/RecoveryEngine.java"):
+        continue
+    assert hashlib.sha256((root / name).read_bytes()).hexdigest() == expected, f"Frozen input changed: {name}"
 manifest = (root / "app/AndroidManifest.xml").read_text()
 assert "android.permission.INTERNET" not in manifest
 assert 'android:debuggable="false"' in manifest
@@ -23,7 +29,7 @@ patterns = {
     "access token": re.compile(r"(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,})"),
     "operator Windows home": re.compile(r"[A-Za-z]:[\\/](?:Users|Documents and Settings)[\\/][^\s<>\"]+", re.I),
     "operator Unix home": re.compile(r"/(?:Users|home/(?!runner(?:/|$)))[^\s<>\"]+"),
-    "private mail ID": re.compile(r"(?:消息|message)\s*ID\s*[:：]?\s*`?[0-9a-f]{16}", re.I),
+    "private mail ID": re.compile(r"(?:娑堟伅|message)\s*ID\s*[:锛歖?\s*`?[0-9a-f]{16}", re.I),
     "device identifier": re.compile(r"(?:ro\.serialno|ro\.boot\.serialno|IMEI|MEID)\s*[:=]\s*[A-Za-z0-9]{8,}", re.I),
 }
 excluded = {".git", "build", "test-build", "sdk", "backups", "private", "__pycache__"}

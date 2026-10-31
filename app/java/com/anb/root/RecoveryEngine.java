@@ -57,6 +57,15 @@ public final class RecoveryEngine {
         return Readiness.gate(compatible(),installed(SHIZUKU),installed(KSU),alive,modern,grant,shell,environmentReady);
     }
     public void invalidate() { environmentReady=false; }
+    public boolean allowShellSelected() {
+        return context.getSharedPreferences(RecoveryOptions.PREFERENCES,0)
+                .getBoolean(RecoveryOptions.ALLOW_SHELL,RecoveryOptions.DEFAULT_ALLOW_SHELL);
+    }
+    public boolean selectAllowShell(boolean enabled) {
+        if(checking||busy.get()||modulePresent)return false;
+        return context.getSharedPreferences(RecoveryOptions.PREFERENCES,0).edit()
+                .putBoolean(RecoveryOptions.ALLOW_SHELL,enabled).commit();
+    }
     public synchronized String logs() { return log.toString(); }
     public synchronized void record(String text) {
         String line=new java.text.SimpleDateFormat("HH:mm:ss",Locale.CHINA).format(new Date())+"  "+text+"\n";
@@ -96,15 +105,16 @@ public final class RecoveryEngine {
     }
     public boolean start(Progress listener,Runnable finished) {
         if(!busy.compareAndSet(false,true))return false;
+        final boolean allowShell=allowShellSelected();
         progress=listener;
         new Thread(()->{
-            try { recover(); }
+            try { recover(allowShell); }
             catch(Exception e){status(Phase.FAILED,step,"本次未完成",friendly(e));}
             finally{busy.set(false);progress=null;finished.run();}
         },"root-recovery").start();
         return true;
     }
-    private void recover() throws Exception {
+    private void recover(boolean allowShell) throws Exception {
         if(!compatible() || !installed(SHIZUKU) || !installed(KSU))throw new IOException("请先完成依赖检查。");
         if(!context.getSharedPreferences("setup",0).getBoolean("completed",false))throw new IOException("请先完成首次使用准备。");
         status(Phase.CHECKING,0,"检查本次状态","正在确认执行环境和已有运行记录。");
@@ -128,12 +138,15 @@ public final class RecoveryEngine {
             if(uptime<90)throw new IOException("请等待开机满 90 秒后再恢复；约还需 "+(90-uptime)+" 秒。");
             String active=shell.shell("if pgrep -f 'anb_root.*/explo[i]t|ksu_loade[r].sh|gl_ex[p]loit' >/dev/null; then echo ACTIVE; else echo IDLE; fi").trim();
             if(!"IDLE".equals(active))throw new IOException("另一次恢复仍在运行。请等待；不要并发启动。");
+            if(!state.edit().putString("options_boot",boot).putBoolean("allow_shell",allowShell).commit())
+                throw new IOException("无法保存恢复选项，已停止。");
+            record("本次恢复选项：允许调试工具使用 Root="+(allowShell?"开启":"关闭")+"。已有尝试恢复进度时不会更改选项。");
             // Match the verified upstream driver: do not leave a pre-load manager alive.
             shell.shell("am force-stop "+KSU);
             record("KernelSU 管理器已在加载前停止；完成后将重新启动。");
             dir=ROOT+"/run_"+boot+"_"+System.currentTimeMillis()+"_"+UUID.randomUUID().toString().replace("-","");
             status(Phase.PREPARING,1,"准备本次恢复","校验内置文件并创建独立运行目录。");
-            stage(shell);
+            stage(shell,allowShell);
             save(boot,"launching");
             String launch="set -e; mkdir "+q(ROOT+"/boot_"+boot+".lock")+"; cd "+q(dir)
                     +"; nohup env KSU_RUNDIR="+q(dir)+" "+q(dir+"/exploit")+" >gl.log 2>&1 </dev/null &";
@@ -227,7 +240,7 @@ public final class RecoveryEngine {
         if(!context.getSharedPreferences("run",0).edit().putString("boot",boot).putString("dir",dir==null?"":dir).putString("phase",result).commit())
             throw new IOException("无法保存本次运行记录，已停止。");
     }
-    private void stage(ShizukuShell shell)throws Exception {
+    private void stage(ShizukuShell shell,boolean allowShell)throws Exception {
         File ext=context.getExternalFilesDir(null);
         if(ext==null)throw new IOException("手机存储尚不可用，请解锁后重试。");
         File files=new File(ext,"payload-v2");if(!files.isDirectory()&&!files.mkdirs())throw new IOException("无法准备文件目录。");
@@ -243,9 +256,8 @@ public final class RecoveryEngine {
             commands.append("cp ").append(q(file.getAbsolutePath())).append(" ").append(q(dir+"/"+name)).append("; ");
             commands.append("echo ").append(q(hashes.getProperty(name)+"  "+dir+"/"+name)).append(" | sha256sum -c -; ");
         }
-        String loader=read(new File(files,"ksu_loader.tmpl")).replace("@RUNDIR@",dir)
-                .replace("@STAMP@",String.valueOf(System.currentTimeMillis())).replace("@FREEZE_HISECD@","1")
-                .replace("@ALLOW_SHELL@","0").replace("@STAGES@","1").replace("@ENFORCE@","1");
+        String loader=RecoveryOptions.renderLoader(read(new File(files,"ksu_loader.tmpl")),dir,
+                String.valueOf(System.currentTimeMillis()),allowShell);
         File rendered=new File(files,"ksu_loader.sh");write(rendered,loader);
         commands.append("cp ").append(q(rendered.getAbsolutePath())).append(" ").append(q(dir+"/ksu_loader.sh")).append("; ");
         for(String name:new String[]{"exploit","load_ko","magiskpolicy","ksud","kmsg_dumper","ksu_loader.sh"})

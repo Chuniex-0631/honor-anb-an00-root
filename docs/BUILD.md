@@ -1,6 +1,6 @@
 # 构建说明
 
-正式 APK 在 [Releases](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/latest)，以 [发布清单](../release/v2.1.0.json) 的 SHA-256 和证书指纹为准。签名私钥不在仓库。
+正式 APK 在 [Releases](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/latest)，以 [发布清单](../release/v2.2.0.json) 的 SHA-256 和证书指纹为准。签名私钥不在仓库。
 
 ## 工具
 
@@ -27,3 +27,5 @@ pwsh -File build.ps1
 Java/AIDL 源码可直接审计；8 个原载荷保留字节。校验见 [core-files.json](../release/core-files.json) 与 [资产哈希](../app/assets/payload-hashes.properties)。上游 native 源码／许可见 [第三方说明](THIRD_PARTY.md)。
 
 编译成功不是实机利用成功；支持范围不因编译通过而扩展。
+
+部分旧版 Windows SDK 原生工具不识别中文路径。遇到资源目录存在却提示无法打开时，可将工作目录映射至空闲盘符后构建，或使用不含中文的路径。

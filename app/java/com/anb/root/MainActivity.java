@@ -21,6 +21,8 @@ public final class MainActivity extends Activity {
     private final Handler main=new Handler(Looper.getMainLooper());
     private TextView headline,subtitle,badge,heroNote,deviceDetail,shizukuDetail,ksuDetail,environmentDetail,progressText,logText,recordStatus,recordMessage,actionNote;
     private Button primary,refresh,shizukuAction,ksuAction,details;
+    private Switch allowShellSwitch;
+    private TextView allowShellNote;
     private LinearLayout[] pages=new LinearLayout[3];
     private ScrollView[] scrolls=new ScrollView[3];
     private TextView[] tabs=new TextView[3];
@@ -95,7 +97,7 @@ public final class MainActivity extends Activity {
         icon.setContentDescription("ANB Root 图标");header.addView(icon,new LinearLayout.LayoutParams(dp(42),dp(42)));
         LinearLayout brand=column();LinearLayout.LayoutParams blp=new LinearLayout.LayoutParams(0,-2,1);blp.leftMargin=dp(12);
         brand.addView(text("ANB Root",21,DARK,true));gap(brand,3);brand.addView(text("荣耀 80 Pro 直屏版",11,MUTED,false));header.addView(brand,blp);
-        TextView version=text("2.1.0",11,GREEN,true);version.setPadding(dp(10),dp(6),dp(10),dp(6));version.setBackground(shape(0xffE1EDE5,12));version.setOnClickListener(v->showAbout());header.addView(version);frame.addView(header);
+        TextView version=text("2.2.0",11,GREEN,true);version.setPadding(dp(10),dp(6),dp(10),dp(6));version.setBackground(shape(0xffE1EDE5,12));version.setOnClickListener(v->showAbout());header.addView(version);frame.addView(header);
         FrameLayout content=new FrameLayout(this);frame.addView(content,new LinearLayout.LayoutParams(-1,0,1));
         for(int i=0;i<3;i++){
             ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setClipToPadding(false);
@@ -132,6 +134,21 @@ public final class MainActivity extends Activity {
         ksuAction=button("KernelSU",v->openPackage(RecoveryEngine.KSU,"https://github.com/tiann/KernelSU/releases/tag/v3.3.0"),false);
         shortcuts.addView(shizukuAction,new LinearLayout.LayoutParams(0,dp(44),1));LinearLayout.LayoutParams k=new LinearLayout.LayoutParams(0,dp(44),1);k.leftMargin=dp(10);shortcuts.addView(ksuAction,k);state.addView(shortcuts);
         progressCard=card(root);progressCard.addView(text("本次进度",16,DARK,true));gap(progressCard,12);progressText=text("",14,MUTED,false);progressText.setLineSpacing(dp(8),1);progressCard.addView(progressText);
+        LinearLayout options=card(root);options.addView(text("恢复选项",16,DARK,true));gap(options,10);
+        allowShellSwitch=new Switch(this);allowShellSwitch.setText("允许调试工具使用 Root");allowShellSwitch.setTextSize(14);allowShellSwitch.setTextColor(DARK);
+        allowShellSwitch.setMinHeight(dp(52));allowShellSwitch.setSwitchPadding(dp(12));
+        allowShellSwitch.setChecked(engine.allowShellSelected());options.addView(allowShellSwitch,new LinearLayout.LayoutParams(-1,-2));
+        gap(options,8);options.addView(text("开启后，ADB、Shizuku 等以调试身份运行的工具可直接获准使用 Root，无需逐项授权。普通应用仍由 KernelSU 单独管理。日常使用建议关闭。",13,MUTED,false));
+        gap(options,10);allowShellNote=text("",12,AMBER,false);options.addView(allowShellNote);
+        allowShellSwitch.setOnCheckedChangeListener((view,enabled)->{
+            if(enabled==engine.allowShellSelected())return;
+            if(!enabled){if(!engine.selectAllowShell(false))toast("暂时无法保存选项，请重新检查状态");render();return;}
+            view.setChecked(false);
+            new AlertDialog.Builder(this).setTitle("允许调试工具使用 Root？")
+                    .setMessage("这会允许所有以 shell 身份运行的调试工具请求 Root，包括已授权电脑的 ADB 和通过 Shizuku 运行的工具，不再逐项询问。\n\n选项会被记住，在下一次恢复时生效。恢复成功后若要取消这项自动授权，需要完整重启后关闭选项并重新恢复。")
+                    .setPositiveButton("允许",(d,w)->{if(!engine.selectAllowShell(true))toast("当前状态已变化，未开启选项");render();})
+                    .setNegativeButton("保持关闭",null).show();
+        });
         LinearLayout how=card(root);how.addView(text("重启后怎么做？",16,DARK,true));gap(how,10);
         how.addView(text("①  启动 Shizuku\n②  返回这里恢复 Root\n③  在 KernelSU 管理权限",13,MUTED,false));
         full(how,button("查看完整指南",v->showPage(2),false));
@@ -159,6 +176,7 @@ public final class MainActivity extends Activity {
         helpRow(faq,"恢复超时，或手机重启了",()->dialog("先确认状态","不要重复运行同一次恢复。先保存诊断记录；若本次状态无法确认，请完整重启手机，再启动 Shizuku 后重试。","查看记录",()->showPage(1)));
         helpRow(faq,"升级系统后还能使用吗？",()->dialog("系统版本支持","本版本仅适配 ANB-AN00 的 MagicOS 9.0.0.230。升级后若内核不匹配，App 会关闭恢复入口；需要重新确认适配，不能套用旧版文件。",null,null));
         helpRow(faq,"卸载 App 会立即解除 Root 吗？",()->dialog("临时 Root 的有效期","卸载 App 不会立即卸载当前已加载的内核模块。完整重启会结束本次临时 Root；之后不再启动恢复即可。",null,null));
+        helpRow(faq,"允许调试工具使用 Root 是什么？",()->dialog("调试工具的 Root 权限","默认关闭。开启后，ADB、Shizuku 等以 shell 身份运行的工具可直接获准使用 Root，普通应用仍由 KernelSU 单独授权。\n\n该选择会被记住，只在恢复加载模块时设置。已有 Root 时不能即时切换；请完整重启手机，在恢复前修改。关闭选项仅取消此自动授权，不会撤销 KernelSU 中已有的其他授权。",null,null));
         LinearLayout privacy=card(root);privacy.addView(text("本地运行，由你掌控",17,DARK,true));gap(privacy,8);
         privacy.addView(text("App 不申请联网权限，不上传运行记录。诊断文件只会保存到你选择的位置。日志可能含设备版本和运行信息，分享前可以先查看。",13,MUTED,false));
         full(privacy,button("关于与开源许可",v->showAbout(),false));
@@ -172,8 +190,8 @@ public final class MainActivity extends Activity {
         else builder.setPositiveButton("知道了",null);builder.show();
     }
     private void showAbout(){
-        new AlertDialog.Builder(this).setTitle("ANB Root 2.1.0")
-                .setMessage("荣耀 80 Pro 直屏版 · 临时 Root 助手\n适配 ANB-AN00 / MagicOS 9.0.0.230\n\n通过 Shizuku 提供执行环境，使用已验证的 GhostLock-H80GT 载荷与 KernelSU 管理权限。\n\n核心恢复逻辑与 2.0.1 保持一致，本版更新界面、引导和发行包装。")
+        new AlertDialog.Builder(this).setTitle("ANB Root 2.2.0")
+                .setMessage("荣耀 80 Pro 直屏版 · 临时 Root 助手\n适配 ANB-AN00 / MagicOS 9.0.0.230\n\n通过 Shizuku 提供执行环境，使用已验证的 GhostLock-H80GT 载荷与 KernelSU 管理权限。\n\n本版增加调试工具 Root 选项，默认关闭；原载荷与其余加载参数保持不变。")
                 .setPositiveButton("关闭",null).setNeutralButton("开源许可",(d,w)->showLicenses()).show();
     }
     private void showLicenses(){
@@ -212,6 +230,11 @@ public final class MainActivity extends Activity {
         boolean ksu=engine.installed(RecoveryEngine.KSU);ksuDetail.setText(ksu?"已安装":"待安装");ksuDetail.setTextColor(ksu?GREEN:AMBER);
         environmentDetail.setText(engine.checking?"检测中…":engine.environmentReady?"已通过":"待检测");environmentDetail.setTextColor(engine.environmentReady?GREEN:MUTED);
         firstUseCard.setVisibility(setup()?View.GONE:View.VISIBLE);
+        allowShellSwitch.setChecked(engine.allowShellSelected());
+        allowShellSwitch.setEnabled(!busy&&!engine.modulePresent);
+        allowShellNote.setText(engine.modulePresent?"本次 Root 已加载，不能即时更改。请完整重启后，在恢复前设置。":busy
+                ?"正在处理，本次恢复选项已锁定。"
+                :"默认关闭，会记住你的选择。已开始的恢复不会改用新选项；完整重启后按新选择恢复。");
         String[] state=describe(gate);String heroTitle=state[0],heroMessage=state[1],statusLabel=setup()?"本机状态":"首次准备";
         if(gate==Readiness.Gate.READY&&setup()){heroTitle="准备就绪";heroMessage=engine.modulePresent?"已发现 KernelSU。你可以直接验证当前 Root。":"所有条件已通过，点击下方按钮恢复本次权限。";}
         if(engine.phase==RecoveryEngine.Phase.SUCCESS){heroTitle="Root 已就绪";heroMessage=engine.message.contains("刷新未完成")?"Root 已验证，管理器状态待更新。可到记录页刷新 KernelSU。":"本次开机的 Root 已验证。你可以在 KernelSU 中管理权限。";statusLabel="已验证";}

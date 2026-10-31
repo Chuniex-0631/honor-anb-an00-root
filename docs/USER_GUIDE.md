@@ -7,8 +7,16 @@
 1. 安装官方 [Shizuku](https://shizuku.rikka.app/download/) 和 [KernelSU v3.3.0](https://github.com/tiann/KernelSU/releases/tag/v3.3.0)。
 2. 在 Shizuku 中通过无线调试完成配对并启动；本工具要求 shell 模式。
 3. 打开 ANB Root，允许 Shizuku 访问。按钮会引导完成缺少的准备步骤。
-4. 检查通过后点“完成首次准备”，然后点“恢复 Root”。
+4. 检查通过后点“完成首次准备”；按需选择“允许调试工具使用 Root”（默认关闭），然后点“恢复 Root”。
 5. 如等待授权，在 KernelSU → 超级用户中允许 ANB Root，再返回验证。
+
+## 允许调试工具使用 Root
+
+普通使用保持关闭。开启后，ADB、Shizuku 等所有以 shell 调试身份运行的工具可直接获准使用 Root，无需逐项授权；普通应用仍需 KernelSU 授权。开启时请阅读 App 内的说明并确认。
+
+选择会被记住，仅在新一次恢复时生效，恢复中不能修改。已有 Root 时不能即时开关；需完整重启后，在恢复前修改。继续查看同次开机的旧尝试不会改变原参数。关闭选项不撤销 KernelSU 中其他已有授权。
+
+2.2.0 新增开启模式已通过脚本和构建检查，尚待支持设备实机复验。
 
 ## 每次重启后
 

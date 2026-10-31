@@ -1,5 +1,9 @@
 # ANB Root — HONOR 80 Pro Flat / ANB-AN00 Temporary Root
 
+Version 2.2.0 adds **Allow debugging tools to use Root**, off by default on install or upgrade. When enabled, shell (UID 2000) tools such as ADB and Shizuku are automatically allowed to request root; ordinary apps still need KernelSU authorization. The choice is remembered and fixed when a new recovery starts. It cannot change an already loaded module: fully reboot, change the option, then restore. Existing attempts only resume monitoring with their original parameters. Turning this option off does not revoke other KernelSU grants.
+
+The eight payload files are unchanged. Both loader branches and the build are tested; the new enabled mode still needs a physical ANB-AN00 retest.
+
 [简体中文](README.md) · [Download APK](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/latest) · [Compatibility](docs/COMPATIBILITY.md)
 
 ANB Root restores **session-only root** on a verified HONOR ANB-AN00 firmware using **Shizuku UserService, GhostLock and an Honor-specific KernelSU LKM**. Start Shizuku through Android wireless debugging, grant this app permission, and run recovery on the phone. No computer is required for the established phone-only workflow.
