@@ -12,6 +12,14 @@ public final class WorkflowTest {
             if(args[0].equals("wait")){Thread.sleep(10000);return;}
             if(args[0].equals("large")){for(int i=0;i<100000;i++)System.out.print('x');return;}
         }
+        check(Readiness.compatible(Readiness.MODEL,Readiness.KERNEL,35,Readiness.FINGERPRINT),"exact validated firmware");
+        check(!Readiness.compatible("ANP-AN00",Readiness.KERNEL,35,Readiness.FINGERPRINT),"wrong model blocked");
+        check(!Readiness.compatible(Readiness.MODEL,Readiness.KERNEL+"-other",35,Readiness.FINGERPRINT),"different kernel blocked");
+        check(!Readiness.compatible(Readiness.MODEL,Readiness.KERNEL,34,Readiness.FINGERPRINT),"older Android blocked");
+        check(!Readiness.compatible(Readiness.MODEL,Readiness.KERNEL,35,Readiness.FINGERPRINT+"-other"),"different firmware blocked");
+        check(!Readiness.compatible(null,Readiness.KERNEL,35,Readiness.FINGERPRINT),"missing model blocked");
+        check(!Readiness.compatible(Readiness.MODEL,null,35,Readiness.FINGERPRINT),"missing kernel blocked");
+        check(!Readiness.compatible(Readiness.MODEL,Readiness.KERNEL,35,null),"missing fingerprint blocked");
         Readiness.Gate[] expected={Readiness.Gate.DEVICE,Readiness.Gate.SHIZUKU_INSTALL,Readiness.Gate.KSU_INSTALL,Readiness.Gate.SHIZUKU_START,
                 Readiness.Gate.SHIZUKU_VERSION,Readiness.Gate.SHIZUKU_PERMISSION,Readiness.Gate.SHELL_MODE,Readiness.Gate.ENVIRONMENT};
         for(int i=0;i<8;i++){
