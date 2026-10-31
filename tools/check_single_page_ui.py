@@ -31,7 +31,7 @@ assert "engine.refreshManagerOnly()" in manager
 assert "openPackage(RecoveryEngine.KSU,KSU_URL)" in manager
 assert "openUri(KSU_URL)" in manager
 assert "startRecovery(" not in manager, "Manager action must never start exploit"
-assert "engine.refreshManagerOnly()" in engine and "am force-stop " in engine, "Existing manager refresh must remain"
+assert "public void refreshManagerOnly()" in engine and "am force-stop " in engine, "Existing manager refresh must remain"
 assert "engine.selectAllowShell(true)" in activity and "new AlertDialog.Builder(this)" in activity
 assert "if(!expandedLog)return;" in activity
 assert "all.length()>32000" in activity
