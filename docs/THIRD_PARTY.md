@@ -13,3 +13,7 @@
 App 自有源码为 Apache-2.0，不覆盖第三方许可。原文见 [许可目录](../app/assets/licenses) 和 [NOTICE](../NOTICE)。
 
 本项目贡献为 ANB-AN00 验证、Shizuku 集成、状态与重入处理、界面和发布整理；不将漏洞发现、原始 exploit 或 KernelSU 当作自有原创。
+
+## 固定上游源码
+
+本版载荷来源：GhostLock-H80GT `v0.3.1`，提交 [`33541d1a852a926f782602aa34d79cfbffbd4bb6`](https://github.com/yakidango-official/GhostLock-H80GT/tree/33541d1a852a926f782602aa34d79cfbffbd4bb6)。其 [LKM 构建脚本与补丁](https://github.com/yakidango-official/GhostLock-H80GT/tree/33541d1a852a926f782602aa34d79cfbffbd4bb6/ksu) 固定使用 [KernelSU v3.3.0 源码](https://github.com/tiann/KernelSU/tree/v3.3.0)。设备内核树和工具链要求见该固定版本的构建说明；公共 GKI 对照不能替代厂商内核。
