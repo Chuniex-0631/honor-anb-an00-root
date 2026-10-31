@@ -11,6 +11,8 @@ flowchart LR
     G --> H[重新启动管理器]
 ```
 
+界面层由 [MainActivity](../app/java/com/anb/root/MainActivity.java) 负责绘制和分发操作；[UiState](../app/java/com/anb/root/UiState.java) 是不依赖 Android 的状态和按钮决策模型。首页、设置、记录不独立判断是否启动恢复，所有执行仍交给 RecoveryEngine 的串行恢复和设备校验。测试见 [UiStateTest](../tests/UiStateTest.java)。
+
 普通 App 不能简单替代 ADB shell 环境，因此采用官方 UserService，检测 UID、上下文和 Seccomp。实现见 [RecoveryEngine](../app/java/com/anb/root/RecoveryEngine.java)、[ShizukuShell](../app/java/com/anb/root/ShizukuShell.java) 和 [ShellUserService](../app/java/com/anb/root/ShellUserService.java)。
 
 每次开机保存记录并使用原子目录锁。超时／断开不代表内核载荷停止，不能启动第二条链路。完成判断结合本次日志、模块、Enforcing 和 App 实际 Root。
