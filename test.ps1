@@ -8,9 +8,11 @@ New-Item -ItemType Directory -Force -Path $outputPath | Out-Null
     (Join-Path $projectRoot 'app/java/com/anb/root/RunStatus.java') `
     (Join-Path $projectRoot 'app/java/com/anb/root/RecoveryOptions.java') `
     (Join-Path $projectRoot 'app/java/com/anb/root/UiState.java') `
+    (Join-Path $projectRoot 'app/java/com/anb/root/ManagerAction.java') `
     (Join-Path $projectRoot 'tests/WorkflowTest.java') `
     (Join-Path $projectRoot 'tests/RecoveryOptionsTest.java') `
-    (Join-Path $projectRoot 'tests/UiStateTest.java')
+    (Join-Path $projectRoot 'tests/UiStateTest.java') `
+    (Join-Path $projectRoot 'tests/ManagerActionTest.java')
 if ($LASTEXITCODE -ne 0) { throw 'Test compilation failed' }
 & java -cp $outputPath com.anb.root.WorkflowTest
 if ($LASTEXITCODE -ne 0) { throw 'Tests failed' }
@@ -19,3 +21,6 @@ if ($LASTEXITCODE -ne 0) { throw 'Recovery option tests failed' }
 
 & java -cp $outputPath com.anb.root.UiStateTest
 if ($LASTEXITCODE -ne 0) { throw 'UI state tests failed' }
+
+& java -cp $outputPath com.anb.root.ManagerActionTest
+if ($LASTEXITCODE -ne 0) { throw 'Manager shortcut tests failed' }
