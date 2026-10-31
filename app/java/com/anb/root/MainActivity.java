@@ -18,7 +18,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -60,7 +59,6 @@ public final class MainActivity extends Activity {
     private boolean syncingSwitch, expandedLog;
     private int selectedPage=HOME;
     private String shownLog="";
-    private UiState lastUi;
 
     // Warm, subtle surfaces and a single accent, with native dark-mode support.
     private int background, surface, ink, secondary, outline, accent, onAccent, accentTint;
@@ -513,7 +511,6 @@ public final class MainActivity extends Activity {
     private void render() {
         if(primary==null)return;
         UiState state=currentState();
-        lastUi=state;
         statusTitle.setText(state.title);
         statusMessage.setText(state.message);
         statusBadge.setText(state.badge);
@@ -557,9 +554,12 @@ public final class MainActivity extends Activity {
         shellDescription.setText(locked?
                 (engine.modulePresent?"本次已加载内核模块；需要完整重启才能切换此模式。":"正在检查或恢复，选项暂时锁定。"):
                 "该选择在下一次新恢复时生效。已有运行不会重新加载；切换本次 Root 模式需要完整重启。");
-        refreshManagerButton.setEnabled(!engine.busy.get()&&!engine.checking);
-        managerMessage.setText(engine.phase==RecoveryEngine.Phase.SUCCESS
-                ||engine.phase==RecoveryEngine.Phase.WAIT_AUTH?engine.message:"刷新只会重新打开 KernelSU，不会重启恢复链。");
+        refreshManagerButton.setEnabled(!engine.busy.get()&&!engine.checking&&engine.modulePresent);
+        managerMessage.setText(!engine.modulePresent
+                ?"本次尚未加载 KernelSU，完成 Root 后才能刷新管理器。"
+                :engine.message.startsWith("KernelSU 管理器已")
+                    ||engine.message.startsWith("刷新未完成")?engine.message
+                    :"刷新只会重新打开 KernelSU，不会重启恢复链。");
         if(engine.busy.get())getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
