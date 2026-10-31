@@ -35,6 +35,9 @@ jobs:
         with:
           python-version: '3.13'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: ''
+          log-accepted-android-sdk-licenses: false
       - name: Install pinned SDK packages
         shell: pwsh
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
