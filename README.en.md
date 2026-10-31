@@ -2,6 +2,8 @@
 
 Version 2.2.0 adds **Allow debugging tools to use Root**, off by default on install or upgrade. When enabled, shell (UID 2000) tools such as ADB and Shizuku are automatically allowed to request root; ordinary apps still need KernelSU authorization. The choice is remembered and fixed when a new recovery starts. It cannot change an already loaded module: fully reboot, change the option, then restore. Existing attempts only resume monitoring with their original parameters. Turning this option off does not revoke other KernelSU grants.
 
+An unreleased UI branch adopts a KernelSU-inspired three-tab layout (Home / Settings / Records), dark/light surfaces, and tested recovery button states. The signed 2.2.0 release still has the previous UI.
+
 The eight payload files are unchanged. Both loader branches and the build are tested; the new enabled mode still needs a physical ANB-AN00 retest.
 
 [简体中文](README.md) · [Download APK](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/latest) · [Compatibility](docs/COMPATIBILITY.md)
