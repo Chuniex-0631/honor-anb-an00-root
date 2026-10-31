@@ -1,11 +1,12 @@
 # Changelog
 
-## Unreleased — UI rebuild candidate (no signed APK)
+## Unreleased — v2.2.2 candidate (not an official release)
 
-- 参考 KernelSU 的信息层级，重建首页／设置／记录三个页面，支持浅色／深色主题和滚动布局。
-- 统一 Root 状态、按钮、失败和等待授权的状态模型（`UiState`），新增 JVM 回归测试。
-- 首页仅保留唯一恢复按钮；调试授权、管理器刷新移至设置页；最近日志限 32,000 字符，完整内容仍可导出。
-- 不更改内核载荷或恢复模板。仅为未签名源码候选版，需实机 UI 验收才能正式发布。
+- 参考 KernelSU 的卡片信息层级，改成紧凑、无标签的单页滚动 UI：Root 状态、环境、恢复选项、快捷操作、诊断与帮助。
+- 保留唯一底部主按钮和 `UiState` 阻断状态模型，避免检查中／恢复中重复触发。
+- 移除左上角 A 标识，将“打开 Shizuku”／“打开 KernelSU”横排；后者在安全条件满足时使用已有的管理器刷新功能，否则直接打开，不修改恢复链。
+- 全新「盾牌＋小钥匙」Adaptive、Legacy、Monochrome 图标，适配圆形遮罩安全区。
+- 原生载荷、恢复引擎、LKM 与 loader 均不改变；候选版需要 CI 和 ANB-AN00 实机复验，并使用正式签名证书后才能发版。
 
 
 ## 2.2.0 — 2026-11-01
