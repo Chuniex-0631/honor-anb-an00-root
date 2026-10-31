@@ -178,7 +178,7 @@ public final class MainActivity extends Activity {
         helpRow(faq,"卸载 App 会立即解除 Root 吗？",()->dialog("临时 Root 的有效期","卸载 App 不会立即卸载当前已加载的内核模块。完整重启会结束本次临时 Root；之后不再启动恢复即可。",null,null));
         helpRow(faq,"允许调试工具使用 Root 是什么？",()->dialog("调试工具的 Root 权限","默认关闭。开启后，ADB、Shizuku 等以 shell 身份运行的工具可直接获准使用 Root，普通应用仍由 KernelSU 单独授权。\n\n该选择会被记住，只在恢复加载模块时设置。已有 Root 时不能即时切换；请完整重启手机，在恢复前修改。关闭选项仅取消此自动授权，不会撤销 KernelSU 中已有的其他授权。",null,null));
         LinearLayout privacy=card(root);privacy.addView(text("本地运行，由你掌控",17,DARK,true));gap(privacy,8);
-        privacy.addView(text("App 不申请联网权限，不上传运行记录。诊断文件只会保存到你选择的位置。日志可能含设备版本和运行信息，分享前可以先查看。",13,MUTED,false));
+        privacy.addView(text("App 不申请联网权限，不上传运行记录。执行时会在 App 专属目录保存必要的载荷及环境、验证摘要；点击“保存诊断记录”才会向你选择的位置导出。分享前请检查日志内容。",13,MUTED,false));
         full(privacy,button("关于与开源许可",v->showAbout(),false));
     }
     private void helpRow(LinearLayout parent,String label,Runnable action){
