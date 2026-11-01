@@ -1,10 +1,10 @@
 {
     "version":  "2.3.0",
     "version_code":  7,
-    "status":  "candidate",
+    "status":  "released",
     "package":  "com.anb.root",
     "artifact":  "ANB-Root-2.3.0.apk",
-    "sha256":  null,
+    "sha256":  "a51edf0d169d7d4faf0b978ab6c0c3e4fa36e3092adf4cfe65264e8e781c4b4f",
     "signing_certificate_sha256":  "933e0a448cd3328beb33f0cebeba6d45b3ed937bbfc1eadae2ba400782f3c408",
     "model":  "ANB-AN00",
     "firmware":  "9.0.0.230",
