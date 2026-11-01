@@ -39,4 +39,4 @@
 - Use Shizuku UserService exclusively, removing the fixed TCP client/private-key import.
 - Add prerequisite gates, foreground progress, per-boot tracking and completion checks.
 
-Early research: [archived changelog](docs/RESEARCH_CHANGELOG.md).
+Early research: [archived changelog](docs/research/RESEARCH_CHANGELOG.md).

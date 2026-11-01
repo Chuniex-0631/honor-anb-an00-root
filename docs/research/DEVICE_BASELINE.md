@@ -2,7 +2,7 @@
 
 > 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
 
-来源为用户上传的 [ADB 只读文本](../evidence/device/honor80pro-flat-baseline.txt)，采集时间 2026-10-11。该文本为从附件读取后存入 Git 的**文本转录**；目前尚未独立比较两份文件的原始字节和 SHA-256。
+来源为用户上传的 [ADB 只读文本](../../evidence/device/honor80pro-flat-baseline.txt)，采集时间 2026-10-11。该文本为从附件读取后存入 Git 的**文本转录**；目前尚未独立比较两份文件的原始字节和 SHA-256。
 
 ## 核心属性
 
@@ -27,7 +27,7 @@
 - uname 及 /proc/version：Linux **5.10.236-android12-9-gd671cf8c2b02**；ARM64 / SMP PREEMPT。
 - 内核构建字符串时间：**2026-08-11 02:55:06 UTC**，不是系统 OTA 推送时间。
 - 编译器：Android (7284624, based on r416183b) **clang version 12.0.5**；LLD 12.0.5。
-- /proc/config.gz：列表显示 **42,277 B**，权限模式 -r--r--r--；用户已成功将 gzip 导出并上传至 [仓库](../evidence/device/honor-anb-config.gz)，解压检查成功，见 [配置报告](KERNEL_CONFIG_REPORT.md)。
+- /proc/config.gz：列表显示 **42,277 B**，权限模式 -r--r--r--；用户已成功将 gzip 导出并上传至 [仓库](../../evidence/device/honor-anb-config.gz)，解压检查成功，见 [配置报告](KERNEL_CONFIG_REPORT.md)。
 - /sys/kernel/config.gz：不存在。
 
 **注意：** 名称含 android12-9 的 kernel 与 Android 15 用户空间并不矛盾；不能仅凭内核命名假定设备运行 Android 12。

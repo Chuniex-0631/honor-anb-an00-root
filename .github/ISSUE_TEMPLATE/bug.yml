@@ -1,31 +1,43 @@
-name: 问题反馈 / Bug report
-description: 提供版本和脱敏步骤，不上传完整私人日志。
+﻿name: Bug report
+description: 报告 ANB Root 的问题
 title: "[Bug] "
+labels: ["bug"]
 body:
-  - type: checkboxes
+  - type: markdown
     attributes:
-      label: 提交前检查
+      value: |
+        请先确认设备与系统版本，并附上 App 内“记录 → 保存诊断记录”导出的文件。
+  - type: input
+    id: version
+    attributes:
+      label: ANB Root 版本
+      description: 首页右上角显示，例如 2.3.2
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: 设备与系统
+      description: 型号、MagicOS 版本、内核版本（例如 ANB-AN00 / 9.0.0.230 / 5.10.236-...）
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: 出问题的阶段
       options:
-        - label: 已核对支持型号、固件、内核，未并发恢复。
-          required: true
-        - label: 无序列号、IMEI、账号、私钥或完整设备日志。
-          required: true
-  - type: input
-    attributes:
-      label: 型号 / 固件 / 内核
-    validations:
-      required: true
-  - type: input
-    attributes:
-      label: App / Shizuku / KernelSU 版本
+        - 依赖检查
+        - Shizuku 授权
+        - 恢复 Root
+        - 验证 Root
+        - 刷新 KernelSU
+        - 其他
     validations:
       required: true
   - type: textarea
+    id: details
     attributes:
-      label: 复现步骤、预期与实际结果
+      label: 现象与诊断记录
+      description: 描述现象；附上导出的诊断文件内容（可先自行检查是否含个人信息）
     validations:
       required: true
-  - type: textarea
-    attributes:
-      label: 相关脱敏片段（可选）
-      description: 只提供必要片段，先去除个人标识和凭据。

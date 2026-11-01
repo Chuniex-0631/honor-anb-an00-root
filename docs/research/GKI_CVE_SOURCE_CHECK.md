@@ -6,7 +6,7 @@
 
 ## 复查方法
 
-直接使用 GitHub 连接器读取公共 [AOSP kernel/common 镜像](https://github.com/aosp-mirror/kernel_common/tree/b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e) 的固定提交及四个源码文件，对函数内部的公开上游修复特征进行定位。原始 Git blob SHA、源码链接与结构化布尔检查见 [JSON](../evidence/reports/anb-gki-cve-static-markers.json)。没有通过 Kconfig 宏名代替代码复核。
+直接使用 GitHub 连接器读取公共 [AOSP kernel/common 镜像](https://github.com/aosp-mirror/kernel_common/tree/b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e) 的固定提交及四个源码文件，对函数内部的公开上游修复特征进行定位。原始 Git blob SHA、源码链接与结构化布尔检查见 [JSON](../../evidence/reports/anb-gki-cve-static-markers.json)。没有通过 Kconfig 宏名代替代码复核。
 
 | CVE | 固定 Google 参考树中的实际观察 | 解读边界 |
 |---|---|---|

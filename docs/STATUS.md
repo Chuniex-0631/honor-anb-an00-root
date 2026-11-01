@@ -1,6 +1,6 @@
 # 研究状态总表 — 2026-10-11
 
-> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](research/RESEARCH_HISTORY.md)。
 
 当前发布进展（2026-10-31）：已在指定固件完成临时 Root 和重启后 Shizuku 本机恢复验证，ANB Root 2.1.0 正式发布。详见 [验证摘要](VALIDATION.md)；下表保留原研究阶段结论。
 
@@ -12,7 +12,7 @@
 | MagicOS 9.0.0.230、Android 15、补丁 2026-08-01 | **实机确认** | A |
 | 内核 Linux 5.10.236、Android Clang 12.0.5 | **实机确认** | A |
 | Flash locked、VBMeta locked、AVB green | **实机确认** | A，不代表任何已解锁能力 |
-| /proc/config.gz 原件 | **已入仓、gzip 解压成功、SHA-256 已存档** | A，42,277 B、5,672 项；[报告](KERNEL_CONFIG_REPORT.md) |
+| /proc/config.gz 原件 | **已入仓、gzip 解压成功、SHA-256 已存档** | A，42,277 B、5,672 项；[报告](research/KERNEL_CONFIG_REPORT.md) |
 | ro.oem_unlock_supported 的结果为空 | **实机确认** | A，不能解释为空 false |
 | Futex PI / RT Mutex | **均启用** | A，`CONFIG_FUTEX_PI=y`、`CONFIG_RT_MUTEXES=y`；**非漏洞证据** |
 | 荣耀官方开源发行渠道存在 | **确认** | B，官网指定 `Open Source Codes Issue` 主题可请求源码，尚无 ANB 当前版本的源码包 |
@@ -28,7 +28,7 @@
 
 **续接核验：** GitHub API 确认仓库为 Private；Actions #38073627910（GKI 对照）与 #38073733732（归档审计）均为 success。新的符号定义与 Clang12 实验已由 Actions #38076177418 **成功**、#38076601768 **归档成功**。完整数据和旧实验差异见 [GKI_SYMBOL_PROVENANCE](GKI_SYMBOL_PROVENANCE.md)。
 
-**优先任务：** 配置采集已完成；寻找当前版本匹配源码和补丁，核实真正的启动链及可复现性。继续离线优先，不使用未经适配的刷机文件。详见 [下一步](NEXT_STEPS.md)。
+**优先任务：** 配置采集已完成；寻找当前版本匹配源码和补丁，核实真正的启动链及可复现性。继续离线优先，不使用未经适配的刷机文件。详见 [下一步](research/NEXT_STEPS.md)。
 
 ## 2026-10-11 配置分析的实际成果
 
@@ -36,20 +36,20 @@
 - 解析 **5,672** 个 Kconfig 符号（y=2,044、m=0、n=3,525、其它取值=103），不把缺失符号自动等同于 n。
 - **运行机制**：Futex PI/RT Mutex 启用；**现代缓解**：CFI、Full LTO、Shadow Call Stack、Pointer Authentication、BTI、KASLR、Strong Stack Protector、SELinux/SECCOMP 均启用。
 - **其它重要设置**：`CONFIG_MODULE_SIG_FORCE=y`、`CONFIG_DEBUG_INFO_DWARF4=y`、`CONFIG_KPROBE_EVENTS=y`、`CONFIG_KALLSYMS_ALL=y`、`CONFIG_PANIC_ON_OOPS=y`；这些只能说明配置或编译条件，不代表 Shell 可任意读取符号或载入模块。
-- [真实配置摘要](KERNEL_CONFIG_REPORT.md)、[分类研究报告](KERNEL_SECURITY_PROFILE.md) 与 [JSON 证据](../evidence/reports/anb-config-audit.json) 均在 GitHub Actions 中生成并保存。
+- [真实配置摘要](research/KERNEL_CONFIG_REPORT.md)、[分类研究报告](research/KERNEL_SECURITY_PROFILE.md) 与 [JSON 证据](../evidence/reports/anb-config-audit.json) 均在 GitHub Actions 中生成并保存。
 - **未验证**：原厂二进制代码是否含特定漏洞、Bootloader 解锁途径、无 Root 的动态调试权限、可被第三方签名模块加载的实际状态。
 
 
 ## 208 项缺失配置的新归类
 
-[厂商差异报告](VENDOR_DELTA_TRIAGE.md) 已从真实 diff 中分类 **208 项原本启用却未保留在 Google GKI 参考树求解配置中的符号**：荣耀/HN 命名 84 项、CVE 命名 3 项、编译器/内存/ARM64 26 项、Qualcomm/平台 4 项、内存/IO 29 项、启动/诊断 10 项、其它 52 项。**分类仅凭名称，不是源代码实现确认**。
+[厂商差异报告](research/VENDOR_DELTA_TRIAGE.md) 已从真实 diff 中分类 **208 项原本启用却未保留在 Google GKI 参考树求解配置中的符号**：荣耀/HN 命名 84 项、CVE 命名 3 项、编译器/内存/ARM64 26 项、Qualcomm/平台 4 项、内存/IO 29 项、启动/诊断 10 项、其它 52 项。**分类仅凭名称，不是源代码实现确认**。
 
-具体三个 CVE 开关与公开漏洞公告的关系见 [CVE 配置线索](CVE_CONFIG_FLAGS.md)。无任何配置项本身能证明该机型可提权或已可绕过厂商安全机制。
+具体三个 CVE 开关与公开漏洞公告的关系见 [CVE 配置线索](research/CVE_CONFIG_FLAGS.md)。无任何配置项本身能证明该机型可提权或已可绕过厂商安全机制。
 
 ## 最新源码调查
 
-详见 [官方出处、更新历史与请求路径](SOURCE_PROVENANCE.md)，以及 [Google GKI 配置对照方法](GKI_COMPARISON_METHOD.md)。本阶段不把公共参考树当作厂商内核，也不将 Google 的原生 GKI boot.img 用于 ANB 真机。
+详见 [官方出处、更新历史与请求路径](research/SOURCE_PROVENANCE.md)，以及 [Google GKI 配置对照方法](research/GKI_COMPARISON_METHOD.md)。本阶段不把公共参考树当作厂商内核，也不将 Google 的原生 GKI boot.img 用于 ANB 真机。
 
 ## 2026-10-11 厂商源码申请
 
-已通过 Gmail 实际向 `support@hihonor.com` 发送 `Open Source Codes Issue` 请求，状态为已发出、尚无回复。详见 [联络记录](OFFICIAL_SOURCE_REQUEST_LOG.md)。发送成功不意味着源码已获取，亦不改变 Root/BL 状态。
+已通过 Gmail 实际向 `support@hihonor.com` 发送 `Open Source Codes Issue` 请求，状态为已发出、尚无回复。详见 [联络记录](research/OFFICIAL_SOURCE_REQUEST_LOG.md)。发送成功不意味着源码已获取，亦不改变 Root/BL 状态。

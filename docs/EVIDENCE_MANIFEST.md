@@ -1,6 +1,6 @@
 # 已归档证据和未取得原件
 
-> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](RESEARCH_HISTORY.md)。
+> 历史研究快照（截至 2026-10-11）。本页保留当时结论；当前结果见 [研究历史与发布状态](research/RESEARCH_HISTORY.md)。
 
 当前 App 发行证据：公开 [发行元数据](../release/current.json)、[核心文件哈希](../release/v2.3.0-core-files.json)、[APK 校验值](../release/SHA256SUMS.txt) 和 [验证摘要](VALIDATION.md)。原始私人运行日志仅本地保存。
 
@@ -21,16 +21,16 @@
 ## 2026-10-11 配置的实物验收与历史状态修正
 
 - 本文件此前记录“附件已上传、尚未归档”：**已失效**。用户已将原始 `honor-anb-config.gz` 上传至本 GitHub 仓库；Actions [#38072192104](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/runs/38072192104) 实际解压并生成报告。
-- [KERNEL_CONFIG_REPORT](KERNEL_CONFIG_REPORT.md) 是直接读取实际 gzip 的自动结果；[KERNEL_SECURITY_PROFILE](KERNEL_SECURITY_PROFILE.md) 和 [JSON](../evidence/reports/anb-config-audit.json) 则提供分类的精选符号、统计和研究边界。
+- [KERNEL_CONFIG_REPORT](research/KERNEL_CONFIG_REPORT.md) 是直接读取实际 gzip 的自动结果；[KERNEL_SECURITY_PROFILE](research/KERNEL_SECURITY_PROFILE.md) 和 [JSON](../evidence/reports/anb-config-audit.json) 则提供分类的精选符号、统计和研究边界。
 - 经过 SHA-256 对仓库**当前原件**的完整性核查；尚未和机主本地未改动的备份单独做 SHA 比对，不声称存在多个独立来源认证。
 - `ro.oem_unlock_supported` 为空结果、Bootloader 仍 locked；配置可读取不是 Root 或解锁证据。
 
 
 ## 2026-10-11 GKI 真实差异输出与新资料
 
-- 已保存 [Google 5.10.236 对照报告](GKI_CONFIG_COMPARISON.md)、[完整配置差异 JSON](../evidence/reports/anb-gki-config-delta.json)、[208 项名称归类](VENDOR_DELTA_TRIAGE.md) 与 [可机读分类数据](../evidence/reports/anb-vendor-delta-triage.json)。后续若重跑不同 Clang 或源码 tag，应新增独立版本记录，不覆盖原始证据来源而不留痕。
+- 已保存 [Google 5.10.236 对照报告](research/GKI_CONFIG_COMPARISON.md)、[完整配置差异 JSON](../evidence/reports/anb-gki-config-delta.json)、[208 项名称归类](research/VENDOR_DELTA_TRIAGE.md) 与 [可机读分类数据](../evidence/reports/anb-vendor-delta-triage.json)。后续若重跑不同 Clang 或源码 tag，应新增独立版本记录，不覆盖原始证据来源而不留痕。
 - [首次实算 CI](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/runs/38073022058) 产生配置差异，后由成功的 [Artifact 归档 CI](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/runs/38073491737) 永久保存。
-- 三个以 CVE 编号命名的配置键及其可能的公开问题属于离线线索，不等于原厂安全补丁状态；见 [CVE_CONFIG_FLAGS](CVE_CONFIG_FLAGS.md)。
+- 三个以 CVE 编号命名的配置键及其可能的公开问题属于离线线索，不等于原厂安全补丁状态；见 [CVE_CONFIG_FLAGS](research/CVE_CONFIG_FLAGS.md)。
 
 ## 2026-10-11 官方开源来源与待完成实验
 
@@ -46,7 +46,7 @@
 
 ## v0.6 GKI 源码定位记录
 
-- [GKI 参考树 CVE 代码特征 JSON](../evidence/reports/anb-gki-cve-static-markers.json) 与 [分析报告](GKI_CVE_SOURCE_CHECK.md)：来源为已固定公共镜像提交，包含四个 Git blob SHA、匹配特征及解释边界；**不包含设备 OEM 源码，也没有声称已验证任何真实设备 CVE**。
+- [GKI 参考树 CVE 代码特征 JSON](../evidence/reports/anb-gki-cve-static-markers.json) 与 [分析报告](research/GKI_CVE_SOURCE_CHECK.md)：来源为已固定公共镜像提交，包含四个 Git blob SHA、匹配特征及解释边界；**不包含设备 OEM 源码，也没有声称已验证任何真实设备 CVE**。
 
 ### 精确 Clang12 和符号定义已归档数据
 

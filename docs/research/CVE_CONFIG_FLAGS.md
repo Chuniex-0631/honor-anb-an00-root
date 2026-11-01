@@ -6,7 +6,7 @@
 
 ## 真机原始证据
 
-`evidence/device/honor-anb-config.gz` 已验证 SHA-256 `76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3`。公共 GKI Kconfig 对照所生成的 [差异 JSON](../evidence/reports/anb-gki-config-delta.json) 中，出现：
+`evidence/device/honor-anb-config.gz` 已验证 SHA-256 `76b2a150f18baf42547b5989b80933c57a8e77fc464a05d04804577c9ac5e6c3`。公共 GKI Kconfig 对照所生成的 [差异 JSON](../../evidence/reports/anb-gki-config-delta.json) 中，出现：
 
 - `CONFIG_CVE_2023_52340=y`
 - `CONFIG_CVE_2023_5717=y`
@@ -42,4 +42,4 @@
 
 ## Google 固定参考树的实际代码复查
 
-已直接读取 Google 公共镜像在 `b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e` 的 `kernel/events/core.c`、`include/linux/perf_event.h`、`net/ipv4/ip_tunnel.c`、`net/ipv6/route.c`，建立 [源码特征检查报告](GKI_CVE_SOURCE_CHECK.md) 和 [含 Blob SHA 的 JSON](../evidence/reports/anb-gki-cve-static-markers.json)。perf 的 `group_generation` 修复特征存在；IPv4 tunnel 的 `pskb_inet_may_pull` 特征缺失；IPv6 GC 仍有 `rt_max_size` 路径。**这仅是 Google 参考树的代码差异，不可将其称为 ANB 生产内核漏洞。**
+已直接读取 Google 公共镜像在 `b97c62c4e7d1e80fb6a2cb0cb381f03bbcd26a4e` 的 `kernel/events/core.c`、`include/linux/perf_event.h`、`net/ipv4/ip_tunnel.c`、`net/ipv6/route.c`，建立 [源码特征检查报告](GKI_CVE_SOURCE_CHECK.md) 和 [含 Blob SHA 的 JSON](../../evidence/reports/anb-gki-cve-static-markers.json)。perf 的 `group_generation` 修复特征存在；IPv4 tunnel 的 `pskb_inet_may_pull` 特征缺失；IPv6 GC 仍有 `rt_max_size` 路径。**这仅是 Google 参考树的代码差异，不可将其称为 ANB 生产内核漏洞。**

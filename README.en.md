@@ -30,7 +30,7 @@ This does not unlock the bootloader or provide persistent root. A full reboot cl
 
 The app uses no fixed TCP 5555 client, imports no desktop ADB private key, and requests no Internet permission. Recovery is serialized and does not automatically re-inject after timeout or disconnect. The race may fail or reboot the phone; support is not a universal reliability claim.
 
-[Build](docs/BUILD.md) · [Architecture](docs/ARCHITECTURE.md) · [Validation](docs/VALIDATION.md) · [History](docs/RESEARCH_HISTORY.md) · [Privacy](docs/PRIVACY.md)
+[Build](docs/BUILD.md) · [Architecture](docs/ARCHITECTURE.md) · [Validation](docs/VALIDATION.md) · [History](docs/research/RESEARCH_HISTORY.md) · [Privacy](docs/PRIVACY.md)
 
 Public research retains model, firmware, kernel and reproducibility hashes. It excludes device identifiers, private mail IDs, credentials, raw private logs, signing keys and operator-specific paths. Historical snapshots are labeled with their original dates.
 

@@ -45,7 +45,7 @@ ANB Root 是面向 **荣耀 80 Pro 直屏版 ANB-AN00** 的 Android 临时 Root 
 
 ## 面向日常使用的界面
 
-截图为 2.1.0／2.2.0 界面；2.3.0 重做了配色与状态呈现（深色主题、五阶段进度、首页可直接处理失败），截图待更新。
+截图为 2.3.2 界面：深色与浅色主题、状态清单、五阶段进度与失败卡片。
 
 <div align="center">
 <img src="docs/assets/home.png" alt="ANB Root 首页：设备兼容、Shizuku 授权与恢复按钮" width="30%">
@@ -74,7 +74,7 @@ App 只通过 **Shizuku UserService** 获取执行环境，没有内置 5555 ADB
 
 2.3.0 是界面与可访问性更新：执行核心、AIDL 与 8 个载荷文件与 2.2.0 逐字节一致，恢复链未改动；新增三个纯 Java 模型类与 3 组单元测试，本地完整构建通过。**2.3.0 尚未在实机运行，只作为候选版本提供，不发布带签名的 APK。** 细节见 [审计报告](docs/AUDIT_2.3.0.md)。
 
-这属于指定设备与固件的实机验证，不是所有设备的通用成功率保证。竞态失败可能重启；不要并发或连续重复启动。见 [验证摘要](docs/VALIDATION.md) 和 [历史索引](docs/RESEARCH_HISTORY.md)。
+这属于指定设备与固件的实机验证，不是所有设备的通用成功率保证。竞态失败可能重启；不要并发或连续重复启动。见 [验证摘要](docs/VALIDATION.md) 和 [历史索引](docs/research/RESEARCH_HISTORY.md)。
 
 ## 常见问题
 
@@ -90,7 +90,7 @@ App 只通过 **Shizuku UserService** 获取执行环境，没有内置 5555 ADB
 
 - [构建说明](docs/BUILD.md)：Java 源码、AIDL、固定依赖和 Android 构建。
 - [技术架构](docs/ARCHITECTURE.md)：Shizuku → 独立 shell 服务 → 恢复与验证。
-- [研究历史](docs/RESEARCH_HISTORY.md)：基线、GKI 参考对照、临时 Root 路线及 App 化。
+- [研究历史](docs/research/RESEARCH_HISTORY.md)：基线、GKI 参考对照、临时 Root 路线及 App 化。
 - [脱敏说明](docs/PRIVACY.md)：保留研究结论，排除个人标识、凭据与原始私人日志。
 - [贡献指南](CONTRIBUTING.md) · [安全政策](SECURITY.md)。
 

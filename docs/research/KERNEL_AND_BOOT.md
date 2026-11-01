@@ -23,7 +23,7 @@
 
 ## 当前核心阻断点
 
-1. 已取得 [原厂配置 gzip](../evidence/device/honor-anb-config.gz) 和 [安全特性分类报告](KERNEL_SECURITY_PROFILE.md)：Futex PI/RT Mutex、CFI、Full LTO、Shadow Call Stack、KASLR、模块签名均有真实状态。**这不等于漏洞补丁状态已明**。
+1. 已取得 [原厂配置 gzip](../../evidence/device/honor-anb-config.gz) 和 [安全特性分类报告](KERNEL_SECURITY_PROFILE.md)：Futex PI/RT Mutex、CFI、Full LTO、Shadow Call Stack、KASLR、模块签名均有真实状态。**这不等于漏洞补丁状态已明**。
 2. 还没有找到与 ANB-AN00 9.0.0.230 匹配的厂商内核源码与原厂 vmlinux/boot.img。
 3. 仅凭 Android 补丁日期或 5.10 分支号**不能证明任何 CVE 可利用**；需要按修复状态与真实设备行为验证。
 4. 历史固件的下载索引不等于可用于锁定 Bootloader 的刷机包，也不说明安全回滚是否允许。
