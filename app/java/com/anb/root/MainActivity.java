@@ -76,7 +76,7 @@ public final class MainActivity extends Activity {
     private final Runnable watchTick=new Runnable(){public void run(){
         if(isFinishing())return;
         refresh();
-        if(engine.checking||engine.busy.get())main.postDelayed(this,400);
+        if(engine.checking||(engine.busy.get()&&!ticking))main.postDelayed(this,400);
     }};
 
     private void watch(){ main.removeCallbacks(watchTick); main.postDelayed(watchTick,300); }

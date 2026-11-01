@@ -23,6 +23,4 @@
     <color name="ripple_on_brand">#33FFFFFF</color>
     <color name="nav_bg">#FFFFFF</color>
 
-    <!-- Kept for compatibility with existing references. -->
-    <color name="app_background">#F3F6F2</color>
 </resources>
