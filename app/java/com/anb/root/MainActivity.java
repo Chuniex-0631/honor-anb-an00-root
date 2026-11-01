@@ -209,9 +209,14 @@ public final class MainActivity extends Activity {
         lp.leftMargin=dp(leftInset);parent.addView(v,lp);
     }
 
-    private LinearLayout card(LinearLayout parent){
+    /** A card that is built detached, so a page can decide where it lands. */
+    private LinearLayout cardView(){
         LinearLayout c=column();c.setPadding(dp(20),dp(18),dp(20),dp(18));
-        c.setBackground(shape(cSurface,18));
+        c.setBackground(shape(cSurface,18));return c;
+    }
+
+    private LinearLayout card(LinearLayout parent){
+        LinearLayout c=cardView();
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(12);
         parent.addView(c,lp);return c;
     }
@@ -497,7 +502,7 @@ public final class MainActivity extends Activity {
         gap(summary,6);
         recordMessage=body("");summary.addView(recordMessage);
 
-        LinearLayout tools=card(root);
+        LinearLayout tools=cardView();
         tools.addView(section("排查与支持"));gap(tools,4);
         tools.addView(body("遇到问题时先保存记录；不要连续重复启动恢复。"));
         LinearLayout actions=new LinearLayout(this);gap(tools,14);
@@ -519,6 +524,10 @@ public final class MainActivity extends Activity {
         management.addView(section("KernelSU 状态未更新？"));gap(management,4);
         management.addView(body("刷新只会重新打开管理器，不会再次执行 Root 恢复。"));
         full(management,button("刷新 KernelSU",v->engine.refreshManagerOnly(),false));
+
+        // The expandable log grows without bound, so it is attached last: nothing sits below it.
+        LinearLayout.LayoutParams tlp=new LinearLayout.LayoutParams(-1,-2);
+        root.addView(tools,tlp);
     }
 
     private void buildHelp(LinearLayout root){
