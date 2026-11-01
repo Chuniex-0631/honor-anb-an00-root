@@ -69,17 +69,24 @@ public final class MainActivity extends Activity {
         refresh();
     };
 
-    /** The engine's environment probe has no completion callback; watch its flag briefly. */
-    private final Runnable checkTick=new Runnable(){public void run(){
+    /**
+     * Background work started by the activity (environment probe, manager refresh) has no
+     * completion callback, so watch the engine flags briefly and refresh in place.
+     */
+    private final Runnable watchTick=new Runnable(){public void run(){
         if(isFinishing())return;
         refresh();
-        if(engine.checking)main.postDelayed(this,400);
+        if(engine.checking||engine.busy.get())main.postDelayed(this,400);
     }};
 
-    private void startEnvironmentCheck(){
-        main.removeCallbacks(checkTick);
-        engine.checkEnvironment();
-        main.postDelayed(checkTick,300);
+    private void watch(){ main.removeCallbacks(watchTick); main.postDelayed(watchTick,300); }
+
+    private void startEnvironmentCheck(){ engine.checkEnvironment(); watch(); }
+
+    private void startManagerRefresh(){
+        engine.refreshManagerOnly();
+        watch();
+        toast("正在刷新 KernelSU 状态…");
     }
 
     private final Runnable busyTick=new Runnable(){public void run(){
@@ -536,7 +543,7 @@ public final class MainActivity extends Activity {
         LinearLayout management=card(root);
         management.addView(section("KernelSU 状态未更新？"));gap(management,4);
         management.addView(body("刷新只会重新打开管理器，不会再次执行 Root 恢复。"));
-        full(management,button("刷新 KernelSU",v->engine.refreshManagerOnly(),false));
+        full(management,button("刷新 KernelSU",v->startManagerRefresh(),false));
 
         // The expandable log grows without bound, so it is attached last: nothing sits below it.
         LinearLayout.LayoutParams tlp=new LinearLayout.LayoutParams(-1,-2);
@@ -568,7 +575,7 @@ public final class MainActivity extends Activity {
         faq.addView(section("常见问题"));gap(faq,2);
         helpRow(faq,"Shizuku 未运行或无法授权",()->dialog("重新连接 Shizuku","先在 Shizuku 中通过无线调试启动服务，再返回本 App。若曾拒绝授权，可在 Shizuku 的应用管理中重新允许 ANB Root。\n\n关闭开发者选项或撤销配对后，需要先在手机上重新开启调试、配对并启动。","打开 Shizuku",()->openPackage(RecoveryEngine.SHIZUKU,"https://shizuku.rikka.app/download/")));
         divider(faq,0);
-        helpRow(faq,"KernelSU 显示“未安装”",()->dialog("刷新管理器状态","恢复完成后，旧的管理器进程可能仍显示过时状态。刷新会停止并重新打开 KernelSU，不会再次提权。","刷新 KernelSU",()->engine.refreshManagerOnly()));
+        helpRow(faq,"KernelSU 显示“未安装”",()->dialog("刷新管理器状态","恢复完成后，旧的管理器进程可能仍显示过时状态。刷新会停止并重新打开 KernelSU，不会再次提权。","刷新 KernelSU",()->startManagerRefresh()));
         divider(faq,0);
         helpRow(faq,"恢复超时，或手机重启了",()->dialog("先确认状态","不要重复运行同一次恢复。先保存诊断记录；若本次状态无法确认，请完整重启手机，再启动 Shizuku 后重试。","查看记录",()->showPage(PAGE_RECORDS)));
         divider(faq,0);
