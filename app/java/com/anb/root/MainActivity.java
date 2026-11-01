@@ -174,9 +174,12 @@ public final class MainActivity extends Activity {
         GradientDrawable d=shape(fill,radius);d.setStroke(dp(1),strokeColor);return d;
     }
 
-    /** Ripple clipped to a rounded rect; without a mask the press effect expands as a huge circle. */
-    private Drawable rippleBounded(int rippleColor,int radius){
-        return new RippleDrawable(ColorStateList.valueOf(rippleColor),null,shape(0xFFFFFFFF,radius));
+    /** The platform bounded press state used by list rows; no borderless circle, no custom mask. */
+    private Drawable selectable(){
+        TypedValue value=new TypedValue();
+        if(getTheme().resolveAttribute(android.R.attr.selectableItemBackground,value,true))
+            return getDrawable(value.resourceId);
+        return null;
     }
 
     private Drawable ripple(int rippleColor,Drawable content){
@@ -234,7 +237,7 @@ public final class MainActivity extends Activity {
         LinearLayout row=new LinearLayout(this);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(dp(56));
-        row.setBackground(rippleBounded(cRipple,10));
+        row.setBackground(selectable());
         row.setPadding(0,0,0,0);
 
         View marker=dot(cMuted);
@@ -283,7 +286,7 @@ public final class MainActivity extends Activity {
         LinearLayout row=new LinearLayout(this);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(dp(52));
-        row.setBackground(rippleBounded(cRipple,10));
+        row.setBackground(selectable());
         row.setPadding(0,dp(12),0,dp(12));
         row.setFocusable(true);
         TextView name=text(label,15,cText,false);
@@ -328,7 +331,7 @@ public final class MainActivity extends Activity {
         for(int i=0;i<3;i++){
             final int index=i;
             LinearLayout item=column();item.setGravity(Gravity.CENTER_HORIZONTAL);
-            item.setBackground(rippleBounded(cRipple,10));item.setFocusable(true);
+            item.setBackground(selectable());item.setFocusable(true);
             ImageView icon=new ImageView(this);icon.setImageResource(icons[i]);
             icon.setColorFilter(cMuted);
             item.addView(icon,new LinearLayout.LayoutParams(dp(22),dp(22)));
@@ -458,7 +461,7 @@ public final class MainActivity extends Activity {
         options.addView(section("恢复选项"));gap(options,6);
         allowShellRow=new LinearLayout(this);
         allowShellRow.setGravity(Gravity.CENTER_VERTICAL);allowShellRow.setMinimumHeight(dp(52));
-        allowShellRow.setBackground(rippleBounded(cRipple,10));allowShellRow.setFocusable(true);
+        allowShellRow.setBackground(selectable());allowShellRow.setFocusable(true);
         allowShellRow.addView(text("允许调试工具使用 Root",15,cText,false),
                 new LinearLayout.LayoutParams(0,-2,1));
         allowShellSwitch=new Switch(this);
@@ -500,11 +503,8 @@ public final class MainActivity extends Activity {
         actions.addView(button("复制记录",v->copyLog(),false),clp);
         tools.addView(actions);
 
-        details=text("",14,cBrand,true);
-        details.setPadding(dp(2),dp(14),dp(2),dp(14));details.setMinHeight(dp(48));
-        details.setBackground(rippleBounded(cRipple,10));
-        details.setOnClickListener(v->{expanded=!expanded;refresh();});
-        tools.addView(details,new LinearLayout.LayoutParams(-1,-2));
+        details=button("展开详细记录",v->{expanded=!expanded;refresh();},false);
+        full(tools,details);
         logText=text("",11,cMuted,false);
         logText.setTypeface(Typeface.MONOSPACE);
         logText.setTextIsSelectable(true);
