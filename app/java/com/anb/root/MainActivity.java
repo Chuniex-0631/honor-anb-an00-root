@@ -174,6 +174,11 @@ public final class MainActivity extends Activity {
         GradientDrawable d=shape(fill,radius);d.setStroke(dp(1),strokeColor);return d;
     }
 
+    /** Ripple clipped to a rounded rect; without a mask the press effect expands as a huge circle. */
+    private Drawable rippleBounded(int rippleColor,int radius){
+        return new RippleDrawable(ColorStateList.valueOf(rippleColor),null,shape(0xFFFFFFFF,radius));
+    }
+
     private Drawable ripple(int rippleColor,Drawable content){
         return new RippleDrawable(ColorStateList.valueOf(rippleColor),content,null);
     }
@@ -229,7 +234,7 @@ public final class MainActivity extends Activity {
         LinearLayout row=new LinearLayout(this);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(dp(56));
-        row.setBackground(ripple(cRipple,null));
+        row.setBackground(rippleBounded(cRipple,10));
         row.setPadding(0,0,0,0);
 
         View marker=dot(cMuted);
@@ -278,7 +283,7 @@ public final class MainActivity extends Activity {
         LinearLayout row=new LinearLayout(this);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(dp(52));
-        row.setBackground(ripple(cRipple,null));
+        row.setBackground(rippleBounded(cRipple,10));
         row.setPadding(0,dp(12),0,dp(12));
         row.setFocusable(true);
         TextView name=text(label,15,cText,false);
@@ -323,7 +328,7 @@ public final class MainActivity extends Activity {
         for(int i=0;i<3;i++){
             final int index=i;
             LinearLayout item=column();item.setGravity(Gravity.CENTER_HORIZONTAL);
-            item.setBackground(ripple(cRipple,null));item.setFocusable(true);
+            item.setBackground(rippleBounded(cRipple,10));item.setFocusable(true);
             ImageView icon=new ImageView(this);icon.setImageResource(icons[i]);
             icon.setColorFilter(cMuted);
             item.addView(icon,new LinearLayout.LayoutParams(dp(22),dp(22)));
@@ -453,7 +458,7 @@ public final class MainActivity extends Activity {
         options.addView(section("恢复选项"));gap(options,6);
         allowShellRow=new LinearLayout(this);
         allowShellRow.setGravity(Gravity.CENTER_VERTICAL);allowShellRow.setMinimumHeight(dp(52));
-        allowShellRow.setBackground(ripple(cRipple,null));allowShellRow.setFocusable(true);
+        allowShellRow.setBackground(rippleBounded(cRipple,10));allowShellRow.setFocusable(true);
         allowShellRow.addView(text("允许调试工具使用 Root",15,cText,false),
                 new LinearLayout.LayoutParams(0,-2,1));
         allowShellSwitch=new Switch(this);
@@ -497,7 +502,7 @@ public final class MainActivity extends Activity {
 
         details=text("",14,cBrand,true);
         details.setPadding(dp(2),dp(14),dp(2),dp(14));details.setMinHeight(dp(48));
-        details.setBackground(ripple(cRipple,null));
+        details.setBackground(rippleBounded(cRipple,10));
         details.setOnClickListener(v->{expanded=!expanded;refresh();});
         tools.addView(details,new LinearLayout.LayoutParams(-1,-2));
         logText=text("",11,cMuted,false);
