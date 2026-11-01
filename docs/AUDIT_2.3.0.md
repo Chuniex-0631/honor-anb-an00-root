@@ -148,4 +148,15 @@
 
 本次审计**没有**在 ANB-AN00 真机上运行。凡涉及实际提权路径的判断（载荷行为、`allow_shell` 生效、KernelSU 授权、重启后恢复）都只做了代码评审，未做运行验证。因此 v2.3.0 只应作为**候选版本**，在真机回归通过前不发布 APK，也不更新 `release/SHA256SUMS.txt` 中的既有条目。
 
-保留的既有不变量：载荷 8 个文件、`ksu_loader.tmpl`、AIDL 接口、执行核心 Java 全部与 2.2.0 逐字节一致。
+保留的既有不变量：载荷 8 个文件、`ksu_loader.tmpl`、AIDL 接口与执行核心 Java 的其余文件与 2.2.0 逐字节一致（L11–L13 清理后核心清单已随之刷新）。
+
+界面部分已在 ANB-AN00 真机上验证（浅色/深色、三页切换、返回键、状态行配色）；恢复链仍未实机执行。
+
+## 10. 冗余代码扫描（自动化）
+
+对 `app/java` 全部 134 个方法声明做引用计数（含 `tests/`）：
+
+- 引用数 ≤1 的候选 10 个，逐一核对后**全部是框架回调**：`setContentView`、`requestPermissions`、`startForegroundService`、`onStartCommand`、`startForeground`、`onBind`、`onServiceConnected`、`onServiceDisconnected`、`SecurityException`、`disableAutomaticSuiInitialization`。
+- 真正的死代码只有 L11–L13 三处，已在 v2.3.0 删除；扫描后无新增孤儿方法。
+
+结论：底层不再有"开发残留"型死代码。剩余可优化项（`stage()` 每次把 18 MB 载荷全量重写到外部目录、`monitor()` 的 3 秒轮询节奏）属于行为改动，需要真机复验，留到实机回归之后再做。
