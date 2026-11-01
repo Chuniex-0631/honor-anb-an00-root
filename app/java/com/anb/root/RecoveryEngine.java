@@ -65,7 +65,7 @@ public final class RecoveryEngine {
      * the old version re-serialised up to 180 KB each time. Rewrite only when the buffer is trimmed.
      */
     public synchronized void record(String text) {
-        String line=new java.text.SimpleDateFormat("HH:mm:ss",Locale.CHINA).format(new Date())+"  "+text+"\n";
+        String line=new java.text.SimpleDateFormat("HH:mm:ss.SSS",Locale.CHINA).format(new Date())+"  "+text+"\n";
         log.append(line);
         File file=new File(context.getFilesDir(),LOG_NAME);
         if(log.length()>180000) {
@@ -106,7 +106,6 @@ public final class RecoveryEngine {
         if(ext!=null)write(new File(ext,"environment-shizuku.txt"),"transport=Shizuku UserService\n"+output+"kernel="+KERNEL+"\n");
     }
     public boolean start(Progress listener,Runnable finished) {
-        if(checking)return false;
         if(!busy.compareAndSet(false,true))return false;
         final boolean allowShell=allowShellSelected();
         progress=listener;
