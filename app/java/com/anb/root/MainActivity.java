@@ -64,10 +64,23 @@ public final class MainActivity extends Activity {
         engine.invalidate();engine.record("Shizuku 服务已停止；恢复入口暂不可用。");refresh();};
     private final Shizuku.OnRequestPermissionResultListener permission=(code,result)->{
         if(code!=REQ_SHIZUKU)return;
-        if(result==PackageManager.PERMISSION_GRANTED){engine.record("用户已授予 Shizuku 权限。");engine.checkEnvironment();}
+        if(result==PackageManager.PERMISSION_GRANTED){engine.record("用户已授予 Shizuku 权限。");startEnvironmentCheck();}
         else engine.record("Shizuku 权限未授予；可稍后在 Shizuku 的应用管理中开启。");
         refresh();
     };
+
+    /** The engine's environment probe has no completion callback; watch its flag briefly. */
+    private final Runnable checkTick=new Runnable(){public void run(){
+        if(isFinishing())return;
+        refresh();
+        if(engine.checking)main.postDelayed(this,400);
+    }};
+
+    private void startEnvironmentCheck(){
+        main.removeCallbacks(checkTick);
+        engine.checkEnvironment();
+        main.postDelayed(checkTick,300);
+    }
 
     private final Runnable busyTick=new Runnable(){public void run(){
         if(isFinishing())return;
@@ -843,12 +856,12 @@ public final class MainActivity extends Activity {
     // ---------------------------------------------------------------- actions
 
     private void autoCheck(){
-        if(engine.gate()==Readiness.Gate.ENVIRONMENT&&!engine.checking)engine.checkEnvironment();
+        if(engine.gate()==Readiness.Gate.ENVIRONMENT&&!engine.checking)startEnvironmentCheck();
     }
 
     private void refreshEnvironment(){
         engine.invalidate();
-        if(engine.gate()==Readiness.Gate.ENVIRONMENT)engine.checkEnvironment();
+        if(engine.gate()==Readiness.Gate.ENVIRONMENT)startEnvironmentCheck();
         else refresh();
     }
 
