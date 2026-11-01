@@ -33,13 +33,16 @@
 | L1 | S2 | `MainActivity.java:41,216` | 每 1000ms 触发整屏 `render()`，每次约 60 次 setText/setVisibility，并在主线程调用 `Shizuku.pingBinder()`、`getVersion()`、`checkSelfPermission()`、`getUid()`（`recovery:51-58`）| 见 `render()` 全文与 `tick` 定义 | **v2.3.0 修复**：移除周期整屏刷新，改为事件驱动；仅 busy 时用 1s tick 更新耗时文本 |
 | L2 | S2 | `MainActivity.java:209` | `humanError` 用中文字符串子串匹配归类错误（`"90 秒"`、`"另一次"`），引擎措辞一变就退化为通用文案，且无法区分授权/超时/重启 | `humanError` 五条 `contains` | **v2.3.0 修复**：新增 `FailureText`，按阶段 + 结构化错误码归类，并有单元测试 |
 | L3 | S2 | `MainActivity.java:100,193` | 版本号 `"2.2.0"` 硬编码在页眉与"关于"对话框，与 `release/*.json` 的 `version_name` 无关联，必然漂移 | 字面量出现两次 | **v2.3.0 修复**：从 `PackageManager` 读取 `versionName` |
-| L4 | S2 | `RecoveryEngine.java:106` | `start()` 不检查 `checking`；界面若在环境检测期间触发恢复，会并发建立两条 UserService 会话 | `start()` 只做 `busy` CAS | **v2.3.0 缓解**：界面在 `checking` 时禁止启动；引擎级互斥留待 2.4（该文件属冻结集）|
-| L5 | S2 | `RecoveryService.java:22` | `onStartCommand` 忽略 `start()` 的布尔返回；被拒时已 `startForeground`，通知会残留到下一次运行结束 | 无条件 `start(...)` | **记录，未改**：修复需解冻核心文件；影响仅限通知驻留，不影响 Root |
-| L6 | S3 | `RecoveryEngine.java:70` | `record()` 每行都同步重写整个日志文件（上限 180 KB），恢复期间约 60 次全量写入 | `FileOutputStream` 每次 `false` | **记录**：建议 2.4 改为追加 + 定期压缩 |
+| L4 | S2 | `RecoveryEngine.java:106` | `start()` 不检查 `checking`；界面若在环境检测期间触发恢复，会并发建立两条 UserService 会话 | `start()` 只做 `busy` CAS | **v2.3.0 修复**：`start()` 增加 `checking` 互斥，界面与引擎双层防护 |
+| L5 | S2 | `RecoveryService.java:22` | `onStartCommand` 忽略 `start()` 的布尔返回；被拒时已 `startForeground`，通知会残留到下一次运行结束 | 无条件 `start(...)` | **v2.3.0 修复**：被拒时立即 `stopForeground` + `stopSelf` |
+| L6 | S3 | `RecoveryEngine.java:70` | `record()` 每行都同步重写整个日志文件（上限 180 KB），恢复期间约 60 次全量写入 | `FileOutputStream` 每次 `false` | **v2.3.0 修复**：改为追加写入，仅在缓冲裁剪时重写 |
 | L7 | S3 | `RecoveryEngine.java:169` | `monitor()` 3 秒轮询、上限 5 分钟，每次 `snapshot()` 执行 3 条命令，最坏约 100 次往返 | `Thread.sleep(3000)` | **记录**：建议 5s + 退避；不改动已验证节奏 |
 | L8 | S3 | `CommandRunner.java:34` | 进程退出后 `reader.join(1000)`，极端情况下尾部输出可能未读完；`truncated` 只统计被丢弃的写入 | 见实现 | **记录**：现有测试覆盖大输出与超时，未覆盖该竞态 |
 | L9 | S3 | `ShizukuShell.java:46` | 单条命令固定 15s 超时，与 `ShellUserService` 的 1–30s 上限不完全一致（引擎侧另有 15s）| 两处常量 | **记录**：一致性小问题 |
-| L10 | S4 | `MainActivity.java:86` | 状态行 `setContentDescription("…状态")` 与其子 TextView 文本重复，TalkBack 会读两遍 | 见 `statusRow` | **v2.3.0 修复**：改为行级单一语义 + 角色 |
+| L10 | S4 | MainActivity.java:86 | 状态行 setContentDescription(…状态) 与其子 TextView 文本重复，TalkBack 会读两遍 | 见 statusRow | **v2.3.0 修复**：改为行级单一语义 + 角色 |
+| L11 | S2 | `RecoveryEngine.java:33`、`199` | 开发期迁移代码：构造时每次启动都清理 2.0 的 ADB 密钥残留；`retireLegacyTcp()` 一次性改写全局 `persist.adb.tcp.port` | `adbkey` 清理与 `migration` 偏好 | **v2.3.0 删除**：这两个客户端在 2.1.0 已移除，迁移逻辑属于开发残留 |
+| L12 | S3 | `RecoveryEngine.java:47` | `version(String)` 无任何调用方 | 全仓搜索无引用 | **v2.3.0 删除** |
+| L13 | S3 | `RecoveryEngine.java:39` | 日志文件名 `recovery-v2.log` 是版本化命名残留，升级后旧名与新名不一致 | 文件名 | **v2.3.0 改为** `recovery.log`（常量集中管理） |
 
 结论：L1–L3、L10 属界面层，可在不解冻核心的前提下修复；L4 以界面约束缓解；L5–L9 明确记入 2.4 待办，附触发条件与影响面。
 

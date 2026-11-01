@@ -19,7 +19,7 @@ import java.io.*;
 import rikka.shizuku.Shizuku;
 
 /**
- * Onboarding, status and records. The activity is a thin renderer: what to show comes from
+ * Onboarding, status and records. The activity is a renderer: what to show comes from
  * {@link StatusModel}, why it failed from {@link FailureText}, and the export from
  * {@link Diagnostics}. Rendering is event driven; only a running recovery ticks a clock.
  */
@@ -36,17 +36,21 @@ public final class MainActivity extends Activity {
             cHeroFrom,cHeroTo,cHeroText,cHeroMuted,cHeroBadge,cRipple,cRippleOnBrand,cNavBg;
 
     private TextView headline,subtitle,badge,heroNote,deviceDetail,shizukuDetail,ksuDetail,environmentDetail,
-            recordStatus,recordMessage,actionNote,errorDetail,errorGuidance,elapsedText,versionChip,logText;
-    private Button primary,shizukuAction,ksuAction,details;
+            recordStatus,recordMessage,actionNote,errorDetail,errorGuidance,elapsedText,versionChip,logText,checkCount;
+    private Button primary,shizukuAction,ksuAction;
+    private TextView details;
     private Switch allowShellSwitch;
     private TextView allowShellNote;
     private LinearLayout[] pages=new LinearLayout[3];
     private ScrollView[] scrolls=new ScrollView[3];
-    private TextView[] tabs=new TextView[3];
+    private LinearLayout[] tabItems=new LinearLayout[3];
+    private ImageView[] tabIcons=new ImageView[3];
+    private TextView[] tabLabels=new TextView[3];
     private TextView[] stageMarks=new TextView[5];
     private TextView[] stageStates=new TextView[5];
-    private LinearLayout actionBar,progressCard,firstUseCard,errorCard;
+    private LinearLayout actionBar,progressCard,errorCard;
     private View[] statusRows=new View[4];
+    private View[] statusDots=new View[4];
 
     private boolean expanded,updatingSwitch;
     private int page;
@@ -140,7 +144,7 @@ public final class MainActivity extends Activity {
         window.getDecorView().setSystemUiVisibility(flags);
     }
 
-    // ---------------------------------------------------------------- small view helpers
+    // ---------------------------------------------------------------- type scale and view helpers
 
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
 
@@ -148,7 +152,18 @@ public final class MainActivity extends Activity {
         TextView v=new TextView(this);v.setText(value);
         v.setTextSize(TypedValue.COMPLEX_UNIT_SP,size);v.setTextColor(color);
         if(medium)v.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
-        v.setLineSpacing(dp(3),1);v.setIncludeFontPadding(false);return v;
+        v.setLineSpacing(dp(4),1);v.setIncludeFontPadding(false);return v;
+    }
+
+    /** Section heading inside a card: 17sp, medium, tight bottom rhythm. */
+    private TextView section(String title){return text(title,17,cText,true);}
+
+    /** Body copy: 14sp with a 1.35 line height, which is what makes paragraphs readable. */
+    private TextView body(String value){return text(value,14,cMuted,false);}
+
+    /** Overline label: 11sp, wide tracking, used for the hero eyebrow. */
+    private TextView overline(String value,int color){
+        TextView v=text(value,11,color,true);v.setLetterSpacing(0.08f);return v;
     }
 
     private GradientDrawable shape(int fill,int radius){
@@ -163,20 +178,30 @@ public final class MainActivity extends Activity {
         return new RippleDrawable(ColorStateList.valueOf(rippleColor),content,null);
     }
 
+    private View dot(int color){
+        View v=new View(this);
+        v.setBackground(shape(color,99));
+        return v;
+    }
+
+    private void paintDot(View dot,int color){
+        if(dot!=null)dot.setBackground(shape(color,99));
+    }
+
     private LinearLayout column(){LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
 
     private void gap(LinearLayout parent,int height){parent.addView(new Space(this),new LinearLayout.LayoutParams(1,dp(height)));}
 
-    private void divider(LinearLayout parent){
+    private void divider(LinearLayout parent,int leftInset){
         View v=new View(this);v.setBackgroundColor(cLine);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(1));
-        lp.topMargin=dp(12);lp.bottomMargin=dp(12);parent.addView(v,lp);
+        lp.leftMargin=dp(leftInset);parent.addView(v,lp);
     }
 
     private LinearLayout card(LinearLayout parent){
-        LinearLayout c=column();c.setPadding(dp(18),dp(18),dp(18),dp(18));
-        c.setBackground(shape(cSurface,20));
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(14);
+        LinearLayout c=column();c.setPadding(dp(20),dp(18),dp(20),dp(18));
+        c.setBackground(shape(cSurface,18));
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(12);
         parent.addView(c,lp);return c;
     }
 
@@ -196,28 +221,69 @@ public final class MainActivity extends Activity {
         lp.topMargin=dp(10);parent.addView(view,lp);
     }
 
+    /**
+     * One checklist entry: status dot, label, value and a chevron, separated by dividers.
+     * The dot carries the state colour so the value text can stay neutral and readable.
+     */
     private TextView statusRow(LinearLayout parent,int index,String label,View.OnClickListener action){
         LinearLayout row=new LinearLayout(this);
-        row.setGravity(Gravity.CENTER_VERTICAL);row.setMinimumHeight(dp(48));
-        row.setPadding(dp(2),dp(2),dp(2),dp(2));
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setMinimumHeight(dp(56));
         row.setBackground(ripple(cRipple,null));
-        TextView name=text(label,14,cText,true);row.addView(name,new LinearLayout.LayoutParams(0,-2,1));
-        TextView value=text("检查中",13,cMuted,false);
+        row.setPadding(0,0,0,0);
+
+        View marker=dot(cMuted);
+        LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(dp(8),dp(8));
+        dlp.rightMargin=dp(14);row.addView(marker,dlp);
+        statusDots[index]=marker;
+
+        TextView name=text(label,15,cText,false);
+        row.addView(name,new LinearLayout.LayoutParams(0,-2,1));
+
+        TextView value=text("检查中",13,cMuted,true);
         value.setGravity(Gravity.END);row.addView(value);
+
+        TextView chevron=text("›",18,cMuted,false);
+        LinearLayout.LayoutParams clp=new LinearLayout.LayoutParams(-2,-2);
+        clp.leftMargin=dp(8);row.addView(chevron,clp);
+
         row.setFocusable(true);row.setClickable(true);row.setOnClickListener(action);
         statusRows[index]=row;
-        parent.addView(row,new LinearLayout.LayoutParams(-1,-2));return value;
+        parent.addView(row,new LinearLayout.LayoutParams(-1,-2));
+        return value;
     }
 
     private void title(LinearLayout parent,String heading,String detail){
-        parent.addView(text(heading,22,cText,true));gap(parent,7);
-        parent.addView(text(detail,13,cMuted,false));gap(parent,20);
+        parent.addView(text(heading,22,cText,true));gap(parent,6);
+        parent.addView(body(detail));gap(parent,18);
+    }
+
+    /** Numbered step list: a fixed number gutter keeps long Chinese lines scannable. */
+    private void steps(LinearLayout parent,String[] items){
+        for(int i=0;i<items.length;i++){
+            LinearLayout row=new LinearLayout(this);
+            row.setGravity(Gravity.TOP);
+            TextView number=text(String.valueOf(i+1),13,cBrand,true);
+            LinearLayout.LayoutParams nlp=new LinearLayout.LayoutParams(dp(22),-2);
+            row.addView(number,nlp);
+            TextView copy=body(items[i]);copy.setTextColor(cText);
+            row.addView(copy,new LinearLayout.LayoutParams(0,-2,1));
+            LinearLayout.LayoutParams rlp=new LinearLayout.LayoutParams(-1,-2);
+            if(i>0)rlp.topMargin=dp(10);
+            parent.addView(row,rlp);
+        }
     }
 
     private void helpRow(LinearLayout parent,String label,Runnable action){
-        TextView row=text(label+"  ›",14,cText,false);
-        row.setPadding(dp(2),dp(14),dp(2),dp(14));row.setMinHeight(dp(48));
-        row.setBackground(ripple(cRipple,null));row.setFocusable(true);
+        LinearLayout row=new LinearLayout(this);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setMinimumHeight(dp(52));
+        row.setBackground(ripple(cRipple,null));
+        row.setPadding(0,dp(12),0,dp(12));
+        row.setFocusable(true);
+        TextView name=text(label,15,cText,false);
+        row.addView(name,new LinearLayout.LayoutParams(0,-2,1));
+        row.addView(text("›",18,cMuted,false));
         row.setOnClickListener(v->action.run());
         parent.addView(row,new LinearLayout.LayoutParams(-1,-2));
     }
@@ -236,28 +302,37 @@ public final class MainActivity extends Activity {
         frame.addView(content,new LinearLayout.LayoutParams(-1,0,1));
         for(int i=0;i<3;i++){
             ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setClipToPadding(false);
-            LinearLayout body=column();body.setPadding(dp(22),dp(10),dp(22),dp(14));scroll.addView(body);
+            LinearLayout body=column();
+            body.setPadding(dp(20),dp(6),dp(20),dp(16));scroll.addView(body);
             pages[i]=body;scrolls[i]=scroll;content.addView(scroll,new FrameLayout.LayoutParams(-1,-1));
         }
         buildHome(pages[PAGE_HOME]);buildRecords(pages[PAGE_RECORDS]);buildHelp(pages[PAGE_HELP]);
 
-        actionBar=column();actionBar.setPadding(dp(22),dp(10),dp(22),dp(10));actionBar.setBackgroundColor(cBg);
+        actionBar=column();actionBar.setPadding(dp(20),dp(8),dp(20),dp(8));actionBar.setBackgroundColor(cBg);
         primary=button("检查准备状态",v->primaryAction(),true);
         actionBar.addView(primary,new LinearLayout.LayoutParams(-1,-2));
         actionNote=text("仅在本次开机有效",11,cMuted,false);
-        actionNote.setGravity(Gravity.CENTER);gap(actionBar,7);actionBar.addView(actionNote);
+        actionNote.setGravity(Gravity.CENTER);gap(actionBar,6);actionBar.addView(actionNote);
         frame.addView(actionBar);
 
         LinearLayout navigation=new LinearLayout(this);
-        navigation.setPadding(dp(12),dp(2),dp(12),dp(5));navigation.setBackgroundColor(cNavBg);
+        navigation.setPadding(dp(10),dp(4),dp(10),dp(4));navigation.setBackgroundColor(cNavBg);
+        String[] labels={"首页","记录","帮助"};
+        int[] icons={R.drawable.ic_tab_home,R.drawable.ic_tab_records,R.drawable.ic_tab_help};
         for(int i=0;i<3;i++){
             final int index=i;
-            TextView tab=text(new String[]{"首页","记录","帮助"}[i],14,cMuted,true);
-            tab.setGravity(Gravity.CENTER);tab.setMinHeight(dp(48));
-            tab.setBackground(ripple(cRipple,null));
-            tab.setOnClickListener(v->showPage(index));
-            tabs[i]=tab;
-            navigation.addView(tab,new LinearLayout.LayoutParams(0,dp(48),1));
+            LinearLayout item=column();item.setGravity(Gravity.CENTER_HORIZONTAL);
+            item.setBackground(ripple(cRipple,null));item.setFocusable(true);
+            ImageView icon=new ImageView(this);icon.setImageResource(icons[i]);
+            icon.setColorFilter(cMuted);
+            item.addView(icon,new LinearLayout.LayoutParams(dp(22),dp(22)));
+            TextView label=text(labels[i],11,cMuted,true);label.setGravity(Gravity.CENTER);
+            LinearLayout.LayoutParams lblp=new LinearLayout.LayoutParams(-2,-2);lblp.topMargin=dp(3);
+            item.addView(label,lblp);
+            item.setContentDescription(labels[i]+"，第 "+(i+1)+" 项，共 3 项");
+            item.setOnClickListener(v->showPage(index));
+            tabItems[i]=item;tabIcons[i]=icon;tabLabels[i]=label;
+            navigation.addView(item,new LinearLayout.LayoutParams(0,dp(56),1));
         }
         frame.addView(navigation);
         setContentView(frame);
@@ -265,7 +340,7 @@ public final class MainActivity extends Activity {
 
     private View buildHeader(){
         LinearLayout header=new LinearLayout(this);
-        header.setPadding(dp(22),dp(14),dp(22),dp(14));header.setGravity(Gravity.CENTER_VERTICAL);
+        header.setPadding(dp(20),dp(12),dp(20),dp(10));header.setGravity(Gravity.CENTER_VERTICAL);
 
         ImageView icon=new ImageView(this);
         int iconId=getResources().getIdentifier("ic_launcher","mipmap",getPackageName());
@@ -273,18 +348,19 @@ public final class MainActivity extends Activity {
         icon.setImageResource(iconId);
         icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         icon.setContentDescription(null);
-        header.addView(icon,new LinearLayout.LayoutParams(dp(42),dp(42)));
+        header.addView(icon,new LinearLayout.LayoutParams(dp(36),dp(36)));
 
         LinearLayout brand=column();
-        LinearLayout.LayoutParams blp=new LinearLayout.LayoutParams(0,-2,1);blp.leftMargin=dp(12);
-        brand.addView(text("ANB Root",21,cText,true));gap(brand,3);
-        brand.addView(text("荣耀 80 Pro 直屏版",11,cMuted,false));
+        LinearLayout.LayoutParams blp=new LinearLayout.LayoutParams(0,-2,1);blp.leftMargin=dp(11);
+        brand.addView(text("ANB Root",19,cText,true));
+        LinearLayout.LayoutParams blp2=new LinearLayout.LayoutParams(-2,-2);blp2.topMargin=dp(1);
+        brand.addView(text("荣耀 80 Pro 直屏版",11,cMuted,false),blp2);
         header.addView(brand,blp);
 
         versionChip=text(versionName(),11,cBrand,true);
-        versionChip.setPadding(dp(12),dp(8),dp(12),dp(8));
-        versionChip.setBackground(shape(cBrandSoft,12));
-        versionChip.setMinHeight(dp(32));
+        versionChip.setPadding(dp(10),dp(6),dp(10),dp(6));
+        versionChip.setBackground(shape(cBrandSoft,10));
+        versionChip.setMinHeight(dp(28));
         versionChip.setContentDescription("版本 "+versionName()+"，点按查看关于");
         versionChip.setOnClickListener(v->showAbout());
         header.addView(versionChip);
@@ -292,22 +368,31 @@ public final class MainActivity extends Activity {
     }
 
     private void buildHome(LinearLayout root){
-        LinearLayout hero=card(root);hero.setPadding(dp(22),dp(22),dp(22),dp(22));
+        LinearLayout hero=card(root);
+        hero.setPadding(dp(22),dp(20),dp(22),dp(20));
         GradientDrawable background=new GradientDrawable(GradientDrawable.Orientation.TL_BR,
                 new int[]{cHeroFrom,cHeroTo});
-        background.setCornerRadius(dp(24));hero.setBackground(background);
-        badge=text("正在检查",11,cHeroBadge,true);
-        badge.setLetterSpacing(0.06f);hero.addView(badge);gap(hero,14);
-        headline=text("准备你的 Root",26,cHeroText,true);hero.addView(headline);gap(hero,10);
-        subtitle=text("",14,cHeroMuted,false);subtitle.setLineSpacing(dp(4),1);hero.addView(subtitle);gap(hero,17);
-        heroNote=text("ANB-AN00 专用  ·  Shizuku 驱动",11,cHeroMuted,false);hero.addView(heroNote);
+        background.setCornerRadius(dp(22));hero.setBackground(background);
+
+        LinearLayout eyebrowRow=new LinearLayout(this);eyebrowRow.setGravity(Gravity.CENTER_VERTICAL);
+        eyebrowRow.addView(dot(cHeroBadge),new LinearLayout.LayoutParams(dp(6),dp(6)));
+        LinearLayout.LayoutParams elp=new LinearLayout.LayoutParams(-2,-2);elp.leftMargin=dp(7);
+        badge=overline("首次准备",cHeroBadge);
+        eyebrowRow.addView(badge,elp);
+        hero.addView(eyebrowRow);gap(hero,12);
+
+        headline=text("准备你的 Root",24,cHeroText,true);
+        headline.setLineSpacing(dp(2),1);hero.addView(headline);gap(hero,8);
+        subtitle=text("",13,cHeroMuted,false);subtitle.setLineSpacing(dp(5),1);hero.addView(subtitle);gap(hero,14);
+        heroNote=text("ANB-AN00 · MagicOS 9.0.0.230",11,cHeroMuted,false);
+        hero.addView(heroNote);
 
         errorCard=card(root);errorCard.setVisibility(View.GONE);
-        errorCard.setBackground(outline(cWarnSoft,20,cWarn));
-        errorCard.addView(text("需要处理",16,cWarn,true));gap(errorCard,8);
+        errorCard.setBackground(outline(cWarnSoft,18,cWarn));
+        errorCard.addView(section("需要处理"));gap(errorCard,8);
         errorDetail=text("",13,cText,false);errorDetail.setTextIsSelectable(true);errorCard.addView(errorDetail);
         gap(errorCard,4);
-        errorGuidance=text("",13,cMuted,false);errorGuidance.setLineSpacing(dp(4),1);errorCard.addView(errorGuidance);
+        errorGuidance=body("");errorCard.addView(errorGuidance);
         LinearLayout errorActions=new LinearLayout(this);gap(errorCard,12);
         Button save=button("保存诊断记录",v->export(),false);
         Button help=button("查看帮助",v->showPage(PAGE_HELP),false);
@@ -315,24 +400,28 @@ public final class MainActivity extends Activity {
         LinearLayout.LayoutParams hlp=new LinearLayout.LayoutParams(0,-2,1);hlp.leftMargin=dp(10);
         errorActions.addView(help,hlp);errorCard.addView(errorActions);
 
-        firstUseCard=card(root);
-        firstUseCard.addView(text("欢迎使用",16,cText,true));gap(firstUseCard,6);
-        firstUseCard.addView(text("先安装并启动 Shizuku，再准备 KernelSU。下方会逐项检查，并引导你完成首次设置。",13,cMuted,false));
-
         LinearLayout state=card(root);
-        state.addView(text("准备状态",16,cText,true));gap(state,8);
+        LinearLayout stateHead=new LinearLayout(this);stateHead.setGravity(Gravity.CENTER_VERTICAL);
+        stateHead.addView(section("准备状态"),new LinearLayout.LayoutParams(0,-2,1));
+        checkCount=text("",12,cMuted,false);checkCount.setGravity(Gravity.END);
+        stateHead.addView(checkCount);
+        state.addView(stateHead);gap(state,4);
+
         deviceDetail=statusRow(state,0,"设备与系统",v->dialog("支持范围",
                 "荣耀 80 Pro 直屏版（ANB-AN00）\nMagicOS 9.0.0.230\n\n当前版本只支持这一已验证组合。",null,null));
+        divider(state,22);
         shizukuDetail=statusRow(state,1,"Shizuku",v->openPackage(RecoveryEngine.SHIZUKU,
                 "https://shizuku.rikka.app/download/"));
+        divider(state,22);
         ksuDetail=statusRow(state,2,"KernelSU",v->openPackage(RecoveryEngine.KSU,
                 "https://github.com/tiann/KernelSU/releases/tag/v3.3.0"));
+        divider(state,22);
         environmentDetail=statusRow(state,3,"执行环境",v->refreshEnvironment());
-        divider(state);
-        LinearLayout shortcuts=new LinearLayout(this);
-        shizukuAction=button("Shizuku",v->openPackage(RecoveryEngine.SHIZUKU,
+
+        LinearLayout shortcuts=new LinearLayout(this);gap(state,14);
+        shizukuAction=button("打开 Shizuku",v->openPackage(RecoveryEngine.SHIZUKU,
                 "https://shizuku.rikka.app/download/"),false);
-        ksuAction=button("KernelSU",v->openPackage(RecoveryEngine.KSU,
+        ksuAction=button("打开 KernelSU",v->openPackage(RecoveryEngine.KSU,
                 "https://github.com/tiann/KernelSU/releases/tag/v3.3.0"),false);
         shortcuts.addView(shizukuAction,new LinearLayout.LayoutParams(0,-2,1));
         LinearLayout.LayoutParams klp=new LinearLayout.LayoutParams(0,-2,1);klp.leftMargin=dp(10);
@@ -340,14 +429,17 @@ public final class MainActivity extends Activity {
         state.addView(shortcuts);
 
         progressCard=card(root);
-        progressCard.addView(text("本次进度",16,cText,true));gap(progressCard,4);
-        elapsedText=text("",11,cMuted,false);progressCard.addView(elapsedText);gap(progressCard,10);
+        LinearLayout progressHead=new LinearLayout(this);progressHead.setGravity(Gravity.CENTER_VERTICAL);
+        progressHead.addView(section("本次进度"),new LinearLayout.LayoutParams(0,-2,1));
+        elapsedText=text("",12,cMuted,false);
+        progressHead.addView(elapsedText);
+        progressCard.addView(progressHead);gap(progressCard,12);
         for(int i=0;i<5;i++){
             LinearLayout row=new LinearLayout(this);
-            row.setGravity(Gravity.CENTER_VERTICAL);row.setMinimumHeight(dp(34));
-            TextView mark=text("○",14,cMuted,true);
+            row.setGravity(Gravity.CENTER_VERTICAL);row.setMinimumHeight(dp(32));
+            TextView mark=text("○",13,cMuted,true);
             mark.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            mark.setWidth(dp(24));row.addView(mark);
+            mark.setWidth(dp(22));row.addView(mark);
             TextView label=text(STAGE_LABELS[i],13,cMuted,false);
             row.addView(label,new LinearLayout.LayoutParams(0,-2,1));
             TextView stateText=text("等待",12,cMuted,false);
@@ -357,18 +449,17 @@ public final class MainActivity extends Activity {
         }
 
         LinearLayout options=card(root);
-        options.addView(text("恢复选项",16,cText,true));gap(options,10);
+        options.addView(section("恢复选项"));gap(options,6);
         allowShellSwitch=new Switch(this);
         allowShellSwitch.setText("允许调试工具使用 Root");
-        allowShellSwitch.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
+        allowShellSwitch.setTextSize(TypedValue.COMPLEX_UNIT_SP,15);
         allowShellSwitch.setTextColor(cText);
         allowShellSwitch.setMinHeight(dp(52));allowShellSwitch.setSwitchPadding(dp(12));
         allowShellSwitch.setChecked(engine.allowShellSelected());
         options.addView(allowShellSwitch,new LinearLayout.LayoutParams(-1,-2));
-        gap(options,8);
-        options.addView(text("开启后，ADB、Shizuku 等以调试身份运行的工具可直接获准使用 Root，无需逐项授权。普通应用仍由 KernelSU 单独管理。日常使用建议关闭。",13,cMuted,false));
-        gap(options,10);
-        allowShellNote=text("",12,cWarn,false);allowShellNote.setLineSpacing(dp(3),1);options.addView(allowShellNote);
+        gap(options,4);
+        allowShellNote=text("",12,cWarn,false);allowShellNote.setLineSpacing(dp(4),1);
+        options.addView(allowShellNote);
         allowShellSwitch.setOnCheckedChangeListener((view,enabled)->{
             if(updatingSwitch)return;
             if(enabled==engine.allowShellSelected())return;
@@ -380,59 +471,80 @@ public final class MainActivity extends Activity {
                         if(!engine.selectAllowShell(true))toast("当前状态已变化，未开启选项");refresh();})
                     .setNegativeButton("保持关闭",null).show();
         });
-
-        LinearLayout how=card(root);
-        how.addView(text("重启后怎么做？",16,cText,true));gap(how,10);
-        how.addView(text("①  启动 Shizuku\n②  返回这里恢复 Root\n③  在 KernelSU 管理权限",13,cMuted,false));
-        full(how,button("查看完整指南",v->showPage(PAGE_HELP),false));
     }
 
     private void buildRecords(LinearLayout root){
-        title(root,"运行记录","查看最近的执行状态，或保存诊断记录。");
+        title(root,"运行记录","查看最近一次执行的状态，或保存诊断记录。");
         LinearLayout summary=card(root);
         recordStatus=text("尚未开始",18,cText,true);summary.addView(recordStatus);
-        gap(summary,8);
-        recordMessage=text("",13,cMuted,false);recordMessage.setLineSpacing(dp(4),1);summary.addView(recordMessage);
+        gap(summary,6);
+        recordMessage=body("");summary.addView(recordMessage);
 
         LinearLayout tools=card(root);
-        tools.addView(text("排查与支持",16,cText,true));gap(tools,6);
-        tools.addView(text("遇到问题时先保存记录；不要连续重复启动恢复。",13,cMuted,false));
-        full(tools,button("保存诊断记录",v->export(),false));
-        full(tools,button("复制记录",v->copyLog(),false));
-        details=button("展开详细记录",v->{expanded=!expanded;refresh();},false);
-        full(tools,details);
+        tools.addView(section("排查与支持"));gap(tools,4);
+        tools.addView(body("遇到问题时先保存记录；不要连续重复启动恢复。"));
+        LinearLayout actions=new LinearLayout(this);gap(tools,14);
+        actions.addView(button("保存诊断记录",v->export(),false),new LinearLayout.LayoutParams(0,-2,1));
+        LinearLayout.LayoutParams clp=new LinearLayout.LayoutParams(0,-2,1);clp.leftMargin=dp(10);
+        actions.addView(button("复制记录",v->copyLog(),false),clp);
+        tools.addView(actions);
+
+        details=text("",14,cBrand,true);
+        details.setPadding(dp(2),dp(14),dp(2),dp(14));details.setMinHeight(dp(48));
+        details.setBackground(ripple(cRipple,null));
+        details.setOnClickListener(v->{expanded=!expanded;refresh();});
+        tools.addView(details,new LinearLayout.LayoutParams(-1,-2));
         logText=text("",11,cMuted,false);
         logText.setTypeface(Typeface.MONOSPACE);
         logText.setTextIsSelectable(true);
-        logText.setPadding(0,dp(16),0,0);
+        logText.setPadding(0,dp(4),0,dp(4));
         logText.setVisibility(View.GONE);
         tools.addView(logText,new LinearLayout.LayoutParams(-1,-2));
 
         LinearLayout management=card(root);
-        management.addView(text("KernelSU 状态未更新？",16,cText,true));gap(management,6);
-        management.addView(text("刷新只会重新打开管理器，不会再次执行 Root 恢复。",13,cMuted,false));
+        management.addView(section("KernelSU 状态未更新？"));gap(management,4);
+        management.addView(body("刷新只会重新打开管理器，不会再次执行 Root 恢复。"));
         full(management,button("刷新 KernelSU",v->engine.refreshManagerOnly(),false));
     }
 
     private void buildHelp(LinearLayout root){
         title(root,"使用帮助","每次开机，一次清晰的恢复流程。");
+
         LinearLayout start=card(root);
-        start.addView(text("第一次使用",17,cText,true));gap(start,10);
-        start.addView(text("1. 安装官方 Shizuku 与 KernelSU v3.3.0。\n2. 在 Shizuku 中通过无线调试配对并启动。\n3. 返回 ANB Root，允许使用 Shizuku。\n4. 检查通过后，完成首次准备并开始恢复。\n5. 如提示授权，在 KernelSU 中允许 ANB Root，然后返回验证。",14,cMuted,false));
+        start.addView(section("第一次使用"));gap(start,12);
+        steps(start,new String[]{
+                "安装官方 Shizuku 与 KernelSU v3.3.0。",
+                "在 Shizuku 中通过无线调试配对并启动。",
+                "返回 ANB Root，允许使用 Shizuku。",
+                "检查通过后，完成首次准备并开始恢复。",
+                "如提示授权，在 KernelSU 中允许 ANB Root，然后返回验证。"});
+
         LinearLayout reboot=card(root);
-        reboot.addView(text("每次重启之后",17,cText,true));gap(reboot,10);
-        reboot.addView(text("解锁手机，等待开机约 90 秒。重新启动 Shizuku，再回到 ANB Root 点击恢复。\n\n只有显示“Root 已验证”后，才确认本次权限可用。Shizuku 和临时 Root 都不会自动跨重启保持运行。",14,cMuted,false));
+        reboot.addView(section("每次重启之后"));gap(reboot,12);
+        steps(reboot,new String[]{
+                "解锁手机，等待开机约 90 秒。",
+                "重新启动 Shizuku。",
+                "回到 ANB Root 点击恢复，看到“Root 已验证”才算成功。"});
+        gap(reboot,10);
+        reboot.addView(body("Shizuku 和临时 Root 都不会跨重启保持运行。"));
+
         LinearLayout faq=card(root);
-        faq.addView(text("常见问题",17,cText,true));gap(faq,6);
+        faq.addView(section("常见问题"));gap(faq,2);
         helpRow(faq,"Shizuku 未运行或无法授权",()->dialog("重新连接 Shizuku","先在 Shizuku 中通过无线调试启动服务，再返回本 App。若曾拒绝授权，可在 Shizuku 的应用管理中重新允许 ANB Root。\n\n关闭开发者选项或撤销配对后，需要先在手机上重新开启调试、配对并启动。","打开 Shizuku",()->openPackage(RecoveryEngine.SHIZUKU,"https://shizuku.rikka.app/download/")));
+        divider(faq,0);
         helpRow(faq,"KernelSU 显示“未安装”",()->dialog("刷新管理器状态","恢复完成后，旧的管理器进程可能仍显示过时状态。刷新会停止并重新打开 KernelSU，不会再次提权。","刷新 KernelSU",()->engine.refreshManagerOnly()));
+        divider(faq,0);
         helpRow(faq,"恢复超时，或手机重启了",()->dialog("先确认状态","不要重复运行同一次恢复。先保存诊断记录；若本次状态无法确认，请完整重启手机，再启动 Shizuku 后重试。","查看记录",()->showPage(PAGE_RECORDS)));
+        divider(faq,0);
         helpRow(faq,"升级系统后还能使用吗？",()->dialog("系统版本支持","本版本仅适配 ANB-AN00 的 MagicOS 9.0.0.230。升级后若内核不匹配，App 会关闭恢复入口；需要重新确认适配，不能套用旧版文件。",null,null));
+        divider(faq,0);
         helpRow(faq,"卸载 App 会立即解除 Root 吗？",()->dialog("临时 Root 的有效期","卸载 App 不会立即卸载当前已加载的内核模块。完整重启会结束本次临时 Root；之后不再启动恢复即可。",null,null));
+        divider(faq,0);
         helpRow(faq,"允许调试工具使用 Root 是什么？",()->dialog("调试工具的 Root 权限","默认关闭。开启后，ADB、Shizuku 等以 shell 身份运行的工具可直接获准使用 Root，普通应用仍由 KernelSU 单独授权。\n\n该选择会被记住，只在恢复加载模块时设置。已有 Root 时不能即时切换；请完整重启手机，在恢复前修改。关闭选项仅取消此自动授权，不会撤销 KernelSU 中已有的其他授权。",null,null));
+
         LinearLayout privacy=card(root);
-        privacy.addView(text("本地运行，由你掌控",17,cText,true));gap(privacy,8);
-        privacy.addView(text("App 不申请联网权限，不上传运行记录。诊断文件只会保存到你选择的位置。日志可能含设备版本和运行信息，分享前可以先查看。",13,cMuted,false));
+        privacy.addView(section("本地运行，由你掌控"));gap(privacy,8);
+        privacy.addView(body("App 不申请联网权限，不上传运行记录。诊断文件只会保存到你选择的位置。日志可能含设备版本和运行信息，分享前可以先查看。"));
         full(privacy,button("关于与开源许可",v->showAbout(),false));
     }
 
@@ -448,30 +560,38 @@ public final class MainActivity extends Activity {
         set(headline,headlineText(snapshot.headline));
         set(subtitle,bodyText(snapshot.headline,busy));
         set(heroNote,engine.phase==RecoveryEngine.Phase.SUCCESS
-                ?"本次开机有效  ·  重启后需重新恢复"
-                :"ANB-AN00 专用  ·  Shizuku 驱动");
+                ?"ANB-AN00 · 本次开机有效，重启后需重新恢复"
+                :"ANB-AN00 · MagicOS 9.0.0.230");
 
-        set(deviceDetail,engine.compatible()?"已匹配":"不受支持");
-        deviceDetail.setTextColor(engine.compatible()?cBrand:cWarn);
-        String shizuku="待安装";int shizukuColor=cWarn;
+        boolean compatible=engine.compatible();
+        set(deviceDetail,compatible?"已匹配":"不受支持");
+        paintDot(statusDots[0],compatible?cBrand:cWarn);
+
+        String shizuku="待安装";int shizukuColor=cWarn;boolean shizukuReady=false;
         if(engine.installed(RecoveryEngine.SHIZUKU)){
             try{
                 if(!Shizuku.pingBinder())shizuku="待启动";
                 else if(Shizuku.getVersion()<13)shizuku="待更新";
                 else if(Shizuku.checkSelfPermission()!=PackageManager.PERMISSION_GRANTED)shizuku="待授权";
                 else if(Shizuku.getUid()!=2000)shizuku="需无线调试启动";
-                else{shizuku="已连接";shizukuColor=cBrand;}
+                else{shizuku="已连接";shizukuColor=cBrand;shizukuReady=true;}
             }catch(Exception e){shizuku="连接已断开";}
         }
         set(shizukuDetail,shizuku);shizukuDetail.setTextColor(shizukuColor);
+        paintDot(statusDots[1],shizukuReady?cBrand:cWarn);
+
         boolean ksu=engine.installed(RecoveryEngine.KSU);
         set(ksuDetail,ksu?"已安装":"待安装");ksuDetail.setTextColor(ksu?cBrand:cWarn);
+        paintDot(statusDots[2],ksu?cBrand:cWarn);
+
         set(environmentDetail,checking?"检测中…":engine.environmentReady?"已通过":"待检测");
         environmentDetail.setTextColor(engine.environmentReady?cBrand:cMuted);
+        paintDot(statusDots[3],engine.environmentReady?cBrand:cMuted);
+
+        int ready=(compatible?1:0)+(shizukuReady?1:0)+(ksu?1:0)+(engine.environmentReady?1:0);
+        set(checkCount,ready+"/4");
 
         updateRowDescriptions();
-        firstUseCard.setVisibility(setup?View.GONE:View.VISIBLE);
-
         updatingSwitch=true;
         allowShellSwitch.setChecked(engine.allowShellSelected());
         updatingSwitch=false;
@@ -480,7 +600,7 @@ public final class MainActivity extends Activity {
         set(allowShellNote,engine.modulePresent
                 ?"本次 Root 已加载，不能即时更改。请完整重启后，在恢复前设置。"
                 :busy||checking?"正在处理，本次恢复选项已锁定。"
-                :"默认关闭，会记住你的选择。已开始的恢复不会改用新选项；完整重启后按新选择恢复。");
+                :"开启后 ADB、Shizuku 等调试工具可直接使用 Root；日常建议关闭。");
 
         boolean failed=engine.phase==RecoveryEngine.Phase.FAILED;
         errorCard.setVisibility(failed?View.VISIBLE:View.GONE);
@@ -501,7 +621,7 @@ public final class MainActivity extends Activity {
         enable(primary,!busy&&!checking&&snapshot.action!=StatusModel.Action.NONE);
         set(actionNote,actionNoteText(busy,checking,gate));
 
-        set(details,expanded?"收起详细记录":"展开详细记录");
+        set(details,expanded?"收起详细记录":(engine.logs().isEmpty()?"展开详细记录":"展开详细记录 · "+engine.logs().split("\n").length+" 行"));
         logText.setVisibility(expanded?View.VISIBLE:View.GONE);
         if(expanded){
             String current=engine.logs();
@@ -561,7 +681,7 @@ public final class MainActivity extends Activity {
         }
         if(busy){
             long seconds=busySince==0?0:Math.max(0,(SystemClock.elapsedRealtime()-busySince)/1000);
-            set(elapsedText,String.format(java.util.Locale.CHINA,"已用 %d:%02d · 通常 1–3 分钟",seconds/60,seconds%60));
+            set(elapsedText,String.format(java.util.Locale.CHINA,"已用 %d:%02d",seconds/60,seconds%60));
             if(step!=lastAnnouncedStep){
                 lastAnnouncedStep=step;
                 progressCard.announceForAccessibility(STAGE_LABELS[Math.min(4,step)]+"，进行中");
@@ -682,10 +802,10 @@ public final class MainActivity extends Activity {
         for(int i=0;i<3;i++){
             scrolls[i].setVisibility(i==page?View.VISIBLE:View.GONE);
             boolean selected=i==page;
-            tabs[i].setTextColor(selected?cBrand:cMuted);
-            tabs[i].setBackground(selected?shape(cBrandTint,14):ripple(cRipple,null));
-            tabs[i].setSelected(selected);
-            tabs[i].setContentDescription(tabs[i].getText()+"，第 "+(i+1)+" 项，共 3 项，"
+            tabLabels[i].setTextColor(selected?cBrand:cMuted);
+            tabIcons[i].setColorFilter(selected?cBrand:cMuted);
+            tabItems[i].setSelected(selected);
+            tabItems[i].setContentDescription(tabLabels[i].getText()+"，第 "+(i+1)+" 项，共 3 项，"
                     +(selected?"已选中":"未选中"));
         }
         actionBar.setVisibility(page==PAGE_HOME?View.VISIBLE:View.GONE);
@@ -752,7 +872,7 @@ public final class MainActivity extends Activity {
     private void startRecovery(){
         if(engine.busy.get()||engine.checking){toast("正在处理，请稍候");refresh();return;}
         if(!setup()){toast("请先完成首次准备");refresh();return;}
-        if(engine.gate()!=Readiness.Gate.READY){refresh();return;}
+        if(engine.gate()!=Readiness.Gate.READY){toast("当前状态已变化，请按首页提示重新准备");refresh();return;}
         if(Build.VERSION.SDK_INT>=33
                 &&checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED
                 &&!getSharedPreferences("ui",0).getBoolean("notif_asked",false)){
