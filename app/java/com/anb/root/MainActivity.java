@@ -48,11 +48,11 @@ public final class MainActivity extends Activity {
     private TextView[] tabLabels=new TextView[3];
     private TextView[] stageMarks=new TextView[5];
     private TextView[] stageStates=new TextView[5];
-    private LinearLayout actionBar,progressCard,errorCard;
+    private LinearLayout actionBar,progressCard,errorCard,allowShellRow;
     private View[] statusRows=new View[4];
     private View[] statusDots=new View[4];
 
-    private boolean expanded,updatingSwitch;
+    private boolean expanded,updatingSwitch,ticking;
     private int page;
     private String shownLog="";
     private long lastPrimaryTap,busySince;
@@ -71,7 +71,7 @@ public final class MainActivity extends Activity {
 
     private final Runnable busyTick=new Runnable(){public void run(){
         if(isFinishing())return;
-        if(!engine.busy.get()){refresh();return;}
+        if(!engine.busy.get()){ticking=false;refresh();return;}
         updateProgress();
         if(engine.phase!=lastPhase){lastPhase=engine.phase;refresh();}
         main.postDelayed(this,1000);
@@ -104,7 +104,7 @@ public final class MainActivity extends Activity {
         if(engine.busy.get())main.post(busyTick);
     }
 
-    @Override protected void onPause(){main.removeCallbacks(busyTick);super.onPause();}
+    @Override protected void onPause(){ticking=false;main.removeCallbacks(busyTick);super.onPause();}
 
     @Override protected void onDestroy(){
         main.removeCallbacks(busyTick);
@@ -310,9 +310,10 @@ public final class MainActivity extends Activity {
 
         actionBar=column();actionBar.setPadding(dp(20),dp(8),dp(20),dp(8));actionBar.setBackgroundColor(cBg);
         primary=button("检查准备状态",v->primaryAction(),true);
+        primary.setSingleLine(true);
         actionBar.addView(primary,new LinearLayout.LayoutParams(-1,-2));
         actionNote=text("仅在本次开机有效",11,cMuted,false);
-        actionNote.setGravity(Gravity.CENTER);gap(actionBar,6);actionBar.addView(actionNote);
+        actionNote.setGravity(Gravity.CENTER);actionNote.setSingleLine(true);gap(actionBar,6);actionBar.addView(actionNote);
         frame.addView(actionBar);
 
         LinearLayout navigation=new LinearLayout(this);
@@ -450,13 +451,18 @@ public final class MainActivity extends Activity {
 
         LinearLayout options=card(root);
         options.addView(section("恢复选项"));gap(options,6);
+        allowShellRow=new LinearLayout(this);
+        allowShellRow.setGravity(Gravity.CENTER_VERTICAL);allowShellRow.setMinimumHeight(dp(52));
+        allowShellRow.setBackground(ripple(cRipple,null));allowShellRow.setFocusable(true);
+        allowShellRow.addView(text("允许调试工具使用 Root",15,cText,false),
+                new LinearLayout.LayoutParams(0,-2,1));
         allowShellSwitch=new Switch(this);
-        allowShellSwitch.setText("允许调试工具使用 Root");
-        allowShellSwitch.setTextSize(TypedValue.COMPLEX_UNIT_SP,15);
-        allowShellSwitch.setTextColor(cText);
-        allowShellSwitch.setMinHeight(dp(52));allowShellSwitch.setSwitchPadding(dp(12));
+        allowShellSwitch.setMinHeight(dp(48));
+        allowShellSwitch.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         allowShellSwitch.setChecked(engine.allowShellSelected());
-        options.addView(allowShellSwitch,new LinearLayout.LayoutParams(-1,-2));
+        allowShellRow.addView(allowShellSwitch);
+        allowShellRow.setOnClickListener(v->allowShellSwitch.toggle());
+        options.addView(allowShellRow,new LinearLayout.LayoutParams(-1,-2));
         gap(options,4);
         allowShellNote=text("",12,cWarn,false);allowShellNote.setLineSpacing(dp(4),1);
         options.addView(allowShellNote);
@@ -621,10 +627,13 @@ public final class MainActivity extends Activity {
         enable(primary,!busy&&!checking&&snapshot.action!=StatusModel.Action.NONE);
         set(actionNote,actionNoteText(busy,checking,gate));
 
-        set(details,expanded?"收起详细记录":(engine.logs().isEmpty()?"展开详细记录":"展开详细记录 · "+engine.logs().split("\n").length+" 行"));
+        String logDump=engine.logs();
+        int logLines=logDump.isEmpty()?0:logDump.split("\n").length;
+        set(details,expanded?"收起详细记录"
+                :logLines==0?"展开详细记录":"展开详细记录 · "+logLines+" 行");
         logText.setVisibility(expanded?View.VISIBLE:View.GONE);
         if(expanded){
-            String current=engine.logs();
+            String current=logDump;
             if(!current.equals(shownLog)){
                 set(logText,current.isEmpty()?"暂无记录。完成检查或恢复后，会显示在这里。":current);
                 shownLog=current;
@@ -634,8 +643,9 @@ public final class MainActivity extends Activity {
         if(busy){
             if(!getWindow().getDecorView().getKeepScreenOn())
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            if(busySince==0){
-                busySince=SystemClock.elapsedRealtime();
+            if(busySince==0)busySince=SystemClock.elapsedRealtime();
+            if(!ticking){
+                ticking=true;
                 main.removeCallbacks(busyTick);main.post(busyTick);
             }
         }else{
@@ -684,7 +694,8 @@ public final class MainActivity extends Activity {
             set(elapsedText,String.format(java.util.Locale.CHINA,"已用 %d:%02d",seconds/60,seconds%60));
             if(step!=lastAnnouncedStep){
                 lastAnnouncedStep=step;
-                progressCard.announceForAccessibility(STAGE_LABELS[Math.min(4,step)]+"，进行中");
+                if(progressCard.getVisibility()==View.VISIBLE)
+                    progressCard.announceForAccessibility(STAGE_LABELS[Math.min(4,step)]+"，进行中");
             }
         }else{
             set(elapsedText,"");
