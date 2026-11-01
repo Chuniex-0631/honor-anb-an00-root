@@ -1,2 +1,3 @@
 5760e3295fc6dfd695f95d3dc15ed03497e6e7400ab94b74fdeca15940408dfc  ANB-Root-2.2.0.apk
 d7aca61376e9cc6f0b57d15ed2bae464e50e95cb562f334d71e0bed4007cf1a0  ANB-Root-2.2.0.zip
+a51edf0d169d7d4faf0b978ab6c0c3e4fa36e3092adf4cfe65264e8e781c4b4f  ANB-Root-2.3.0.apk

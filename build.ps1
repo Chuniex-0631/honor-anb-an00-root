@@ -23,11 +23,13 @@ New-Item -ItemType Directory -Force $generated,(Join-Path $out 'classes'),(Join-
 if ($LASTEXITCODE -ne 0) { throw 'Dependency verification failed.' }
 $jars = @('api.jar','provider.jar','aidl.jar','shared.jar','annotation.jar') | ForEach-Object { Join-Path (Join-Path $root 'deps') $_ }
 $classpath = (@($AndroidJar) + $jars) -join [IO.Path]::PathSeparator
-$release = Get-Content -LiteralPath (Join-Path $root 'release/v2.2.0.json') -Raw | ConvertFrom-Json
+$release = Get-Content -LiteralPath (Join-Path $root 'release/current.json') -Raw | ConvertFrom-Json
+$release = Get-Content -LiteralPath (Join-Path $root $release.metadata) -Raw | ConvertFrom-Json
 & (Join-Path $BuildToolsPath 'aapt2.exe') compile --dir (Join-Path $app 'res') -o (Join-Path $out 'res.zip')
 if ($LASTEXITCODE -ne 0) { throw 'Resource compile failed.' }
 & (Join-Path $BuildToolsPath 'aapt2.exe') link -o (Join-Path $out 'base.apk') -I $AndroidJar `
     --manifest (Join-Path $app 'AndroidManifest.xml') -R (Join-Path $out 'res.zip') -A (Join-Path $app 'assets') `
+    --java $generated `
     --min-sdk-version 26 --target-sdk-version 35 --version-code $release.version_code --version-name $release.version --auto-add-overlay
 if ($LASTEXITCODE -ne 0) { throw 'Resource link failed.' }
 & (Join-Path $BuildToolsPath 'aidl.exe') ('-p' + $framework) ('-I' + (Join-Path $app 'aidl')) ('-o' + $generated) (Join-Path $app 'aidl/com/anb/root/IShellService.aidl')

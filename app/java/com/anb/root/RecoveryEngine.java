@@ -14,6 +14,7 @@ public final class RecoveryEngine {
     public static final String KERNEL="5.10.236-android12-9-gd671cf8c2b02";
     public static final String SHIZUKU="moe.shizuku.privileged.api", KSU="me.weishu.kernelsu";
     static final String ROOT="/data/local/tmp/anb_root_runs";
+    static final String LOG_NAME="recovery.log";
     static final String[] FILES={"exploit","kernelsu.ko","ksud","magiskpolicy","load_ko","kmsg_dumper","ksu_rules","ksu_loader.tmpl"};
     public enum Phase { IDLE,CHECKING,PREPARING,RUNNING,LOADING,VERIFYING,WAIT_AUTH,SUCCESS,FAILED }
     private static RecoveryEngine instance;
@@ -32,21 +33,13 @@ public final class RecoveryEngine {
     private volatile Progress progress;
     private RecoveryEngine(Context c) {
         context=c;
-        // Remove the retired client's local credentials; never import or use ADB keys in v2.
-        context.getSharedPreferences("adbkey",0).edit().clear().apply();
-        File ext=context.getExternalFilesDir(null);
-        if(ext!=null)for(String name:new String[]{"adbkey","adb_pub.txt"})new File(ext,name).delete();
-        try { log.append(read(new File(context.getFilesDir(),"recovery-v2.log"))); }
+        try { log.append(read(new File(context.getFilesDir(),LOG_NAME))); }
         catch(Exception ignored) { }
     }
     public boolean compatible() { return "ANB-AN00".equals(android.os.Build.MODEL) && KERNEL.equals(System.getProperty("os.version")); }
     public boolean installed(String pkg) {
         try { context.getPackageManager().getPackageInfo(pkg,0);return true; }
         catch(PackageManager.NameNotFoundException e) { return false; }
-    }
-    public String version(String pkg) {
-        try{return context.getPackageManager().getPackageInfo(pkg,0).versionName;}
-        catch(Exception e){return "未安装";}
     }
     public Readiness.Gate gate() {
         boolean alive=false,modern=false,grant=false,shell=false;
@@ -67,12 +60,21 @@ public final class RecoveryEngine {
                 .putBoolean(RecoveryOptions.ALLOW_SHELL,enabled).commit();
     }
     public synchronized String logs() { return log.toString(); }
+    /**
+     * Append the line instead of rewriting the whole file: a recovery writes dozens of lines and
+     * the old version re-serialised up to 180 KB each time. Rewrite only when the buffer is trimmed.
+     */
     public synchronized void record(String text) {
-        String line=new java.text.SimpleDateFormat("HH:mm:ss",Locale.CHINA).format(new Date())+"  "+text+"\n";
+        String line=new java.text.SimpleDateFormat("HH:mm:ss.SSS",Locale.CHINA).format(new Date())+"  "+text+"\n";
         log.append(line);
-        if(log.length()>180000)log.delete(0,log.length()-120000);
-        try(FileOutputStream out=new FileOutputStream(new File(context.getFilesDir(),"recovery-v2.log"),false)) {
-            out.write(log.toString().getBytes(StandardCharsets.UTF_8));
+        File file=new File(context.getFilesDir(),LOG_NAME);
+        if(log.length()>180000) {
+            log.delete(0,log.length()-120000);
+            try { write(file,log.toString()); } catch(IOException ignored) { }
+            return;
+        }
+        try(OutputStream out=new FileOutputStream(file,true)) {
+            out.write(line.getBytes(StandardCharsets.UTF_8));
         }catch(IOException ignored){}
     }
     private void status(Phase p,int stage,String heading,String detail) {
@@ -190,22 +192,10 @@ public final class RecoveryEngine {
         save(boot,"verified");
         File ext=context.getExternalFilesDir(null);
         if(ext!=null)write(new File(ext,"verification.txt"),"boot_count="+boot+"\ntransport=Shizuku UserService\nkernel="+KERNEL+"\n"+result.output+"SELinux="+enforce+"\n");
-        retireLegacyTcp();
         boolean manager=refreshManager(shell);
         status(Phase.SUCCESS,5,"Root 已验证",manager
                 ?"KernelSU 管理器已重新启动。请确认首页显示“工作中”；本次开机有效，SELinux 为 Enforcing。"
                 :"Root 与 Enforcing 已验证；管理器刷新未完成，请在页面点击“刷新 KernelSU”。无需重新恢复。");
-    }
-    private void retireLegacyTcp() {
-        SharedPreferences migration=context.getSharedPreferences("migration",0);
-        if(migration.getBoolean("legacy_tcp_retired",false))return;
-        try {
-            CommandRunner.Result result=CommandRunner.run(new String[]{"/system/bin/su","-c",
-                    "setprop persist.adb.tcp.port -1 && setprop service.adb.tcp.port -1 && getprop persist.adb.tcp.port && getprop service.adb.tcp.port"},8000);
-            if(result.exitCode==0 && result.output.trim().equals("-1\n-1")) {
-                migration.edit().putBoolean("legacy_tcp_retired",true).apply();record("旧版固定 TCP 设置已清理；无线调试由 Shizuku 管理。");
-            } else record("旧版 TCP 设置清理未确认；App 仍只使用 Shizuku，不会回退旧连接。");
-        }catch(Exception e){record("旧版设置清理未完成："+friendly(e));}
     }
     private void waitAuth(ShizukuShell shell,String boot)throws Exception {
         save(boot,"waiting_authorization");

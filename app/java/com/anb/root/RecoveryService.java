@@ -21,8 +21,10 @@ public final class RecoveryService extends Service {
     }
     public int onStartCommand(Intent intent,int flags,int startId) {
         startForeground(12,notification("正在检查恢复状态"));
-        RecoveryEngine.get(this).start(text->main.post(()->getSystemService(NotificationManager.class).notify(12,notification(text))),
+        boolean accepted=RecoveryEngine.get(this).start(
+                text->main.post(()->getSystemService(NotificationManager.class).notify(12,notification(text))),
                 ()->main.post(()->{stopForeground(STOP_FOREGROUND_REMOVE);stopSelf();}));
+        if(!accepted){stopForeground(STOP_FOREGROUND_REMOVE);stopSelf();}
         return START_NOT_STICKY;
     }
     public IBinder onBind(Intent intent){return null;}
