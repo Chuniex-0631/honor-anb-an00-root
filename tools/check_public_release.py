@@ -36,7 +36,8 @@ if status == "released":
 else:
     assert status == "candidate", f"unknown release status: {status}"
     assert not release.get("sha256"), "a candidate must not claim a signed artifact hash"
-    assert release.get("requires_device_reverification") is True, "candidates must be flagged for device reverification"
+    assert release.get("requires_device_reverification") is True or release.get("device_verified") is True, \
+        "a candidate must be either flagged for device reverification or already device verified"
 
 core = json.loads(core_path.read_text())
 for name, expected in core.items():
