@@ -1,0 +1,4 @@
+package android.content;import java.util.*;public class SharedPreferences {
+ private final Map<String,Object> values=new HashMap<>(); public synchronized String getString(String k,String d){return (String)values.getOrDefault(k,d);} public synchronized boolean getBoolean(String k,boolean d){return (Boolean)values.getOrDefault(k,d);} public Editor edit(){return new Editor();}
+ public class Editor {private final Map<String,Object> staged=new HashMap<>(); public Editor putString(String k,String v){staged.put(k,v);return this;}public Editor putBoolean(String k,boolean v){staged.put(k,v);return this;}public boolean commit(){synchronized(SharedPreferences.this){values.putAll(staged);}return true;}}
+}

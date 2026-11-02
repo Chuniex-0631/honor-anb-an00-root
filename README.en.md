@@ -1,8 +1,12 @@
 # ANB Root — HONOR 80 Pro Flat / ANB-AN00 Temporary Root
 
+**2.3.3 audit fixes:** exact model/SDK/firmware/kernel gating, actionable failures, SELinux guidance, shared task ownership, duplicate foreground-service protection, process and UI lifecycle cleanup, asynchronous diagnostic export. Verification/progress checks cannot start a new recovery chain. The eight payload files and AIDL are unchanged; application control code has changed. See the [closure and test limits](docs/AUDIT_2.3.3.md).
+
+The control changes have passed automated and simulated execution tests, but were not reverified by performing root/reboot on a physical device in this release session. Earlier device results do not substitute for that test.
+
 Version 2.2.0 adds **Allow debugging tools to use Root**, off by default on install or upgrade. When enabled, shell (UID 2000) tools such as ADB and Shizuku are automatically allowed to request root; ordinary apps still need KernelSU authorization. The choice is remembered and fixed when a new recovery starts. It cannot change an already loaded module: fully reboot, change the option, then restore. Existing attempts only resume monitoring with their original parameters. Turning this option off does not revoke other KernelSU grants.
 
-Version 2.3.0 is a UI and accessibility release: dark theme, event-driven rendering (no per-second full redraw or main-thread binder polling), an in-page failure card, a five-stage progress timeline, 48dp touch targets and explicit screen-reader semantics. The execution core, the AIDL interface and all eight payload files are byte-identical to 2.2.0, so the recovery chain is unchanged. Three new pure-Java models are unit tested and the full APK builds locally, but **2.3.0 has not been run on a device; it is a candidate and no signed APK is published**. See [the audit](docs/AUDIT_2.3.0.md).
+Versions 2.3.0–2.3.2 introduced dark mode, progress and accessibility changes. The old audit's claims about completed fixes and an entirely unchanged execution core are corrected in [the 2.3.3 closure](docs/AUDIT_2.3.3.md). Only the payloads and AIDL remain byte-identical in 2.3.3; control code has been updated.
 
 The eight payload files are unchanged. Both loader branches and the build are tested; the new enabled mode still needs a physical ANB-AN00 retest.
 

@@ -29,10 +29,15 @@ assert release["model"] == "ANB-AN00"
 assert release["transport"] == "Shizuku UserService" and not release["persistent_root"]
 assert release["artifact"] == f"ANB-Root-{version}.apk", "artifact name must carry the version"
 assert not release["allow_shell_default"] and release["allow_shell_change_requires_full_reboot"]
+assert release["sdk"] == 35 and release["firmware_display"] == "ANB-AN00 9.0.0.230(CHNC00E230R2P5)"
+assert isinstance(release["device_verified"], bool)
+assert release["device_verified"] or release.get("requires_device_reverification") is True
+assert re.fullmatch(r"[0-9a-f]{64}", release["signing_certificate_sha256"])
 
 status = release.get("status", "released")
 if status == "released":
-    assert len(release.get("sha256") or "") == 64, "a released artifact needs its SHA256"
+    assert re.fullmatch(r"[0-9a-f]{64}", release.get("sha256") or ""), "a released artifact needs its SHA256"
+    assert release["sha256"] != "0" * 64
 else:
     assert status == "candidate", f"unknown release status: {status}"
     assert not release.get("sha256"), "a candidate must not claim a signed artifact hash"

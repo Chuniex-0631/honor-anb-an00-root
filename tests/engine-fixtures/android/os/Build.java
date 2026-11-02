@@ -1,0 +1,1 @@
+package android.os;public class Build {public static String MODEL=com.anb.root.DeviceProfile.MODEL,DISPLAY=com.anb.root.DeviceProfile.DISPLAY;public static class VERSION{public static int SDK_INT=35;}}

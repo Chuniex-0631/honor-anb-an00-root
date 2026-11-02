@@ -1,0 +1,1 @@
+package android.content;public class Intent {private boolean value;public Intent(Object a,Class<?> c){} public Intent putExtra(String k,boolean v){value=v;return this;}public boolean getBooleanExtra(String k,boolean d){return value;}}

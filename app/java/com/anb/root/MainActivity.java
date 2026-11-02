@@ -52,19 +52,23 @@ public final class MainActivity extends Activity {
     private View[] statusRows=new View[4];
     private View[] statusDots=new View[4];
 
-    private boolean expanded,updatingSwitch,ticking;
+    private boolean expanded,updatingSwitch,ticking,resumed,destroyed,exporting,notificationResolved;
+    private Boolean pendingRecovery;
+    private final Runnable deferredRefresh=()->refresh();
     private int page;
     private String shownLog="";
     private long lastPrimaryTap,busySince;
     private int lastAnnouncedStep=-1;
     private RecoveryEngine.Phase lastPhase;
 
-    private final Shizuku.OnBinderReceivedListener received=()->{engine.invalidate();autoCheck();refresh();};
+    private final Shizuku.OnBinderReceivedListener received=()->{if(destroyed)return;engine.invalidate();if(resumed){autoCheck();refresh();}};
     private final Shizuku.OnBinderDeadListener dead=()->{
+        if(destroyed)return;
         engine.invalidate();engine.record("Shizuku 服务已停止；恢复入口暂不可用。");refresh();};
     private final Shizuku.OnRequestPermissionResultListener permission=(code,result)->{
-        if(code!=REQ_SHIZUKU)return;
-        if(result==PackageManager.PERMISSION_GRANTED){engine.record("用户已授予 Shizuku 权限。");startEnvironmentCheck();}
+        if(destroyed||code!=REQ_SHIZUKU)return;
+        engine.invalidate();
+        if(result==PackageManager.PERMISSION_GRANTED){engine.record("用户已授予 Shizuku 权限。");if(resumed)startEnvironmentCheck();}
         else engine.record("Shizuku 权限未授予；可稍后在 Shizuku 的应用管理中开启。");
         refresh();
     };
@@ -74,12 +78,12 @@ public final class MainActivity extends Activity {
      * completion callback, so watch the engine flags briefly and refresh in place.
      */
     private final Runnable watchTick=new Runnable(){public void run(){
-        if(isFinishing())return;
+        if(!resumed||destroyed||isFinishing()||isDestroyed())return;
         refresh();
-        if(engine.checking||(engine.busy.get()&&!ticking))main.postDelayed(this,400);
+        if(engine.isChecking()||(engine.isBusy()&&!ticking))main.postDelayed(this,400);
     }};
 
-    private void watch(){ main.removeCallbacks(watchTick); main.postDelayed(watchTick,300); }
+    private void watch(){ if(!resumed||destroyed)return;main.removeCallbacks(watchTick); main.postDelayed(watchTick,300); }
 
     private void startEnvironmentCheck(){ engine.checkEnvironment(); watch(); }
 
@@ -90,8 +94,8 @@ public final class MainActivity extends Activity {
     }
 
     private final Runnable busyTick=new Runnable(){public void run(){
-        if(isFinishing())return;
-        if(!engine.busy.get()){ticking=false;refresh();return;}
+        if(!resumed||destroyed||isFinishing()||isDestroyed())return;
+        if(!engine.isBusy()){ticking=false;refresh();return;}
         updateProgress();
         if(engine.phase!=lastPhase){lastPhase=engine.phase;refresh();}
         main.postDelayed(this,1000);
@@ -118,16 +122,19 @@ public final class MainActivity extends Activity {
 
     @Override protected void onResume(){
         super.onResume();
+        resumed=true;
         autoCheck();
         refresh();
         main.removeCallbacks(busyTick);
-        if(engine.busy.get())main.post(busyTick);
+        if(engine.isBusy())main.post(busyTick);
+        if(engine.isChecking()||engine.isBusy())watch();
+        resumePermissionAction();
     }
 
-    @Override protected void onPause(){ticking=false;main.removeCallbacks(busyTick);super.onPause();}
+    @Override protected void onPause(){resumed=false;ticking=false;main.removeCallbacksAndMessages(null);super.onPause();}
 
     @Override protected void onDestroy(){
-        main.removeCallbacks(busyTick);
+        destroyed=true;main.removeCallbacksAndMessages(null);pendingRecovery=null;
         Shizuku.removeBinderReceivedListener(received);Shizuku.removeBinderDeadListener(dead);
         Shizuku.removeRequestPermissionResultListener(permission);
         super.onDestroy();
@@ -498,6 +505,13 @@ public final class MainActivity extends Activity {
         allowShellSwitch.setChecked(engine.allowShellSelected());
         allowShellRow.addView(allowShellSwitch);
         allowShellRow.setOnClickListener(v->allowShellSwitch.toggle());
+        allowShellRow.setAccessibilityDelegate(new View.AccessibilityDelegate(){
+            @Override public void onInitializeAccessibilityNodeInfo(View host,android.view.accessibility.AccessibilityNodeInfo info){
+                super.onInitializeAccessibilityNodeInfo(host,info);
+                info.setClassName(Switch.class.getName());info.setCheckable(true);info.setChecked(allowShellSwitch.isChecked());
+                info.setContentDescription("允许调试工具使用 Root");
+            }
+        });
         options.addView(allowShellRow,new LinearLayout.LayoutParams(-1,-2));
         gap(options,4);
         allowShellNote=text("",12,cWarn,false);allowShellNote.setLineSpacing(dp(4),1);
@@ -594,10 +608,10 @@ public final class MainActivity extends Activity {
     // ---------------------------------------------------------------- rendering
 
     private void refresh(){
-        if(headline==null||primary==null)return;
+        if(!resumed||destroyed||isFinishing()||isDestroyed()||headline==null||primary==null)return;
         Readiness.Gate gate=engine.gate();
-        boolean busy=engine.busy.get(),checking=engine.checking,setup=setup();
-        StatusModel.Snapshot snapshot=StatusModel.of(gate,engine.phase.name(),busy,checking,setup,engine.modulePresent);
+        boolean busy=engine.isBusy(),checking=engine.isChecking(),setup=setup();
+        StatusModel.Snapshot snapshot=StatusModel.of(gate,engine.phase.name(),busy,checking,setup,engine.modulePresent,engine.failureKind);
 
         set(badge,badgeText(snapshot.badge));
         set(headline,headlineText(snapshot.headline));
@@ -613,7 +627,7 @@ public final class MainActivity extends Activity {
         String shizuku="待安装";int shizukuColor=cWarn;boolean shizukuReady=false;
         if(engine.installed(RecoveryEngine.SHIZUKU)){
             try{
-                if(!Shizuku.pingBinder())shizuku="待启动";
+                if(!RecoveryEngine.shizukuAlive())shizuku="待启动";
                 else if(Shizuku.getVersion()<13)shizuku="待更新";
                 else if(Shizuku.checkSelfPermission()!=PackageManager.PERMISSION_GRANTED)shizuku="待授权";
                 else if(Shizuku.getUid()!=2000)shizuku="需无线调试启动";
@@ -640,8 +654,9 @@ public final class MainActivity extends Activity {
         updatingSwitch=false;
         boolean switchEnabled=!busy&&!checking&&!engine.modulePresent;
         if(allowShellSwitch.isEnabled()!=switchEnabled)allowShellSwitch.setEnabled(switchEnabled);
+        enable(allowShellRow,switchEnabled);
         set(allowShellNote,engine.modulePresent
-                ?"本次 Root 已加载，不能即时更改。请完整重启后，在恢复前设置。"
+                ?"这里显示保存的恢复选择，不能即时更改已加载模块。请完整重启后，在恢复前设置。"
                 :busy||checking?"正在处理，本次恢复选项已锁定。"
                 :"开启后 ADB、Shizuku 等调试工具可直接使用 Root；日常建议关闭。");
 
@@ -708,7 +723,7 @@ public final class MainActivity extends Activity {
     }
 
     private void updateProgress(){
-        boolean busy=engine.busy.get();
+        boolean busy=engine.isBusy();
         boolean failed=engine.phase==RecoveryEngine.Phase.FAILED;
         boolean waiting=engine.phase==RecoveryEngine.Phase.WAIT_AUTH;
         int step=Math.max(0,Math.min(5,engine.step));
@@ -774,11 +789,11 @@ public final class MainActivity extends Activity {
             case UPDATE_SHIZUKU:return "更新 Shizuku";
             case GRANT_SHIZUKU:return "授予 Shizuku 权限";
             case SHELL_MODE:return "请用无线调试启动";
-            case CHECK_ENV:return engine.checking?"正在检查环境":"检查执行环境";
+            case CHECK_ENV:return engine.isChecking()?"正在检查环境":"检查执行环境";
             case FIRST_SETUP:return "准备条件已满足";
             case WORKING:return engine.title;
             case WAIT_AUTH:return "还差一步授权";
-            case SUCCESS:return "Root 已就绪";
+            case SUCCESS:return "上次验证成功";
             case FAILED:return "本次尚未完成";
             default:return setup()?"准备就绪":"准备条件已满足";
         }
@@ -800,14 +815,16 @@ public final class MainActivity extends Activity {
             case WAIT_AUTH:return "请在 KernelSU 中允许 ANB Root 使用 Root，然后返回这里验证。";
             case SUCCESS:return engine.message.contains("刷新未完成")
                     ?"Root 已验证，管理器状态待更新。可到记录页刷新 KernelSU。"
-                    :"本次开机的 Root 已验证。你可以在 KernelSU 中管理权限。";
-            case FAILED:return "已停止本次执行。请按下方说明处理，不要重复启动。";
+                    :"本次开机内曾验证 Root。可再次验证当前权限，或在 KernelSU 中管理授权。";
+            case FAILED:return "本次尚未确认完成。后台恢复可能仍在运行，请按下方说明处理，不要重复启动。";
             default:return setup()?"所有条件已通过，点击下方按钮恢复本次权限。":"已检测两个应用、Shizuku 授权和执行环境。";
         }
     }
 
     private String guidanceText(String message){
-        switch(FailureText.classify(message)){
+        switch(engine.failureKind){
+            case SECURITY_NOT_RESTORED:return "SELinux 尚未恢复为 Enforcing。请保存记录并完整重启手机，不要继续使用本次未完成的 Root。";
+            case REBOOT_REQUIRED:return "本次开机的记录无法安全继续。请先保存诊断并完整重启，之后重新启动 Shizuku 再恢复。";
             case BOOT_WAIT:return "系统仍在启动。请解锁并等到桌面稳定（约 90 秒）后，再点一次。";
             case CONCURRENT_RUN:return "已有一次恢复在运行。请等待它结束，不要并发启动。";
             case REBOOTED:return "手机在恢复过程中重启了。解锁后重新启动 Shizuku，再返回检查。";
@@ -834,13 +851,15 @@ public final class MainActivity extends Activity {
             case FINISH_SETUP:return "完成首次准备";
             case RESTORE:return "恢复 Root";
             case VERIFY:return engine.phase==RecoveryEngine.Phase.WAIT_AUTH?"验证 Root 授权":"验证当前 Root";
+            case CHECK_PROGRESS:return "检查现有进度";
             case SAVE_DIAGNOSTICS:return "保存诊断记录";
             default:return "暂不可用";
         }
     }
 
     private String actionNoteText(boolean busy,boolean checking,Readiness.Gate gate){
-        if(busy||checking)return "前台通知会保留本次进度";
+        if(checking)return "正在检查本机执行环境";
+        if(busy)return "请保持耐心，可在本页查看进度";
         if(gate==Readiness.Gate.READY)return "仅在本次开机有效";
         return "按提示完成准备后即可继续";
     }
@@ -863,7 +882,7 @@ public final class MainActivity extends Activity {
     // ---------------------------------------------------------------- actions
 
     private void autoCheck(){
-        if(engine.gate()==Readiness.Gate.ENVIRONMENT&&!engine.checking)startEnvironmentCheck();
+        if(engine.gate()==Readiness.Gate.ENVIRONMENT&&!engine.isChecking())startEnvironmentCheck();
     }
 
     private void refreshEnvironment(){
@@ -878,8 +897,8 @@ public final class MainActivity extends Activity {
         lastPrimaryTap=now;
 
         Readiness.Gate gate=engine.gate();
-        StatusModel.Snapshot snapshot=StatusModel.of(gate,engine.phase.name(),engine.busy.get(),
-                engine.checking,setup(),engine.modulePresent);
+        StatusModel.Snapshot snapshot=StatusModel.of(gate,engine.phase.name(),engine.isBusy(),
+                engine.isChecking(),setup(),engine.modulePresent,engine.failureKind);
         switch(snapshot.action){
             case SHIZUKU_DOWNLOAD:
                 openPackage(RecoveryEngine.SHIZUKU,"https://shizuku.rikka.app/download/");return;
@@ -898,8 +917,10 @@ public final class MainActivity extends Activity {
             case SAVE_DIAGNOSTICS:
                 export();return;
             case RESTORE:
+                startRecovery(true);return;
             case VERIFY:
-                startRecovery();return;
+            case CHECK_PROGRESS:
+                startRecovery(false);return;
             default:
                 return;
         }
@@ -917,32 +938,40 @@ public final class MainActivity extends Activity {
         }catch(Exception e){toast("Shizuku 连接已变化，请重新检查");}
     }
 
-    private void startRecovery(){
-        if(engine.busy.get()||engine.checking){toast("正在处理，请稍候");refresh();return;}
+    private void startRecovery(boolean allowNewRecovery){
+        if(engine.isBusy()||engine.isChecking()){toast("正在处理，请稍候");refresh();return;}
         if(!setup()){toast("请先完成首次准备");refresh();return;}
         if(engine.gate()!=Readiness.Gate.READY){toast("当前状态已变化，请按首页提示重新准备");refresh();return;}
         if(Build.VERSION.SDK_INT>=33
                 &&checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED
                 &&!getSharedPreferences("ui",0).getBoolean("notif_asked",false)){
             getSharedPreferences("ui",0).edit().putBoolean("notif_asked",true).apply();
+            pendingRecovery=allowNewRecovery;
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},REQ_NOTIFICATIONS);
             return;
         }
-        launchService();
+        launchService(allowNewRecovery);
     }
 
-    private void launchService(){
+    private void launchService(boolean allowNewRecovery){
+        if(!resumed||destroyed||engine.isBusy()||engine.isChecking()||!setup()||engine.gate()!=Readiness.Gate.READY){refresh();return;}
         busySince=SystemClock.elapsedRealtime();
-        startForegroundService(new Intent(this,RecoveryService.class));
-        main.postDelayed(this::refresh,250);
-        main.postDelayed(this::refresh,1200);
+        try{startForegroundService(new Intent(this,RecoveryService.class).putExtra(RecoveryService.EXTRA_ALLOW_NEW_RECOVERY,allowNewRecovery));}
+        catch(RuntimeException error){engine.serviceUnavailable(error);toast("系统未允许启动进度服务，请重新检查");refresh();return;}
+        main.postDelayed(deferredRefresh,250);
+        main.postDelayed(deferredRefresh,1200);
     }
 
     @Override public void onRequestPermissionsResult(int request,String[] names,int[] grants){
         super.onRequestPermissionsResult(request,names,grants);
-        if(request!=REQ_NOTIFICATIONS)return;
-        if(engine.gate()==Readiness.Gate.READY)launchService();
-        else{toast("状态已变化，请重新检查");refresh();}
+        if(request!=REQ_NOTIFICATIONS||pendingRecovery==null)return;
+        notificationResolved=true;resumePermissionAction();
+    }
+    private void resumePermissionAction(){
+        if(!resumed||destroyed||!notificationResolved||pendingRecovery==null)return;
+        boolean allowNew=pendingRecovery;pendingRecovery=null;notificationResolved=false;
+        // A dialog callback must never bypass the current lifecycle/task/prerequisite checks.
+        launchService(allowNew);
     }
 
     private void openPackage(String pkg,String fallback){
@@ -980,17 +1009,32 @@ public final class MainActivity extends Activity {
     @Override protected void onActivityResult(int request,int result,Intent data){
         super.onActivityResult(request,result,data);
         if(request!=REQ_EXPORT||result!=RESULT_OK||data==null||data.getData()==null)return;
-        try(OutputStream out=getContentResolver().openOutputStream(data.getData())){
-            if(out==null)throw new IOException();
-            out.write(report().getBytes("UTF-8"));toast("诊断记录已保存");
-        }catch(Exception e){toast("保存失败，请重试");}
+        if(exporting){toast("正在保存上一份诊断记录");return;}
+        exporting=true;
+        final Uri destination=data.getData();
+        final ContentResolver resolver=getApplicationContext().getContentResolver();
+        final String snapshot=report();
+        final java.lang.ref.WeakReference<MainActivity> target=new java.lang.ref.WeakReference<>(this);
+        final Handler delivery=new Handler(Looper.getMainLooper());
+        new Thread(()->{
+            String notice;
+            try(OutputStream out=resolver.openOutputStream(destination)){
+                if(out==null)throw new IOException();out.write(snapshot.getBytes(java.nio.charset.StandardCharsets.UTF_8));notice="诊断记录已保存";
+            }catch(Exception e){notice="保存失败，请重试";}
+            final String resultText=notice;
+            delivery.post(()->{
+                MainActivity activity=target.get();if(activity==null)return;
+                activity.exporting=false;
+                if(activity.resumed&&!activity.destroyed&&!activity.isFinishing()&&!activity.isDestroyed())activity.toast(resultText);
+            });
+        },"diagnostic-export").start();
     }
 
     private String report(){
         String stamp=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss",java.util.Locale.CHINA)
                 .format(new java.util.Date());
-        return Diagnostics.build(versionName(),versionCode(),android.os.Build.MODEL,RecoveryEngine.KERNEL,
-                engine.phase.name(),"未知",stamp,engine.logs());
+        return Diagnostics.build(versionName(),versionCode(),android.os.Build.MODEL,System.getProperty("os.version","未知"),
+                engine.phase.name(),engine.bootCount,stamp,engine.logs());
     }
 
     private void copyLog(){
@@ -1003,7 +1047,7 @@ public final class MainActivity extends Activity {
 
     private String versionName(){
         try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}
-        catch(Exception e){return "2.3.0";}
+        catch(Exception e){return "未知";}
     }
 
     private int versionCode(){
@@ -1015,7 +1059,7 @@ public final class MainActivity extends Activity {
         new AlertDialog.Builder(this).setTitle("ANB Root "+versionName())
                 .setMessage("荣耀 80 Pro 直屏版 · 临时 Root 助手\n适配 ANB-AN00 / MagicOS 9.0.0.230\n\n"
                         +"通过 Shizuku 提供执行环境，使用已验证的 GhostLock-H80GT 载荷与 KernelSU 管理权限。\n\n"
-                        +"本版为界面与可访问性更新，恢复链与载荷未改动。")
+                        +"本版修复兼容检查、失败处理、任务和资源管理。8 个原载荷保持不变，App 执行控制层已更新。")
                 .setPositiveButton("关闭",null)
                 .setNeutralButton("开源许可",(d,w)->showLicenses()).show();
     }

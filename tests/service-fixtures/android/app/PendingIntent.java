@@ -1,0 +1,1 @@
+package android.app; public class PendingIntent {public static final int FLAG_IMMUTABLE=1,FLAG_UPDATE_CURRENT=2; public static PendingIntent getActivity(Service s,int i,android.content.Intent n,int f){return new PendingIntent();}}

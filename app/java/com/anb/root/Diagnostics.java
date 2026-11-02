@@ -17,7 +17,7 @@ public final class Diagnostics {
         out.append("内核: ").append(value(kernel)).append('\n');
         out.append("阶段: ").append(value(phase)).append('\n');
         out.append("开机编号: ").append(value(boot)).append('\n');
-        out.append("说明: 仅保存在本机；导出内容可能包含设备型号与运行信息。\n");
+        out.append("说明: 由你选择保存位置；内容可能含设备型号与运行信息，分享前请检查。\n");
         out.append("---- 运行记录 ----\n");
         if (log != null) out.append(log);
         if (out.length() == 0 || out.charAt(out.length() - 1) != '\n') out.append('\n');

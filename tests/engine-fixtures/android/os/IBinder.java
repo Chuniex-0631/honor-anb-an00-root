@@ -1,0 +1,1 @@
+package android.os;public class IBinder {public boolean isBinderAlive(){return true;}}

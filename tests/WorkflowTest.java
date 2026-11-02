@@ -28,9 +28,9 @@ public final class WorkflowTest {
         check(!Readiness.resume("77","78",path),"never use prior boot result");
         check(!Readiness.resume("77","77",path+"; id"),"reject invalid saved path");
         check(!Readiness.resume("77","77","/data/local/tmp/other"),"restrict run directory");
-        check(!RunStatus.isComplete("MODULE=1\nENFORCE=Enforcing\n"),"module alone not success");
-        check(!RunStatus.isComplete("MODULE=1\nFINISHED=1\nENFORCE=Permissive\n"),"wait for enforcement");
-        check(RunStatus.isComplete("MODULE=1\nFINISHED=1\nENFORCE=Enforcing\n"),"full completion");
+        check(!RunStatus.isComplete("ANB_STATUS=1\nMODULE=1\nFINISHED=0\nENFORCE=Enforcing\nDETAILS\n"),"module alone not success");
+        check(!RunStatus.isComplete("ANB_STATUS=1\nMODULE=1\nFINISHED=1\nENFORCE=Permissive\nDETAILS\n"),"wait for enforcement");
+        check(RunStatus.isComplete("ANB_STATUS=1\nMODULE=1\nFINISHED=1\nENFORCE=Enforcing\nDETAILS\n"),"full completion");
         CommandRunner.Result r=CommandRunner.run(child("unicode"),3000);
         check(r.exitCode==0&&r.output.equals("中文输出\n"),"UTF-8 process output");
         r=CommandRunner.run(child("error"),3000);check(r.exitCode==7,"nonzero status");

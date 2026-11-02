@@ -1,0 +1,1 @@
+package com.anb.root; public class MainActivity {}

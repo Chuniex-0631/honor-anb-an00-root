@@ -1,5 +1,5 @@
 {
-    "version":  "2.3.2",
-    "metadata":  "release/v2.3.2.json",
-    "core":  "release/v2.3.2-core-files.json"
+  "version": "2.3.3",
+  "metadata": "release/v2.3.3.json",
+  "core": "release/v2.3.3-core-files.json"
 }

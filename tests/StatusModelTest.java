@@ -70,6 +70,6 @@ public final class StatusModelTest {
         s = snap(Readiness.Gate.READY, "IDLE", false, false, true, true);
         check(s.action == StatusModel.Action.VERIFY, "an already loaded module is only verified");
 
-        System.out.println("PASS: 8 gates, precedence (device > checking > busy > phase > gate), setup/module actions, badges");
+        System.out.println("PASS: 8 gates, precedence (device > checking > busy > current gate > phase), setup/module actions, badges");
     }
 }

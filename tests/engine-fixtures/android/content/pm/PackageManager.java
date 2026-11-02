@@ -1,0 +1,1 @@
+package android.content.pm;public class PackageManager {public static final int PERMISSION_GRANTED=0;public Object getPackageInfo(String p,int f)throws NameNotFoundException{return new Object();}public static class NameNotFoundException extends Exception{}}

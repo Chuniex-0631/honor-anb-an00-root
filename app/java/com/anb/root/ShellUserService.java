@@ -22,6 +22,7 @@ public final class ShellUserService extends IShellService.Stub {
                     Math.max(1000,Math.min(30000,timeoutMs)));
             reply.putInt("exit",r.exitCode);reply.putString("output",r.output);
             reply.putBoolean("timeout",r.timedOut);reply.putBoolean("truncated",r.truncated);
+            reply.putBoolean("incomplete",r.incomplete);
         } catch(Exception e) {
             reply.putInt("exit",-1);reply.putString("output",e.toString());
         }

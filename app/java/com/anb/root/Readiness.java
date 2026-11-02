@@ -24,7 +24,10 @@ public final class Readiness {
         return uid&&seccomp;
     }
     public static boolean resume(String savedBoot,String currentBoot,String directory) {
-        return currentBoot.matches("[0-9]+") && currentBoot.equals(savedBoot)
-                && directory.matches("/data/local/tmp/anb_root_runs/run_[0-9]+_[0-9]+_[a-f0-9]{32}");
+        if(currentBoot==null||!currentBoot.matches("[0-9]+")||!currentBoot.equals(savedBoot)||!validDirectory(directory))return false;
+        return directory.startsWith("/data/local/tmp/anb_root_runs/run_"+currentBoot+"_");
+    }
+    public static boolean validDirectory(String directory) {
+        return directory!=null&&directory.matches("/data/local/tmp/anb_root_runs/run_[0-9]+_[0-9]+_[a-f0-9]{32}");
     }
 }

@@ -1,0 +1,37 @@
+{
+  "version": "2.3.3",
+  "date": "2026-11-02",
+  "audit_base": "bd33e6f1f9e4889767974c05548d05b373365eee",
+  "closed_findings": [
+    "A01",
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08",
+    "B01",
+    "B02",
+    "B03",
+    "B04"
+  ],
+  "checks": {
+    "jvm_and_fixture_test_groups": 8,
+    "public_source_and_privacy": "passed",
+    "archive_evidence_and_links": "passed",
+    "full_android_build": "passed",
+    "signature_and_version": "passed",
+    "signed_vs_unsigned_all_entries": "identical",
+    "all_source_assets": "identical",
+    "payload_and_aidl_vs_2_1_0": "identical",
+    "production_contains_test_fixtures": false
+  },
+  "core_manifest_sha256": "3e8e7726c05f8732aa4b033ffc90f8713edd546bc7ecadc967eb8ff589b3bd32",
+  "apk_sha256": "1d708a22a737403ac9864086d764580acbae9af8d0bd66beb40a1811d3faf945",
+  "signing_certificate_sha256": "933e0a448cd3328beb33f0cebeba6d45b3ed937bbfc1eadae2ba400782f3c408",
+  "phone_connected": false,
+  "phone_root_or_reboot_test_performed": false,
+  "native_full_reverse_engineering_performed": false,
+  "device_reverification_required": true
+}

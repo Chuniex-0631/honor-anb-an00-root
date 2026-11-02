@@ -7,11 +7,10 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import rikka.shizuku.Shizuku;
 
 public final class RecoveryEngine {
-    public static final String KERNEL="5.10.236-android12-9-gd671cf8c2b02";
+    public static final String KERNEL=DeviceProfile.KERNEL;
     public static final String SHIZUKU="moe.shizuku.privileged.api", KSU="me.weishu.kernelsu";
     static final String ROOT="/data/local/tmp/anb_root_runs";
     static final String LOG_NAME="recovery.log";
@@ -22,8 +21,10 @@ public final class RecoveryEngine {
         if(instance==null)instance=new RecoveryEngine(c.getApplicationContext()); return instance;
     }
     final Context context;
-    final AtomicBoolean busy=new AtomicBoolean();
-    public volatile boolean environmentReady, checking, modulePresent;
+    private final TaskGate tasks=new TaskGate();
+    public volatile boolean environmentReady, modulePresent;
+    public volatile String bootCount="未知";
+    public volatile FailureText.Kind failureKind=FailureText.Kind.UNKNOWN;
     public volatile Phase phase=Phase.IDLE;
     public volatile String title="先完成准备", message="检查所需应用，启动 Shizuku 并授予权限。";
     public volatile int step;
@@ -33,10 +34,19 @@ public final class RecoveryEngine {
     private volatile Progress progress;
     private RecoveryEngine(Context c) {
         context=c;
-        try { log.append(read(new File(context.getFilesDir(),LOG_NAME))); }
+        try (RandomAccessFile file=new RandomAccessFile(new File(context.getFilesDir(),LOG_NAME),"r")) {
+            long start=Math.max(0,file.length()-540000);file.seek(start);
+            byte[] bytes=new byte[(int)(file.length()-start)];file.readFully(bytes);
+            log.append(new String(bytes,StandardCharsets.UTF_8));
+        }
         catch(Exception ignored) { }
     }
-    public boolean compatible() { return "ANB-AN00".equals(android.os.Build.MODEL) && KERNEL.equals(System.getProperty("os.version")); }
+    public boolean compatible() { return DeviceProfile.supports(android.os.Build.MODEL,android.os.Build.VERSION.SDK_INT,
+            android.os.Build.DISPLAY,System.getProperty("os.version")); }
+    public boolean isBusy(){return tasks.busy();}
+    public boolean isChecking(){return tasks.checking();}
+    /** Cached binder liveness for presentation; the worker performs the real IPC probe. */
+    public static boolean shizukuAlive(){android.os.IBinder binder=Shizuku.getBinder();return binder!=null&&binder.isBinderAlive();}
     public boolean installed(String pkg) {
         try { context.getPackageManager().getPackageInfo(pkg,0);return true; }
         catch(PackageManager.NameNotFoundException e) { return false; }
@@ -44,7 +54,7 @@ public final class RecoveryEngine {
     public Readiness.Gate gate() {
         boolean alive=false,modern=false,grant=false,shell=false;
         try {
-            alive=Shizuku.pingBinder();
+            alive=shizukuAlive();
             if(alive) { modern=Shizuku.getVersion()>=13;grant=Shizuku.checkSelfPermission()==PackageManager.PERMISSION_GRANTED;shell=Shizuku.getUid()==2000; }
         } catch(Exception ignored) { }
         return Readiness.gate(compatible(),installed(SHIZUKU),installed(KSU),alive,modern,grant,shell,environmentReady);
@@ -55,9 +65,12 @@ public final class RecoveryEngine {
                 .getBoolean(RecoveryOptions.ALLOW_SHELL,RecoveryOptions.DEFAULT_ALLOW_SHELL);
     }
     public boolean selectAllowShell(boolean enabled) {
-        if(checking||busy.get()||modulePresent)return false;
-        return context.getSharedPreferences(RecoveryOptions.PREFERENCES,0).edit()
-                .putBoolean(RecoveryOptions.ALLOW_SHELL,enabled).commit();
+        TaskGate.Lease owner=tasks.acquire(TaskGate.Task.SETTINGS);if(owner==null)return false;
+        try {
+            if(modulePresent)return false;
+            return context.getSharedPreferences(RecoveryOptions.PREFERENCES,0).edit()
+                    .putBoolean(RecoveryOptions.ALLOW_SHELL,enabled).commit();
+        }finally{owner.close();}
     }
     public synchronized String logs() { return log.toString(); }
     /**
@@ -78,12 +91,12 @@ public final class RecoveryEngine {
         }catch(IOException ignored){}
     }
     private void status(Phase p,int stage,String heading,String detail) {
+        if(p!=Phase.FAILED)failureKind=FailureText.Kind.UNKNOWN;
         phase=p;step=stage;title=heading;message=detail;
         record(heading+"："+detail);Progress current=progress;if(current!=null)current.changed(heading);
     }
     public void checkEnvironment() {
-        if(checking||busy.get())return;
-        checking=true;
+        TaskGate.Lease owner=tasks.acquire(TaskGate.Task.CHECK);if(owner==null)return;
         new Thread(()->{
             try(ShizukuShell shell=ShizukuShell.open(context)) {
                 probe(shell);
@@ -91,33 +104,37 @@ public final class RecoveryEngine {
                 status(Phase.IDLE,0,"准备就绪",modulePresent?"已发现 KernelSU；可以验证本次权限，无需重复恢复。":"点击恢复，本次开机内有效。");
             }catch(Exception e) {
                 environmentReady=false;
-                status(Phase.FAILED,0,"执行环境尚未就绪",friendly(e));
-            }finally{checking=false;}
+                failed(e,0,"执行环境尚未就绪");
+            }finally{owner.close();}
         },"environment-check").start();
     }
     private void probe(ShizukuShell shell) throws Exception {
         String output=shell.shell("id; sed -n '/^Seccomp:/p' /proc/self/status");
         record("Shizuku UserService 环境：\n"+output.trim());
         if(!Readiness.validEnvironment(output))throw new IOException("执行进程不是预期的 shell 环境；请通过无线调试重新启动 Shizuku。");
-        if(!KERNEL.equals(shell.shell("uname -r").trim()) || !"ANB-AN00".equals(shell.shell("getprop ro.product.model").trim()))
-            throw new IOException("当前设备或系统版本不在支持范围内。");
+        if(!DeviceProfile.supportsProbe(shell.shell("getprop ro.product.model; getprop ro.build.version.sdk; getprop ro.build.display.id; uname -r")))
+            throw new RecoveryFailure(FailureText.Kind.COMPATIBILITY,"当前设备、固件或内核不在支持范围内。");
+        bootCount=shell.shell("settings get global boot_count").trim();
+        if(!bootCount.matches("[0-9]+"))throw new RecoveryFailure(FailureText.Kind.PREPARE,"无法确认本次开机编号。");
         environmentReady=true;
         File ext=context.getExternalFilesDir(null);
         if(ext!=null)write(new File(ext,"environment-shizuku.txt"),"transport=Shizuku UserService\n"+output+"kernel="+KERNEL+"\n");
     }
-    public boolean start(Progress listener,Runnable finished) {
-        if(!busy.compareAndSet(false,true))return false;
+    public boolean start(Progress listener,Runnable finished,boolean allowNewRecovery) {
+        TaskGate.Lease owner=tasks.acquire(TaskGate.Task.RECOVERY);if(owner==null)return false;
         final boolean allowShell=allowShellSelected();
         progress=listener;
         new Thread(()->{
-            try { recover(allowShell); }
-            catch(Exception e){status(Phase.FAILED,step,"本次未完成",friendly(e));}
-            finally{busy.set(false);progress=null;finished.run();}
+            try { recover(allowShell,allowNewRecovery); }
+            catch(Exception e){failed(e,step,"本次未完成");}
+            finally{progress=null;owner.close();finished.run();}
         },"root-recovery").start();
         return true;
     }
-    private void recover(boolean allowShell) throws Exception {
-        if(!compatible() || !installed(SHIZUKU) || !installed(KSU))throw new IOException("请先完成依赖检查。");
+    private void recover(boolean allowShell,boolean allowNewRecovery) throws Exception {
+        dir=null;
+        if(!compatible())throw new RecoveryFailure(FailureText.Kind.COMPATIBILITY,"当前设备、固件或内核不在支持范围内。");
+        if(!installed(SHIZUKU) || !installed(KSU))throw new RecoveryFailure(FailureText.Kind.PREPARE,"请先完成依赖检查。");
         if(!context.getSharedPreferences("setup",0).getBoolean("completed",false))throw new IOException("请先完成首次使用准备。");
         status(Phase.CHECKING,0,"检查本次状态","正在确认执行环境和已有运行记录。");
         try(ShizukuShell shell=ShizukuShell.open(context)) {
@@ -127,6 +144,7 @@ public final class RecoveryEngine {
             SharedPreferences state=context.getSharedPreferences("run",0);
             String previous=state.getString("dir","");
             boolean same=Readiness.resume(state.getString("boot",""),boot,previous);
+            if(same)dir=previous;
             modulePresent=hasModule(shell);
             if(modulePresent) {
                 if(same && !finished(shell,previous)) {
@@ -135,9 +153,15 @@ public final class RecoveryEngine {
                 return;
             }
             if(same) {dir=previous;record("同次开机已有尝试，只恢复查看进度，不重复启动。");monitor(shell,boot);return;}
+            if(!allowNewRecovery)throw new RecoveryFailure(FailureText.Kind.PREPARE,"没有可验证的恢复记录。请先检测执行环境；如需恢复，请使用“恢复 Root”。");
+            String lock=ROOT+"/boot_"+boot+".lock";
+            if(!"CLEAR".equals(shell.shell("if [ -e "+q(lock)+" ]; then echo LOCKED; else echo CLEAR; fi").trim()))
+                throw new RecoveryFailure(FailureText.Kind.REBOOT_REQUIRED,"本次开机已有恢复尝试，但记录不可用。请保存诊断并完整重启后再恢复。");
+            if(boot.equals(state.getString("boot",""))&&!previous.isEmpty())
+                throw new RecoveryFailure(FailureText.Kind.REBOOT_REQUIRED,"本次恢复目录与开机记录不匹配。请保存诊断并完整重启后再恢复。");
             if(!"1".equals(shell.shell("getprop sys.boot_completed").trim()))throw new IOException("系统仍在启动，请进入桌面后再试。");
             long uptime=Long.parseLong(shell.shell("cut -d. -f1 /proc/uptime").trim());
-            if(uptime<90)throw new IOException("请等待开机满 90 秒后再恢复；约还需 "+(90-uptime)+" 秒。");
+            if(uptime<90)throw new RecoveryFailure(FailureText.Kind.BOOT_WAIT,"请等待开机满 90 秒后再恢复；约还需 "+(90-uptime)+" 秒。");
             String active=shell.shell("if pgrep -f 'anb_root.*/explo[i]t|ksu_loade[r].sh|gl_ex[p]loit' >/dev/null; then echo ACTIVE; else echo IDLE; fi").trim();
             if(!"IDLE".equals(active))throw new IOException("另一次恢复仍在运行。请等待；不要并发启动。");
             if(!state.edit().putString("options_boot",boot).putBoolean("allow_shell",allowShell).commit())
@@ -161,9 +185,11 @@ public final class RecoveryEngine {
         return s.shell("if grep -q '^kernelsu ' /proc/modules; then echo YES; else echo NO; fi").trim().equals("YES");
     }
     private String snapshot(ShizukuShell s,String directory)throws Exception {
-        return s.shell("cd "+q(directory)+"; if grep -q '^kernelsu ' /proc/modules; then echo MODULE=1; fi; "
-                +"if grep -q '^KernelSU module loaded$' ksu_load.log 2>/dev/null && grep -q '^=== re-enable SELinux enforcing (last step) ===$' ksu_load.log 2>/dev/null; then echo FINISHED=1; fi; "
-                +"printf 'ENFORCE='; getenforce; tail -n 5 ksu_load.log 2>/dev/null; tail -n 4 gl.log 2>/dev/null; true");
+        if(!Readiness.validDirectory(directory))throw new RecoveryFailure(FailureText.Kind.REBOOT_REQUIRED,"恢复目录无效，请完整重启后再恢复。");
+        return s.shell("cd "+q(directory)+" || exit 1; printf 'ANB_STATUS=1\\n'; "
+                +"if grep -q '^kernelsu ' /proc/modules; then echo MODULE=1; else echo MODULE=0; fi; "
+                +"if grep -q '^KernelSU module loaded$' ksu_load.log 2>/dev/null && grep -q '^=== re-enable SELinux enforcing (last step) ===$' ksu_load.log 2>/dev/null; then echo FINISHED=1; else echo FINISHED=0; fi; "
+                +"printf 'ENFORCE='; getenforce; echo DETAILS; tail -n 5 ksu_load.log 2>/dev/null; tail -n 4 gl.log 2>/dev/null; true");
     }
     private boolean finished(ShizukuShell s,String directory)throws Exception {return RunStatus.isComplete(snapshot(s,directory));}
     private void monitor(ShizukuShell shell,String boot)throws Exception {
@@ -171,23 +197,32 @@ public final class RecoveryEngine {
         while(SystemClock.elapsedRealtime()<end) {
             if(!boot.equals(shell.shell("settings get global boot_count").trim()))throw new IOException("手机已重启。请重新启动 Shizuku，然后返回检查。");
             String out=snapshot(shell,dir);
+            modulePresent=RunStatus.modulePresent(out);
             if(!last.equals(out)){record(out);last=out;}
-            if(out.contains("MODULE=1") && phase!=Phase.LOADING)
+            if(RunStatus.modulePresent(out) && phase!=Phase.LOADING)
                 status(Phase.LOADING,3,"正在完成加载","模块已出现，正在等待恢复收尾；尚未确认成功。");
             if(RunStatus.isComplete(out)){modulePresent=true;verify(shell,boot);return;}
             Thread.sleep(3000);
         }
         save(boot,"timeout");
-        throw new IOException("等待超过 5 分钟，未确认完成。记录已保留；本次开机不会自动重跑，请重启后再试。");
+        if(RunStatus.securityNotRestored(last))throw new RecoveryFailure(FailureText.Kind.SECURITY_NOT_RESTORED,
+                "等待结束后 SELinux 未恢复为 Enforcing。请保存记录并完整重启手机；本次未判定成功。");
+        throw new RecoveryFailure(FailureText.Kind.TIMEOUT,"等待超过 5 分钟，未确认完成。记录已保留；本次开机不会自动重跑，请重启后再试。");
     }
     private void verify(ShizukuShell shell,String boot)throws Exception {
         status(Phase.VERIFYING,4,"验证 Root 与保护状态","正在通过 KernelSU 检查本 App 的权限。");
         String enforce=shell.shell("getenforce").trim();
-        if(!"Enforcing".equals(enforce))throw new IOException("KernelSU 已加载，但保护状态尚未恢复。未判定成功；请保存日志。");
+        if(!"Enforcing".equals(enforce))throw new RecoveryFailure(FailureText.Kind.SECURITY_NOT_RESTORED,
+                "KernelSU 已加载，但 SELinux 未恢复为 Enforcing。请保存记录并完整重启；本次未判定成功。");
         CommandRunner.Result result;
         try {result=CommandRunner.run(new String[]{"/system/bin/su","-c","id"},20000);}
         catch(IOException e){waitAuth(shell,boot);return;}
-        if(result.timedOut || result.exitCode!=0 || !result.output.contains("uid=0(root)")){waitAuth(shell,boot);return;}
+        if(result.timedOut || result.truncated || result.incomplete || result.exitCode!=0
+                || !result.output.matches("(?s)(?:.*\\n)?uid=0\\(root\\)(?:\\s.*)?")){waitAuth(shell,boot);return;}
+        modulePresent=hasModule(shell);
+        if(!modulePresent)throw new RecoveryFailure(FailureText.Kind.PREPARE,"模块状态已变化，请重新检测执行环境。");
+        if(!"Enforcing".equals(shell.shell("getenforce").trim()))
+            throw new RecoveryFailure(FailureText.Kind.SECURITY_NOT_RESTORED,"验证期间 SELinux 未保持 Enforcing。请保存记录并完整重启手机。");
         record("ROOT_PROOF "+result.output.trim()+"\nSELinux="+enforce+"\nboot_count="+boot);
         save(boot,"verified");
         File ext=context.getExternalFilesDir(null);
@@ -217,14 +252,24 @@ public final class RecoveryEngine {
         }catch(Exception e){record("管理器刷新未完成："+friendly(e));return false;}
     }
     public void refreshManagerOnly() {
-        if(checking||!busy.compareAndSet(false,true))return;
+        TaskGate.Lease owner=tasks.acquire(TaskGate.Task.MANAGER);if(owner==null)return;
         new Thread(()->{
             try(ShizukuShell shell=ShizukuShell.open(context)) {
                 boolean ok=refreshManager(shell);
                 message=ok?"KernelSU 管理器已重新启动，请查看首页状态。没有重新运行提权。":"刷新未完成，请检查 Shizuku 或导出记录。没有重新运行提权。";
             }catch(Exception e){message=friendly(e);record(message);}
-            finally{busy.set(false);}
+            finally{owner.close();}
         },"manager-refresh").start();
+    }
+    private void failed(Exception error,int stage,String heading) {
+        failureKind=error instanceof RecoveryFailure?((RecoveryFailure)error).kind:FailureText.classify(friendly(error));
+        status(Phase.FAILED,stage,heading,friendly(error));
+    }
+    public void serviceUnavailable(Exception error) {
+        TaskGate.Lease owner=tasks.acquire(TaskGate.Task.CHECK);
+        if(owner==null){record("进度服务未启动："+friendly(error));return;}
+        try {failed(new RecoveryFailure(FailureText.Kind.PREPARE,"系统未允许启动进度服务。请返回首页重新检查后再试。"),0,"进度服务未启动");}
+        finally{owner.close();}
     }
     private void save(String boot,String result)throws IOException {
         if(!context.getSharedPreferences("run",0).edit().putString("boot",boot).putString("dir",dir==null?"":dir).putString("phase",result).commit())

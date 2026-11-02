@@ -1,0 +1,1 @@
+package rikka.shizuku;public class Shizuku {public static android.os.IBinder getBinder(){return new android.os.IBinder();}public static boolean pingBinder(){return true;}public static int getVersion(){return 13;}public static int checkSelfPermission(){return 0;}public static int getUid(){return 2000;}}
