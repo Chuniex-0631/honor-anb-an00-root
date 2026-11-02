@@ -18,7 +18,7 @@
   "app/java/com/anb/root/DeviceProfile.java": "60fdfc91f6f02e2838e93bc41fe891065ebc79b6e9811fab33047c2366ed79a7",
   "app/java/com/anb/root/Diagnostics.java": "3468a4863e00c89d247a19c258aa81d3723e73ba9eb78f91e45809b92782c160",
   "app/java/com/anb/root/FailureText.java": "581136366667fd1dd0ec04dbf64271047f1df1099ed9a9407e68bf530d56b0b9",
-  "app/java/com/anb/root/MainActivity.java": "caa0e027a47203bd96bba0ff73c736b50d5f4f8bc23eb984f82f0802f8266dd1",
+  "app/java/com/anb/root/MainActivity.java": "1cd19a95796c9779490d0001e57362d28d1c62f646013a6c050c776eefbbfda2",
   "app/java/com/anb/root/Readiness.java": "2e7e672eea8fcbf28d4f773bc07019821abde64ec57cbe370966418c5549c785",
   "app/java/com/anb/root/RecoveryEngine.java": "ba44c4083dac77dcbecba81ae7e37d7f952b3d77a789719d2390facd6743791d",
   "app/java/com/anb/root/RecoveryFailure.java": "36b40ec490dd6548f422e3c3ead88da89cfdb2401751df792c17dbe7ab858805",

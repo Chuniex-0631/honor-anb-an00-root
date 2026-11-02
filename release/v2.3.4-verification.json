@@ -1,7 +1,7 @@
 {
   "version": "2.3.4",
   "date": "2026-11-02",
-  "status": "candidate",
+  "status": "released",
   "audit_base": "bf65b956d839e1d4f2dff28d89d67b3c0f3508a4",
   "closed_ui_findings": [
     "U01",
@@ -50,7 +50,12 @@
     "test_apk_uninstalled": true,
     "display_settings_restored": true
   },
-  "apk_sha256": "78f6287076bc33a7f07469386a9363bcb7fe2e370ba98c6ab1bce4cccb817e9c",
+  "apk_sha256": "f8b7f32d3f4d76014ec151ee5ddb39fbf4c597d73b3adddf57d23b17a7690b9a",
   "signing_certificate_sha256": "933e0a448cd3328beb33f0cebeba6d45b3ed937bbfc1eadae2ba400782f3c408",
-  "core_manifest_sha256": "f5238c05935d80dabdc8c77a72a3fb89a6f92a09bcb05da3f577ebe59d237422"
+  "core_manifest_sha256": "e057379ebaa3012d2a6abc0823c6b894f07b036f241141f07d378733f648e482",
+  "final_header_check": {
+    "text_only_title": true,
+    "device_default_and_font_2_checked": true,
+    "recovery_flow_changed": false
+  }
 }

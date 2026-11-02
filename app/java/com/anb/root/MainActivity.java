@@ -402,20 +402,7 @@ public final class MainActivity extends Activity {
         LinearLayout header=new LinearLayout(this);
         header.setPadding(dp(20),dp(12),dp(20),dp(10));header.setGravity(Gravity.CENTER_VERTICAL);
 
-        ImageView icon=new ImageView(this);
-        int iconId=getResources().getIdentifier("ic_launcher","mipmap",getPackageName());
-        if(iconId==0)iconId=getResources().getIdentifier("ic_launcher","drawable",getPackageName());
-        icon.setImageResource(iconId);
-        icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        icon.setContentDescription(null);
-        header.addView(icon,new LinearLayout.LayoutParams(dp(36),dp(36)));
-
-        LinearLayout brand=column();
-        LinearLayout.LayoutParams blp=new LinearLayout.LayoutParams(0,-2,1);blp.leftMargin=dp(11);
-        brand.addView(text("ANB Root",19,cText,true));
-        LinearLayout.LayoutParams blp2=new LinearLayout.LayoutParams(-2,-2);blp2.topMargin=dp(1);
-        brand.addView(text("荣耀 80 Pro 直屏版",11,cMuted,false),blp2);
-        header.addView(brand,blp);
+        header.addView(text("ANB Root",19,cText,true),new LinearLayout.LayoutParams(0,-2,1));
 
         versionChip=text(versionName(),11,cBrand,true);
         versionChip.setPadding(dp(10),dp(6),dp(10),dp(6));
