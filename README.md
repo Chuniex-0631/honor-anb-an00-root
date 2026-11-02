@@ -1,111 +1,115 @@
 <div align="center">
 
-<img src="docs/assets/social-preview.png" alt="ANB Root — HONOR 80 Pro Flat ANB-AN00 temporary root with Shizuku and KernelSU" width="100%">
+<img src="docs/assets/banner.svg" alt="ANB Root — 荣耀 80 Pro 直屏版 ANB-AN00 本机临时 Root，基于 Shizuku 与 KernelSU" width="100%">
 
-# ANB Root · 荣耀 80 Pro 直屏版临时 Root
+# ANB Root
 
-**HONOR 80 Pro Flat / ANB-AN00 · Shizuku · GhostLock · KernelSU LKM**
+**荣耀 80 Pro 直屏版的本机临时 Root 助手**<br>HONOR 80 Pro Flat · ANB-AN00 · Shizuku · KernelSU LKM
 
-[![Release](https://img.shields.io/github/v/release/Chuniex-0631/honor-anb-an00-root?color=087f67)](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/latest)
-[![License](https://img.shields.io/badge/License-Apache--2.0-087f67)](LICENSE)
-[![Android](https://img.shields.io/badge/Android-15-3ddc84)](docs/COMPATIBILITY.md)
-[![CI](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/workflows/ci.yml/badge.svg)](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/workflows/ci.yml)
+[![正式版](https://img.shields.io/github/v/release/Chuniex-0631/honor-anb-an00-root?style=flat-square&color=087f67&label=Release)](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/latest) [![Android 15](https://img.shields.io/badge/Android-15-087f67?style=flat-square)](docs/COMPATIBILITY.md) [![CI](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Chuniex-0631/honor-anb-an00-root/actions/workflows/ci.yml) [![Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-087f67?style=flat-square)](LICENSE)
 
-[**下载 APK**](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/latest) · [使用指南](docs/USER_GUIDE.md) · [兼容范围](docs/COMPATIBILITY.md) · [English](README.en.md)
+**[下载 2.3.5 APK](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/download/v2.3.5/ANB-Root-2.3.5.apk)** · [发布说明](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/tag/v2.3.5) · [使用指南](docs/USER_GUIDE.md) · [English](README.en.md)
 
 </div>
 
-ANB Root 是面向 **荣耀 80 Pro 直屏版 ANB-AN00** 的 Android 临时 Root 工具。先在手机上通过无线调试启动 Shizuku，再由 App 完成已适配的 GhostLock 恢复链和 KernelSU 模块加载；日常恢复不需要连接电脑。
+通过无线调试启动 Shizuku，授予 ANB Root 权限，再由 App 完成已适配的 GhostLock 恢复流程和 KernelSU 模块加载。**日常恢复可以在手机上完成，无需连接电脑。**
 
-**仅适配下表中的已验证系统。Root 在完整重启后失效，需要重新启动 Shizuku 并恢复；本项目不解锁 Bootloader，也不提供永久 Root。**
+> **先确认兼容范围。** 仅支持 ANB-AN00 的指定固件与内核，不适用于 ANP-AN00 曲屏版。Root 在完整重启后失效；重启后需要重新启动 Shizuku，再由 App 恢复。本项目不解锁 Bootloader。
 
-## 2.3.4 UI 审计正式版
+## 为日常使用整理的恢复流程
 
-完善首页四个准备项的动态按压反馈、按钮禁用、进度刷新、弹窗遮罩、大字体与横屏排版。ANB-AN00 五种显示配置完成 1,277 项真实 Activity 断言；恢复流程与原始载荷不变。详见 [UI 审计与边界](docs/AUDIT_2.3.4.md)。2.3.4 已作为正式版发布。
-
-## 2.3.3 审计修复版
-
-修复指定固件校验、失败后的操作入口、保护状态提示、任务互斥与前台服务归属、进程和页面生命周期、异步诊断导出。**验证／检查进度不会启动新恢复链**；原始载荷不变。[修复闭环与测试范围](docs/AUDIT_2.3.3.md)。
-
-## 兼容范围
-
-| 项目 | 已验证组合 |
+| 能做什么 | 使用体验 |
 |---|---|
-| 设备 | HONOR 80 Pro Flat / 荣耀 80 Pro 直屏版 / **ANB-AN00（HNANB）** |
-| 系统 | Android 15 · MagicOS **9.0.0.230** |
-| 固件 | `ANB-AN00 9.0.0.230(CHNC00E230R2P5)` |
-| 内核 | `5.10.236-android12-9-gd671cf8c2b02` |
-| 执行环境 | 官方 Shizuku 13+，无线调试启动的 shell 模式 |
-| 管理器 | KernelSU **v3.3.0**；随工具提供的荣耀定制 LKM |
-| 启动状态 | 实测 Bootloader locked / AVB green；完成后 SELinux Enforcing |
+| 准备引导 | 检查设备、Shizuku、KernelSU 和实际执行环境，按缺项引导 |
+| 恢复与验证 | 显示五阶段进度；已有模块时提供验证入口，避免重复启动恢复 |
+| 权限选择 | “允许调试工具使用 Root”默认关闭，开启前说明授权范围 |
+| 记录与帮助 | 本地记录、诊断导出、KernelSU 刷新，以及重启后的使用说明 |
+| 外观适配 | 文字标题、深色模式、大字体、横屏与左右贯通的列表按压反馈 |
 
-**ANP-AN00 曲屏版、其他荣耀机型与其他内核不在本次支持范围内。** 详细条件见 [兼容性说明](docs/COMPATIBILITY.md)。版本号、相同 config 或相同 SoC 本身不构成兼容证明。
+App 通过 **Shizuku UserService** 获取 shell 环境，不内置固定 5555 ADB 客户端，不导入电脑 ADB 私钥，也不申请联网权限。诊断只在你选择导出时保存到指定位置。
 
-## 快速开始
-
-1. 从 [Releases](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/latest) 下载 APK，按 [SHA-256](release/SHA256SUMS.txt) 核对文件。
-2. 安装官方 [Shizuku](https://shizuku.rikka.app/download/) 和 [KernelSU v3.3.0](https://github.com/tiann/KernelSU/releases/tag/v3.3.0)。
-3. 在 Shizuku 中通过**无线调试**完成配对并启动。返回 ANB Root，授予 Shizuku 权限。
-4. 准备项检查通过后，点击“完成首次准备”，再点击“恢复 Root”。开机不足约 90 秒时先等待。
-5. 如提示授权，在 KernelSU → 超级用户中允许 ANB Root，再返回验证。
-
-以后每次完整重启：**解锁并等待启动完成 → 启动 Shizuku → 打开 ANB Root 恢复**。关闭开发者选项或撤销配对后，需要先在本机重新配置 Shizuku。
-
-## 面向日常使用的界面
-
-截图来自 2.3.2；2.3.3 保留页面结构，并修正状态文案与操作入口。
+## 2.3.5 实机界面
 
 <div align="center">
-<img src="docs/assets/home.png" alt="ANB Root 首页：设备兼容、Shizuku 授权与恢复按钮" width="30%">
-<img src="docs/assets/records.png" alt="ANB Root 记录：诊断导出与 KernelSU 刷新" width="30%">
-<img src="docs/assets/help.png" alt="ANB Root 帮助：首次设置和重启后恢复" width="30%">
+<img src="docs/assets/v2.3.5-home.png" alt="ANB Root 2.3.5 首页：文字标题、四项准备检查与恢复选项" width="30%">
+<img src="docs/assets/v2.3.5-records.png" alt="ANB Root 2.3.5 记录页：诊断导出与独立刷新 KernelSU" width="30%">
+<img src="docs/assets/v2.3.5-help.png" alt="ANB Root 2.3.5 帮助页：首次使用与每次重启后的步骤" width="30%">
+<br>
+<sub>首页 · 记录 · 帮助｜来自 ANB-AN00 上的 2.3.5 正式版</sub>
 </div>
 
-- **首页**：准备条件、五阶段进度、固定底部操作按钮；失败时就地显示原因与下一步。
-- **记录**：本地诊断、文件导出、复制记录、单独刷新 KernelSU。
-- **帮助**：首次使用、重启流程、授权与常见问题。
-- **外观**：跟随系统深色模式；正文与提示色达到 WCAG AA 对比度。
+<details>
+<summary>查看深色模式与本版改进</summary>
 
-App 只通过 **Shizuku UserService** 获取执行环境，没有内置 5555 ADB 客户端，不导入电脑私钥，也不申请联网权限。恢复任务串行执行；连接中断或超时不会自动启动第二条链路。
+<p align="center"><img src="docs/assets/v2.3.5-dark.png" alt="ANB Root 2.3.5 深色模式" width="32%"></p>
 
-## 调试工具的 Root 权限
+- 首页四个准备项使用完整的左右贯通的列表按压反馈，检查按住、松开、返回和滑动取消。
+- 沿用 2.3.4 的任务、弹窗与排版修复；本版统一列表行的左右贯通反馈。
+- 统一弹窗与遮罩管理，完善按钮禁用、导出保护、空记录和已有模块时的提示。
+- 支持两倍字号与横屏布局；顶部保留文字标题。
 
-2.2.0 在首页增加 **“允许调试工具使用 Root”**，安装或升级后默认关闭。开启后，ADB、Shizuku 等以 shell 身份运行的工具可直接获准使用 Root，无需逐项授权；普通应用仍由 KernelSU 单独管理。开启前会说明授权范围。
+详见 [2.3.5 UI 审计](docs/AUDIT_2.3.5.md) 与 [更新日志](CHANGELOG.md)。
 
-选择会被记住，在新一次恢复加载模块时使用。恢复进行中或已有 Root 时不可切换；要取消这项自动授权，需完整重启后关闭选项再恢复。已开始的恢复只会继续查看原进度，不会重新加载或更改参数。关闭此项不会撤销 KernelSU 中其他已有授权。
+</details>
 
-## 验证与边界
+## 支持范围
 
-2026-10-31 已在 ANB-AN00 上验证临时 Root、KernelSU LKM 和重启后由手机独立恢复，机主随后再次重启并复验成功。2.1.0 是用户界面与发行包装更新：与已验证的 2.0.1 相比，**17 项核心输入、18 个核心编译类及执行组件声明一致**。
+| 项目 | 当前支持 |
+|---|---|
+| 手机 | **荣耀 80 Pro 直屏版 / HONOR 80 Pro Flat · ANB-AN00（HNANB）** |
+| 系统 | Android 15 · MagicOS **9.0.0.230** |
+| 完整固件 | `ANB-AN00 9.0.0.230(CHNC00E230R2P5)` |
+| 内核 | `5.10.236-android12-9-gd671cf8c2b02` |
+| Shizuku | 官方 13+，通过无线调试启动的 shell 模式 |
+| KernelSU | 管理器 **v3.3.0**，配合内置的荣耀定制 LKM |
 
-2.2.0 增加选项及其参数传递，8 个原载荷文件未改动。默认关闭与开启的真实模板回归测试和构建通过，新增开启模式尚待 ANB-AN00 实机复验。
+机型、SDK、完整固件与内核均需匹配。相同 SoC 或相近版本号不代表兼容；升级系统后需重新确认适配。[查看完整要求 →](docs/COMPATIBILITY.md)
 
-2.3.0–2.3.2 增加界面、主题与异步状态刷新。旧审计中的已修复声明和“整个核心未变”表述已在 [2.3.3 修复记录](docs/AUDIT_2.3.3.md) 中勘误。
+## 五步开始
 
-**2.3.3 更新 App 执行控制层，8 个原载荷及 AIDL 不变。自动化测试、模拟执行、构建与签名检查通过；本次未连接设备重新运行提权和重启恢复。** 不能把旧版实机记录当作本版已完成设备复验。
+1. **下载与安装。** 安装 [2.3.5 APK](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/download/v2.3.5/ANB-Root-2.3.5.apk)，已有旧版可覆盖升级；可用 [SHA-256 校验文件](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/download/v2.3.5/SHA256SUMS.txt) 核对下载。
+2. **准备依赖。** 安装官方 [Shizuku](https://shizuku.rikka.app/download/) 和 [KernelSU v3.3.0](https://github.com/tiann/KernelSU/releases/tag/v3.3.0)。
+3. **启动并授权。** 在 Shizuku 中通过无线调试完成配对、启动服务，再回到 ANB Root 授予 Shizuku 权限。
+4. **检查并恢复。** 解锁并等待开机约 90 秒；四项检查通过后完成首次准备，按提示恢复。已有模块时只需验证。
+5. **确认结果。** 如提示授权，在 KernelSU → 超级用户中允许 ANB Root，再返回验证，看到“Root 已验证”才算完成。
 
-这属于指定设备与固件的实机验证，不是所有设备的通用成功率保证。竞态失败可能重启；不要并发或连续重复启动。见 [验证摘要](docs/VALIDATION.md) 和 [历史索引](docs/research/RESEARCH_HISTORY.md)。
+**每次完整重启：解锁并等待启动完成 → 启动 Shizuku → 打开 ANB Root 恢复。** 关闭开发者选项或撤销配对后，需要先重新配置 Shizuku 的启动条件。
 
-## 常见问题
+<details>
+<summary>“允许调试工具使用 Root”应该开启吗？</summary>
 
-**KernelSU 显示“未安装”，但 App 已验证 Root？** 使用“记录 → 刷新 KernelSU”。本工具在加载前停止旧管理器、完成后重新打开，避免沿用加载前的进程。
+日常使用建议保持关闭。开启后，ADB、Shizuku 等以 shell 身份运行的调试工具可直接获准使用 Root，普通应用仍由 KernelSU 单独授权。
 
-**Shizuku 关闭或授权被撤销？** 在 Shizuku 中重新启动、配对或授权，再回到 App 检查。不是自动开机 Root。
+选择会被保存，在新一次恢复加载模块时使用。已有选择在升级后保留；恢复进行中或模块已经加载时无法即时切换。需完整重启后，在恢复前修改。关闭此项不会撤销 KernelSU 中其他已有授权。详见 [使用指南](docs/USER_GUIDE.md)。
 
-**升级系统后还能用吗？** 只有设备与内核检查仍匹配时才会开放恢复；新系统需要重新验证适配。
+</details>
 
-更多内容见 [使用指南](docs/USER_GUIDE.md) 与 [故障排查](docs/TROUBLESHOOTING.md)。
+## 遇到问题
 
-## 开发与研究
+| 现象 | 下一步 |
+|---|---|
+| Shizuku 未运行／未授权 | 在 Shizuku 中重新启动或授权，再返回检查 |
+| App 已验证，KernelSU 仍显示未安装 | 使用“记录 → 刷新 KernelSU”，更新管理器显示 |
+| 恢复超时或连接中断 | 先保存诊断，按提示处理；不要连续重复启动 |
+| 系统升级后无法继续 | 核对完整固件与内核，不要套用其他版本载荷 |
 
-- [构建说明](docs/BUILD.md)：Java 源码、AIDL、固定依赖和 Android 构建。
-- [技术架构](docs/ARCHITECTURE.md)：Shizuku → 独立 shell 服务 → 恢复与验证。
-- [研究历史](docs/research/RESEARCH_HISTORY.md)：基线、GKI 参考对照、临时 Root 路线及 App 化。
-- [脱敏说明](docs/PRIVACY.md)：保留研究结论，排除个人标识、凭据与原始私人日志。
-- [贡献指南](CONTRIBUTING.md) · [安全政策](SECURITY.md)。
+[故障排查](docs/TROUBLESHOOTING.md) · [提交问题](https://github.com/Chuniex-0631/honor-anb-an00-root/issues/new/choose) · [安全问题与脱敏](SECURITY.md)
+
+## 验证记录与开源资料
+
+2.3.5 完成五种显示配置的 UI 检查、9 组 JVM／替身测试、完整构建、原签名及公开下载校验，发布包已覆盖安装到支持设备。恢复流程、8 个原载荷与 AIDL 沿用 2.3.4。
+
+**验证结论按版本区分：** 早期版本完成过临时 Root 和重启后本机恢复；用户随后报告 2.3.3 本机验证完成，未提供新的具体步骤与日志。2.3.5 这轮执行了界面与环境检查，未重新运行提权或重启。界面测试与构建成功不等同于全部恢复场景都已实测。
+
+| 想了解什么 | 从这里开始 |
+|---|---|
+| 安装、兼容与常见问题 | [文档导航](docs/README.md) · [使用指南](docs/USER_GUIDE.md) |
+| 代码、构建与贡献 | [构建说明](docs/BUILD.md) · [技术架构](docs/ARCHITECTURE.md) · [贡献指南](CONTRIBUTING.md) |
+| 审计与实测边界 | [验证摘要](docs/VALIDATION.md) · [2.3.5 UI 审计](docs/AUDIT_2.3.5.md) · [2.3.3 代码审计](docs/AUDIT_2.3.3.md) |
+| 研究来源与公开证据 | [研究历史](docs/research/RESEARCH_HISTORY.md) · [证据清单](docs/EVIDENCE_MANIFEST.md) · [脱敏边界](docs/PRIVACY.md) |
 
 ## 致谢与许可
 
-App 自有源码采用 [Apache-2.0](LICENSE)。内置载荷及依赖保留各自许可，尤其 KernelSU 相关组件的 GPL-2.0；见 [NOTICE](NOTICE) 和 [第三方来源](docs/THIRD_PARTY.md)。
+基于 [GhostLock-H80GT](https://github.com/yakidango-official/GhostLock-H80GT) 的已有研究成果，结合 [Shizuku](https://github.com/RikkaApps/Shizuku) 与 [KernelSU](https://github.com/tiann/KernelSU) 完成本机操作流程。感谢 [NebuSec / CyberMeowfia](https://github.com/NebuSec/CyberMeowfia) 与 [Magisk](https://github.com/topjohnwu/Magisk) 等上游项目；漏洞发现与原始载荷归属保留给原作者。
 
-感谢 [GhostLock-H80GT](https://github.com/yakidango-official/GhostLock-H80GT)、[NebuSec / CyberMeowfia](https://github.com/NebuSec/CyberMeowfia)、[Shizuku](https://github.com/RikkaApps/Shizuku)、[KernelSU](https://github.com/tiann/KernelSU) 与 [Magisk](https://github.com/topjohnwu/Magisk)。本项目封装并适配现有研究成果，不将上游漏洞发现归为原创。
+App 自有源码采用 **[Apache-2.0](LICENSE)**。第三方载荷与依赖保留各自许可，包括 KernelSU 相关组件的 GPL-2.0。详见 [NOTICE](NOTICE) 与 [第三方来源](docs/THIRD_PARTY.md)。

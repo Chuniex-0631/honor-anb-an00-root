@@ -222,6 +222,16 @@ public final class MainActivity extends Activity {
         return new RippleDrawable(ColorStateList.valueOf(cRipple),shape(0x00000000,12),shape(0xFFFFFFFF,12));
     }
 
+    /** Settings-style list feedback: uniform, square-edged and full width inside the card. */
+    private Drawable rowFeedback(){
+        android.graphics.drawable.StateListDrawable states=new android.graphics.drawable.StateListDrawable();
+        states.addState(new int[]{android.R.attr.state_enabled,android.R.attr.state_pressed},shape(cRipple,0));
+        states.addState(new int[]{android.R.attr.state_enabled,android.R.attr.state_focused},shape(cRipple,0));
+        states.addState(new int[]{android.R.attr.state_enabled,android.R.attr.state_hovered},shape(cRipple,0));
+        states.addState(new int[0],shape(0x00000000,0));
+        states.setExitFadeDuration(120);return states;
+    }
+
     private Drawable ripple(int rippleColor,Drawable content){
         return new RippleDrawable(ColorStateList.valueOf(rippleColor),content,null);
     }
@@ -240,16 +250,16 @@ public final class MainActivity extends Activity {
 
     private void gap(LinearLayout parent,int height){parent.addView(new Space(this),new LinearLayout.LayoutParams(1,dp(height)));}
 
-    private void divider(LinearLayout parent,int leftInset){
+    private void divider(LinearLayout parent,int leftInset,int rightInset){
         View v=new View(this);v.setBackgroundColor(cLine);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(1));
-        lp.leftMargin=dp(leftInset);parent.addView(v,lp);
+        lp.leftMargin=dp(leftInset);lp.rightMargin=dp(rightInset);parent.addView(v,lp);
     }
 
     /** A card that is built detached, so a page can decide where it lands. */
     private LinearLayout cardView(){
         LinearLayout c=column();c.setPadding(dp(20),dp(18),dp(20),dp(18));
-        c.setBackground(shape(cSurface,18));return c;
+        c.setBackground(shape(cSurface,18));c.setClipToOutline(true);return c;
     }
 
     private LinearLayout card(LinearLayout parent){
@@ -282,8 +292,8 @@ public final class MainActivity extends Activity {
         LinearLayout row=new LinearLayout(this);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(dp(56));
-        row.setBackground(pressable());
-        row.setPadding(dp(10),dp(10),dp(10),dp(10));
+        row.setBackground(rowFeedback());
+        row.setPadding(dp(30),dp(10),dp(30),dp(10));
 
         View marker=dot(cMuted);
         LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(dp(8),dp(8));
@@ -332,8 +342,8 @@ public final class MainActivity extends Activity {
         LinearLayout row=new LinearLayout(this);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(dp(52));
-        row.setBackground(pressable());
-        row.setPadding(0,dp(12),0,dp(12));
+        row.setBackground(rowFeedback());
+        row.setPadding(dp(20),dp(12),dp(20),dp(12));
         row.setFocusable(true);
         TextView name=text(label,15,cText,false);
         row.addView(name,new LinearLayout.LayoutParams(0,-2,1));
@@ -448,7 +458,9 @@ public final class MainActivity extends Activity {
         errorActions.addView(help,hlp);errorCard.addView(errorActions);
 
         LinearLayout state=card(root);
+        state.setPadding(0,dp(18),0,dp(18));
         LinearLayout stateHead=new LinearLayout(this);stateHead.setGravity(Gravity.CENTER_VERTICAL);
+        stateHead.setPadding(dp(20),0,dp(20),0);
         stateHead.addView(section("准备状态"),new LinearLayout.LayoutParams(0,-2,1));
         checkCount=text("",12,cMuted,false);checkCount.setGravity(Gravity.END);
         stateHead.addView(checkCount);
@@ -456,16 +468,17 @@ public final class MainActivity extends Activity {
 
         deviceDetail=statusRow(state,0,"设备与系统",v->dialog("支持范围",
                 "荣耀 80 Pro 直屏版（ANB-AN00）\nMagicOS 9.0.0.230\n\n当前版本只支持这一已验证组合。",null,null));
-        divider(state,22);
+        divider(state,42,20);
         shizukuDetail=statusRow(state,1,"Shizuku",v->openPackage(RecoveryEngine.SHIZUKU,
                 "https://shizuku.rikka.app/download/"));
-        divider(state,22);
+        divider(state,42,20);
         ksuDetail=statusRow(state,2,"KernelSU",v->openPackage(RecoveryEngine.KSU,
                 "https://github.com/tiann/KernelSU/releases/tag/v3.3.0"));
-        divider(state,22);
+        divider(state,42,20);
         environmentDetail=statusRow(state,3,"执行环境",v->refreshEnvironment());
 
         LinearLayout shortcuts=new LinearLayout(this);gap(state,14);
+        shortcuts.setPadding(dp(20),0,dp(20),0);
         shizukuAction=button("打开 Shizuku",v->openPackage(RecoveryEngine.SHIZUKU,
                 "https://shizuku.rikka.app/download/"),false);
         ksuAction=button("打开 KernelSU",v->openPackage(RecoveryEngine.KSU,
@@ -496,10 +509,13 @@ public final class MainActivity extends Activity {
         }
 
         LinearLayout options=card(root);
-        options.addView(section("恢复选项"));gap(options,6);
+        options.setPadding(0,dp(18),0,dp(18));
+        TextView optionsHeading=section("恢复选项");optionsHeading.setPadding(dp(20),0,dp(20),0);
+        options.addView(optionsHeading);gap(options,6);
         allowShellRow=new LinearLayout(this);
         allowShellRow.setGravity(Gravity.CENTER_VERTICAL);allowShellRow.setMinimumHeight(dp(52));
-        allowShellRow.setBackground(pressable());allowShellRow.setFocusable(true);
+        allowShellRow.setBackground(rowFeedback());allowShellRow.setFocusable(true);
+        allowShellRow.setPadding(dp(20),0,dp(20),0);
         allowShellRow.addView(text("允许调试工具使用 Root",15,cText,false),
                 new LinearLayout.LayoutParams(0,-2,1));
         allowShellSwitch=new Switch(this);
@@ -518,6 +534,7 @@ public final class MainActivity extends Activity {
         options.addView(allowShellRow,new LinearLayout.LayoutParams(-1,-2));
         gap(options,4);
         allowShellNote=text("",12,cWarn,false);allowShellNote.setLineSpacing(dp(4),1);
+        allowShellNote.setPadding(dp(20),0,dp(20),0);
         options.addView(allowShellNote);
         allowShellSwitch.setOnCheckedChangeListener((view,enabled)->{
             if(updatingSwitch)return;
@@ -595,17 +612,19 @@ public final class MainActivity extends Activity {
         reboot.addView(body("Shizuku 和临时 Root 都不会跨重启保持运行。"));
 
         LinearLayout faq=card(root);
-        faq.addView(section("常见问题"));gap(faq,2);
+        faq.setPadding(0,dp(18),0,dp(18));
+        TextView faqHeading=section("常见问题");faqHeading.setPadding(dp(20),0,dp(20),0);
+        faq.addView(faqHeading);gap(faq,2);
         helpRow(faq,"Shizuku 未运行或无法授权",()->dialog("重新连接 Shizuku","先在 Shizuku 中通过无线调试启动服务，再返回本 App。若曾拒绝授权，可在 Shizuku 的应用管理中重新允许 ANB Root。\n\n关闭开发者选项或撤销配对后，需要先在手机上重新开启调试、配对并启动。","打开 Shizuku",()->openPackage(RecoveryEngine.SHIZUKU,"https://shizuku.rikka.app/download/")));
-        divider(faq,0);
+        divider(faq,20,20);
         helpRow(faq,"KernelSU 显示“未安装”",()->dialog("刷新管理器状态","恢复完成后，旧的管理器进程可能仍显示过时状态。刷新会停止并重新打开 KernelSU，不会再次提权。","刷新 KernelSU",()->startManagerRefresh()));
-        divider(faq,0);
+        divider(faq,20,20);
         helpRow(faq,"恢复超时，或手机重启了",()->dialog("先确认状态","不要重复运行同一次恢复。先保存诊断记录；若本次状态无法确认，请完整重启手机，再启动 Shizuku 后重试。","查看记录",()->showPage(PAGE_RECORDS)));
-        divider(faq,0);
+        divider(faq,20,20);
         helpRow(faq,"升级系统后还能使用吗？",()->dialog("系统版本支持","本版本仅适配 ANB-AN00 的 MagicOS 9.0.0.230。升级后若内核不匹配，App 会关闭恢复入口；需要重新确认适配，不能套用旧版文件。",null,null));
-        divider(faq,0);
+        divider(faq,20,20);
         helpRow(faq,"卸载 App 会立即解除 Root 吗？",()->dialog("临时 Root 的有效期","卸载 App 不会立即卸载当前已加载的内核模块。完整重启会结束本次临时 Root；之后不再启动恢复即可。",null,null));
-        divider(faq,0);
+        divider(faq,20,20);
         helpRow(faq,"允许调试工具使用 Root 是什么？",()->dialog("调试工具的 Root 权限","默认关闭。开启后，ADB、Shizuku 等以 shell 身份运行的工具可直接获准使用 Root，普通应用仍由 KernelSU 单独授权。\n\n该选择会被记住，只在恢复加载模块时设置。已有 Root 时不能即时切换；请完整重启手机，在恢复前修改。关闭选项仅取消此自动授权，不会撤销 KernelSU 中已有的其他授权。",null,null));
 
         LinearLayout privacy=card(root);

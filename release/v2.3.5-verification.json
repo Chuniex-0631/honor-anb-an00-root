@@ -1,0 +1,28 @@
+{
+  "version": "2.3.5",
+  "date": "2026-11-02",
+  "status": "released",
+  "audit_base": "v2.3.4",
+  "checks": {
+    "jvm_and_fixture_test_groups": 9,
+    "configuration_assertions": {
+      "light_portrait": 291,
+      "dark_portrait": 291,
+      "font_2_portrait": 313,
+      "light_landscape": 285,
+      "dark_font_2_landscape": 287
+    },
+    "activity_assertions_total": 1467,
+    "full_width_rows_checked": 11,
+    "real_press_release_drag_cancel_entries": 10,
+    "light_and_dark_edge_color_pixels": "passed",
+    "full_android_build": "passed",
+    "original_signature": "verified",
+    "recovery_and_palette_files_vs_2_3_4": "identical",
+    "root_or_reboot_performed": false,
+    "private_settings_reference_published": false
+  },
+  "apk_sha256": "7570a8189dc31c185e42ae3d7ac222f5805d9efa95e9c5105dbac59d71434b26",
+  "core_manifest_sha256": "c76c9a42bf93f9630c3bda033292d65d63120a269e71f4c13dbc07709c5bd324",
+  "signing_certificate_sha256": "933e0a448cd3328beb33f0cebeba6d45b3ed937bbfc1eadae2ba400782f3c408"
+}

@@ -33,6 +33,16 @@ public final class UiAuditInstrumentation extends Instrumentation {
     private void check(boolean ok,String reason){assertions++;if(!ok)throw new AssertionError(reason);}
     private View view(String name){return (View)field(activity,name);}
     private String text(String name){return ((TextView)view(name)).getText().toString();}
+    private void checkFullWidthRow(View row){
+        View parent=(View)row.getParent();
+        check(row.getLeft()==0&&row.getRight()==parent.getWidth(),"row spans its entire card");
+        check(row.getBackground() instanceof android.graphics.drawable.StateListDrawable,"uniform list highlight instead of rounded ripple");
+        boolean enabled=row.isEnabled();row.setEnabled(true);row.setPressed(true);
+        android.graphics.drawable.GradientDrawable fill=(android.graphics.drawable.GradientDrawable)row.getBackground().getCurrent();
+        check(fill.getCornerRadius()==0,"pressed row has square edges");
+        check(fill.getColor().getDefaultColor()==(Integer)field(activity,"cRipple"),"original press color preserved");
+        row.setPressed(false);row.setEnabled(enabled);
+    }
     private TextView findText(View node,String label){
         if(node instanceof TextView&&((TextView)node).getText().toString().equals(label))return (TextView)node;
         if(node instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)node;
@@ -71,7 +81,12 @@ public final class UiAuditInstrumentation extends Instrumentation {
             for(int page=0;page<3;page++){
                 final int index=page;
                 ui(()->call(activity,"showPage",new Class<?>[]{int.class},index));waitForIdleSync();
-                ui(()->checkTextLayout(activity.getWindow().getDecorView()));
+                ui(()->{
+                    checkTextLayout(activity.getWindow().getDecorView());
+                    if(index==0){for(View row:(View[])field(activity,"statusRows"))checkFullWidthRow(row);checkFullWidthRow(view("allowShellRow"));}
+                    if(index==2)for(String faq:new String[]{"Shizuku 未运行或无法授权","KernelSU 显示“未安装”","恢复超时，或手机重启了","升级系统后还能使用吗？","卸载 App 会立即解除 Root 吗？","允许调试工具使用 Root 是什么？"})
+                        checkFullWidthRow((View)findText(activity.getWindow().getDecorView(),faq).getParent());
+                });
             }
             ui(()->{
                 check(engine.gate()==Readiness.Gate.READY,"device prerequisites ready for state matrix");
