@@ -19,4 +19,5 @@ public final class TaskGate {
     }
     public boolean busy(){return owner.get()!=null;}
     public boolean checking(){Lease lease=owner.get();return lease!=null&&lease.task==Task.CHECK;}
+    public Task current(){Lease lease=owner.get();return lease==null?null:lease.task;}
 }

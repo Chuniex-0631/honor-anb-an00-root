@@ -44,6 +44,9 @@ jobs:
       - name: Compile without a release signing key
         shell: pwsh
         run: ./build.ps1
+      - name: Compile UI-only instrumentation without signing keys
+        shell: pwsh
+        run: ./tools/build_ui_tests.ps1 -BuildToolsPath "$env:ANDROID_SDK_ROOT/build-tools/35.0.0" -AndroidJar "$env:ANDROID_SDK_ROOT/platforms/android-35/android.jar"
       - uses: actions/upload-artifact@v4
         with:
           name: unsigned-development-build

@@ -28,7 +28,7 @@ with zipfile.ZipFile(args.apk) as signed, zipfile.ZipFile(args.unsigned) as unsi
             name = "assets/" + path.relative_to(root / "app/assets").as_posix()
             assert signed.read(name) == path.read_bytes(), f"Source asset mismatch: {name}"
     dex = signed.read("classes.dex")
-    for fixture in (b"EngineIntegrationTest", b"ServiceRegressionTest", b"AuditRegressionTest"):
+    for fixture in (b"EngineIntegrationTest", b"ServiceRegressionTest", b"AuditRegressionTest", b"UiAuditInstrumentation"):
         assert fixture not in dex, "Test fixture packaged into production"
     assert b"Lcom/anb/root/DeviceProfile;" in dex and b"Lcom/anb/root/TaskGate;" in dex
 print("PASS: release hash, every unsigned ZIP entry unchanged, all source assets, no test fixtures in production")

@@ -1,0 +1,30 @@
+{
+  "version": "2.3.4",
+  "version_code": 11,
+  "status": "candidate",
+  "package": "com.anb.root",
+  "artifact": "ANB-Root-2.3.4.apk",
+  "sha256": "78f6287076bc33a7f07469386a9363bcb7fe2e370ba98c6ab1bce4cccb817e9c",
+  "signing_certificate_sha256": "933e0a448cd3328beb33f0cebeba6d45b3ed937bbfc1eadae2ba400782f3c408",
+  "model": "ANB-AN00",
+  "firmware": "9.0.0.230",
+  "kernel": "5.10.236-android12-9-gd671cf8c2b02",
+  "transport": "Shizuku UserService",
+  "persistent_root": false,
+  "bootloader_unlock": false,
+  "minimum_shizuku_api": 13,
+  "recommended_kernelsu_manager": "v3.3.0",
+  "allow_shell_default": false,
+  "allow_shell_change_requires_full_reboot": true,
+  "payload_and_core": "8 payload files and recovery flow unchanged; UI presentation audited",
+  "device_verified": false,
+  "requires_device_reverification": true,
+  "firmware_display": "ANB-AN00 9.0.0.230(CHNC00E230R2P5)",
+  "sdk": 35,
+  "previous_version_device_validation": {
+    "version": "2.3.3",
+    "date": "2026-11-02",
+    "source": "user-reported completion; scope unspecified"
+  },
+  "ui_device_verified": true
+}

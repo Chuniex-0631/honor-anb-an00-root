@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.anb.root.uitest">
+    <application android:label="ANB Root UI tests" android:debuggable="true" />
+    <instrumentation android:name=".UiAuditInstrumentation" android:targetPackage="com.anb.root"
+        android:label="UI-only regression; never starts recovery" />
+</manifest>

@@ -37,7 +37,7 @@ public final class MainActivity extends Activity {
 
     private TextView headline,subtitle,badge,heroNote,deviceDetail,shizukuDetail,ksuDetail,environmentDetail,
             recordStatus,recordMessage,actionNote,errorDetail,errorGuidance,elapsedText,versionChip,logText,checkCount;
-    private Button primary,shizukuAction,ksuAction;
+    private Button primary,shizukuAction,ksuAction,managerAction;
     private TextView details;
     private Switch allowShellSwitch;
     private TextView allowShellNote;
@@ -52,11 +52,12 @@ public final class MainActivity extends Activity {
     private View[] statusRows=new View[4];
     private View[] statusDots=new View[4];
 
-    private boolean expanded,updatingSwitch,ticking,resumed,destroyed,exporting,notificationResolved;
+    private boolean expanded,updatingSwitch,ticking,resumed,destroyed,exporting,choosingExport,notificationResolved;
+    private AlertDialog activeDialog;
     private Boolean pendingRecovery;
     private final Runnable deferredRefresh=()->refresh();
     private int page;
-    private String shownLog="";
+    private String shownLog;
     private long lastPrimaryTap,busySince;
     private int lastAnnouncedStep=-1;
     private RecoveryEngine.Phase lastPhase;
@@ -88,6 +89,8 @@ public final class MainActivity extends Activity {
     private void startEnvironmentCheck(){ engine.checkEnvironment(); watch(); }
 
     private void startManagerRefresh(){
+        if(engine.isBusy()){toast("正在处理，请稍候");return;}
+        if(engine.gate()!=Readiness.Gate.READY){toast("请先返回首页完成执行环境检查");return;}
         engine.refreshManagerOnly();
         watch();
         toast("正在刷新 KernelSU 状态…");
@@ -110,6 +113,10 @@ public final class MainActivity extends Activity {
         if(state!=null){
             expanded=state.getBoolean("details");
             showPage(state.getInt("page",PAGE_HOME));
+            for(int i=0;i<scrolls.length;i++){
+                final ScrollView scroll=scrolls[i];final int y=state.getInt("scroll_"+i);
+                scroll.post(()->{if(!destroyed)scroll.scrollTo(0,y);});
+            }
         }else showPage(PAGE_HOME);
         Shizuku.addBinderReceivedListenerSticky(received);
         Shizuku.addBinderDeadListener(dead);
@@ -118,6 +125,7 @@ public final class MainActivity extends Activity {
 
     @Override protected void onSaveInstanceState(Bundle state){
         super.onSaveInstanceState(state);state.putInt("page",page);state.putBoolean("details",expanded);
+        for(int i=0;i<scrolls.length;i++)state.putInt("scroll_"+i,scrolls[i].getScrollY());
     }
 
     @Override protected void onResume(){
@@ -131,7 +139,12 @@ public final class MainActivity extends Activity {
         resumePermissionAction();
     }
 
-    @Override protected void onPause(){resumed=false;ticking=false;main.removeCallbacksAndMessages(null);super.onPause();}
+    @Override protected void onPause(){
+        resumed=false;ticking=false;main.removeCallbacksAndMessages(null);
+        if(activeDialog!=null)activeDialog.dismiss();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        super.onPause();
+    }
 
     @Override protected void onDestroy(){
         destroyed=true;main.removeCallbacksAndMessages(null);pendingRecovery=null;
@@ -202,14 +215,11 @@ public final class MainActivity extends Activity {
     }
 
     /**
-     * Press state for list rows: a brand-tinted state layer clipped to an inset rounded rect.
-     * The platform selectableItemBackground uses the theme's grey highlight, which reads as a
-     * hard grey block on these cards.
+     * A bounded layer whose content and mask share the row's rounded geometry.
+     * Insetting only the old mask cut through the status dot at the left edge.
      */
     private Drawable pressable(){
-        int tint=(cBrand&0x00FFFFFF)|0x1F000000;
-        Drawable mask=new android.graphics.drawable.InsetDrawable(shape(0xFFFFFFFF,12),dp(6),0,dp(6),0);
-        return new RippleDrawable(ColorStateList.valueOf(tint),null,mask);
+        return new RippleDrawable(ColorStateList.valueOf(cRipple),shape(0x00000000,12),shape(0xFFFFFFFF,12));
     }
 
     private Drawable ripple(int rippleColor,Drawable content){
@@ -253,7 +263,7 @@ public final class MainActivity extends Activity {
         b.setTextSize(TypedValue.COMPLEX_UNIT_SP,15);
         b.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
         b.setTextColor(solid?cOnBrand:cBrand);
-        b.setMinHeight(0);b.setMinimumHeight(dp(48));
+        b.setMinHeight(0);b.setMinimumHeight(dp(48));b.setGravity(Gravity.CENTER);
         b.setPadding(dp(16),dp(12),dp(16),dp(12));
         b.setBackground(ripple(solid?cRippleOnBrand:cRipple,shape(solid?cBrand:cBrandTint,14)));
         b.setStateListAnimator(null);b.setOnClickListener(listener);return b;
@@ -273,7 +283,7 @@ public final class MainActivity extends Activity {
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(dp(56));
         row.setBackground(pressable());
-        row.setPadding(0,0,0,0);
+        row.setPadding(dp(10),dp(10),dp(10),dp(10));
 
         View marker=dot(cMuted);
         LinearLayout.LayoutParams dlp=new LinearLayout.LayoutParams(dp(8),dp(8));
@@ -284,7 +294,8 @@ public final class MainActivity extends Activity {
         row.addView(name,new LinearLayout.LayoutParams(0,-2,1));
 
         TextView value=text("检查中",13,cMuted,true);
-        value.setGravity(Gravity.END);row.addView(value);
+        value.setGravity(Gravity.END);
+        row.addView(value,new LinearLayout.LayoutParams(0,-2,1));
 
         TextView chevron=text("›",18,cMuted,false);
         LinearLayout.LayoutParams clp=new LinearLayout.LayoutParams(-2,-2);
@@ -336,7 +347,11 @@ public final class MainActivity extends Activity {
     private void buildUi(){
         LinearLayout frame=column();frame.setBackgroundColor(cBg);
         frame.setOnApplyWindowInsetsListener((view,insets)->{
-            view.setPadding(0,insets.getSystemWindowInsetTop(),0,insets.getSystemWindowInsetBottom());
+            if(Build.VERSION.SDK_INT>=30){
+                android.graphics.Insets safe=insets.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.displayCutout());
+                view.setPadding(safe.left,safe.top,safe.right,safe.bottom);
+            }else view.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),
+                    insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
             return insets;
         });
         frame.addView(buildHeader());
@@ -353,11 +368,11 @@ public final class MainActivity extends Activity {
 
         actionBar=column();actionBar.setPadding(dp(20),dp(8),dp(20),dp(8));actionBar.setBackgroundColor(cBg);
         primary=button("检查准备状态",v->primaryAction(),true);
-        primary.setSingleLine(true);
         actionBar.addView(primary,new LinearLayout.LayoutParams(-1,-2));
         actionNote=text("仅在本次开机有效",11,cMuted,false);
-        actionNote.setGravity(Gravity.CENTER);actionNote.setSingleLine(true);gap(actionBar,6);actionBar.addView(actionNote);
-        frame.addView(actionBar);
+        actionNote.setGravity(Gravity.CENTER);gap(actionBar,6);actionBar.addView(actionNote);
+        if(getResources().getConfiguration().screenHeightDp<480)pages[PAGE_HOME].addView(actionBar);
+        else frame.addView(actionBar);
 
         LinearLayout navigation=new LinearLayout(this);
         navigation.setPadding(dp(10),dp(4),dp(10),dp(4));navigation.setBackgroundColor(cNavBg);
@@ -366,6 +381,7 @@ public final class MainActivity extends Activity {
         for(int i=0;i<3;i++){
             final int index=i;
             LinearLayout item=column();item.setGravity(Gravity.CENTER_HORIZONTAL);
+            item.setMinimumHeight(dp(56));item.setPadding(0,dp(4),0,dp(4));
             item.setBackground(pressable());item.setFocusable(true);
             ImageView icon=new ImageView(this);icon.setImageResource(icons[i]);
             icon.setColorFilter(cMuted);
@@ -376,7 +392,7 @@ public final class MainActivity extends Activity {
             item.setContentDescription(labels[i]+"，第 "+(i+1)+" 项，共 3 项");
             item.setOnClickListener(v->showPage(index));
             tabItems[i]=item;tabIcons[i]=icon;tabLabels[i]=label;
-            navigation.addView(item,new LinearLayout.LayoutParams(0,dp(56),1));
+            navigation.addView(item,new LinearLayout.LayoutParams(0,-2,1));
         }
         frame.addView(navigation);
         setContentView(frame);
@@ -404,7 +420,7 @@ public final class MainActivity extends Activity {
         versionChip=text(versionName(),11,cBrand,true);
         versionChip.setPadding(dp(10),dp(6),dp(10),dp(6));
         versionChip.setBackground(shape(cBrandSoft,10));
-        versionChip.setMinHeight(dp(28));
+        versionChip.setMinHeight(dp(48));versionChip.setGravity(Gravity.CENTER);versionChip.setFocusable(true);
         versionChip.setContentDescription("版本 "+versionName()+"，点按查看关于");
         versionChip.setOnClickListener(v->showAbout());
         header.addView(versionChip);
@@ -521,12 +537,17 @@ public final class MainActivity extends Activity {
             if(enabled==engine.allowShellSelected())return;
             if(!enabled){if(!engine.selectAllowShell(false))toast("暂时无法保存选项，请重新检查状态");refresh();return;}
             view.setChecked(false);
-            new AlertDialog.Builder(this).setTitle("允许调试工具使用 Root？")
+            confirmAllowShell();
+        });
+    }
+
+
+    private void confirmAllowShell(){
+        showDialog(new AlertDialog.Builder(this).setTitle("允许调试工具使用 Root？")
                     .setMessage("这会允许所有以 shell 身份运行的调试工具请求 Root，包括已授权电脑的 ADB 和通过 Shizuku 运行的工具，不再逐项询问。\n\n选项会被记住，在下一次恢复时生效。恢复成功后若要取消这项自动授权，需要完整重启后关闭选项并重新恢复。")
                     .setPositiveButton("允许",(d,w)->{
                         if(!engine.selectAllowShell(true))toast("当前状态已变化，未开启选项");refresh();})
-                    .setNegativeButton("保持关闭",null).show();
-        });
+                    .setNegativeButton("保持关闭",null));
     }
 
     private void buildRecords(LinearLayout root){
@@ -557,7 +578,8 @@ public final class MainActivity extends Activity {
         LinearLayout management=card(root);
         management.addView(section("KernelSU 状态未更新？"));gap(management,4);
         management.addView(body("刷新只会重新打开管理器，不会再次执行 Root 恢复。"));
-        full(management,button("刷新 KernelSU",v->startManagerRefresh(),false));
+        managerAction=button("刷新 KernelSU",v->startManagerRefresh(),false);
+        full(management,managerAction);
 
         // The expandable log grows without bound, so it is attached last: nothing sits below it.
         LinearLayout.LayoutParams tlp=new LinearLayout.LayoutParams(-1,-2);
@@ -667,13 +689,14 @@ public final class MainActivity extends Activity {
             set(errorGuidance,guidanceText(engine.message));
         }
 
-        boolean showProgress=busy||engine.phase==RecoveryEngine.Phase.SUCCESS
-                ||engine.phase==RecoveryEngine.Phase.WAIT_AUTH||failed;
+        boolean showProgress=UiState.showProgress(engine.currentTask(),engine.phase.name());
         progressCard.setVisibility(showProgress?View.VISIBLE:View.GONE);
         updateProgress();
 
         set(recordStatus,engine.title);
         set(recordMessage,engine.message);
+        enable(managerAction,!busy&&gate==Readiness.Gate.READY);
+        enable(statusRows[3],!busy&&(gate==Readiness.Gate.READY||gate==Readiness.Gate.ENVIRONMENT));
 
         set(primary,primaryLabel(snapshot.action,busy,checking));
         enable(primary,!busy&&!checking&&snapshot.action!=StatusModel.Action.NONE);
@@ -685,9 +708,9 @@ public final class MainActivity extends Activity {
                 :logLines==0?"展开详细记录":"展开详细记录 · "+logLines+" 行");
         logText.setVisibility(expanded?View.VISIBLE:View.GONE);
         if(expanded){
-            String current=logDump;
+            String current=UiState.logText(logDump);
             if(!current.equals(shownLog)){
-                set(logText,current.isEmpty()?"暂无记录。完成检查或恢复后，会显示在这里。":current);
+                set(logText,current);
                 shownLog=current;
             }
         }
@@ -701,7 +724,7 @@ public final class MainActivity extends Activity {
                 main.removeCallbacks(busyTick);main.post(busyTick);
             }
         }else{
-            busySince=0;
+            ticking=false;busySince=0;
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             main.removeCallbacks(busyTick);
             set(elapsedText,"");
@@ -723,7 +746,7 @@ public final class MainActivity extends Activity {
     }
 
     private void updateProgress(){
-        boolean busy=engine.isBusy();
+        boolean busy=engine.currentTask()==TaskGate.Task.RECOVERY;
         boolean failed=engine.phase==RecoveryEngine.Phase.FAILED;
         boolean waiting=engine.phase==RecoveryEngine.Phase.WAIT_AUTH;
         int step=Math.max(0,Math.min(5,engine.step));
@@ -733,11 +756,7 @@ public final class MainActivity extends Activity {
             String mark=done?"✓":active&&(busy||waiting||failed)?"●":"○";
             set(stageMarks[i],mark);
             stageMarks[i].setTextColor(done?cBrand:active&&(busy||waiting||failed)?cBrand:cMuted);
-            String state=done?"完成"
-                    :active&&busy?"进行中"
-                    :active&&waiting?"待授权"
-                    :active&&failed?"已中断"
-                    :"等待";
+            String state=UiState.stageState(i,step,busy,engine.phase.name());
             set(stageStates[i],state);
             stageStates[i].setTextColor(done?cBrand:active&&(busy||waiting||failed)?cWarn:cMuted);
         }
@@ -791,11 +810,12 @@ public final class MainActivity extends Activity {
             case SHELL_MODE:return "请用无线调试启动";
             case CHECK_ENV:return engine.isChecking()?"正在检查环境":"检查执行环境";
             case FIRST_SETUP:return "准备条件已满足";
-            case WORKING:return engine.title;
+            case WORKING:return engine.currentTask()==TaskGate.Task.MANAGER?"正在刷新 KernelSU"
+                    :engine.currentTask()==TaskGate.Task.SETTINGS?"正在保存选项":engine.title;
             case WAIT_AUTH:return "还差一步授权";
             case SUCCESS:return "上次验证成功";
             case FAILED:return "本次尚未完成";
-            default:return setup()?"准备就绪":"准备条件已满足";
+            default:return engine.modulePresent?"已检测到 Root 模块":setup()?"准备就绪":"准备条件已满足";
         }
     }
 
@@ -810,14 +830,17 @@ public final class MainActivity extends Activity {
             case SHELL_MODE:return "当前服务以 Root 启动。请在 Shizuku 中停止服务，再通过无线调试启动，以确认重启后可用的执行方式。";
             case CHECK_ENV:return busy?"正在确认 Shizuku 提供的执行环境。":"已连接并授权。再检查一次实际执行身份与进程限制。";
             case FIRST_SETUP:return "已检测两个应用、Shizuku 授权和执行环境。确认后开放恢复入口。";
-            case WORKING:return engine.phase==RecoveryEngine.Phase.RUNNING
+            case WORKING:if(engine.currentTask()==TaskGate.Task.MANAGER)return "正在重新打开管理器，不会执行 Root 恢复。";
+                if(engine.currentTask()==TaskGate.Task.SETTINGS)return "正在保存下次恢复所用的选项。";
+                return engine.phase==RecoveryEngine.Phase.RUNNING
                     ?"请保持耐心，通常需要 1–3 分钟。不要重复启动；进度会持续显示。":engine.message;
             case WAIT_AUTH:return "请在 KernelSU 中允许 ANB Root 使用 Root，然后返回这里验证。";
             case SUCCESS:return engine.message.contains("刷新未完成")
                     ?"Root 已验证，管理器状态待更新。可到记录页刷新 KernelSU。"
                     :"本次开机内曾验证 Root。可再次验证当前权限，或在 KernelSU 中管理授权。";
-            case FAILED:return "本次尚未确认完成。后台恢复可能仍在运行，请按下方说明处理，不要重复启动。";
-            default:return setup()?"所有条件已通过，点击下方按钮恢复本次权限。":"已检测两个应用、Shizuku 授权和执行环境。";
+            case FAILED:return "本次尚未确认完成。请查看下方原因与处理建议。";
+            default:return engine.modulePresent?"已发现 KernelSU 模块，点击下方按钮验证当前 Root，无需重复恢复。"
+                    :setup()?"所有条件已通过，点击下方按钮恢复本次权限。":"已检测两个应用、Shizuku 授权和执行环境。";
         }
     }
 
@@ -840,7 +863,7 @@ public final class MainActivity extends Activity {
     }
 
     private String primaryLabel(StatusModel.Action action,boolean busy,boolean checking){
-        if(busy)return "正在处理，请稍候";
+        if(busy)return UiState.busyLabel(engine.currentTask());
         if(checking)return "正在检查…";
         switch(action){
             case SHIZUKU_DOWNLOAD:return "获取 Shizuku";
@@ -886,6 +909,7 @@ public final class MainActivity extends Activity {
     }
 
     private void refreshEnvironment(){
+        if(engine.isBusy()){toast("正在处理，请稍候");return;}
         engine.invalidate();
         if(engine.gate()==Readiness.Gate.ENVIRONMENT)startEnvironmentCheck();
         else refresh();
@@ -929,11 +953,11 @@ public final class MainActivity extends Activity {
     private void requestShizuku(){
         try{
             if(Shizuku.shouldShowRequestPermissionRationale()){
-                new AlertDialog.Builder(this).setTitle("重新开启权限")
+                showDialog(new AlertDialog.Builder(this).setTitle("重新开启权限")
                         .setMessage("请在 Shizuku → 已授权应用中给 ANB Root 开启权限，然后返回。")
                         .setPositiveButton("打开 Shizuku",(d,w)->openPackage(RecoveryEngine.SHIZUKU,
                                 "https://shizuku.rikka.app/download/"))
-                        .setNegativeButton("稍后",null).show();
+                        .setNegativeButton("稍后",null));
             }else Shizuku.requestPermission(REQ_SHIZUKU);
         }catch(Exception e){toast("Shizuku 连接已变化，请重新检查");}
     }
@@ -995,19 +1019,32 @@ public final class MainActivity extends Activity {
         AlertDialog.Builder builder=new AlertDialog.Builder(this).setTitle(heading).setMessage(message);
         if(action!=null)builder.setPositiveButton(action,(d,w)->task.run()).setNegativeButton("关闭",null);
         else builder.setPositiveButton("知道了",null);
-        builder.show();
+        showDialog(builder);
+    }
+
+    /** One platform modal at a time; pausing cancels unconfirmed actions and removes its dim layer. */
+    private void showDialog(AlertDialog.Builder builder){
+        if(!resumed||destroyed||isFinishing()||isDestroyed())return;
+        if(activeDialog!=null&&activeDialog.isShowing())return;
+        final AlertDialog dialog=builder.create();activeDialog=dialog;
+        dialog.setOnDismissListener(ignored->{if(activeDialog==dialog)activeDialog=null;});
+        dialog.show();
     }
 
     private void export(){
+        if(!resumed||destroyed)return;
+        if(exporting||choosingExport){toast("正在保存诊断记录，请稍候");return;}
         Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TITLE,"ANB-Root-诊断-"
                 +new java.text.SimpleDateFormat("yyyyMMdd-HHmmss",java.util.Locale.US).format(new java.util.Date())+".txt");
-        try{startActivityForResult(intent,REQ_EXPORT);}catch(Exception e){toast("当前无法打开保存页面");}
+        try{choosingExport=true;startActivityForResult(intent,REQ_EXPORT);}
+        catch(Exception e){choosingExport=false;toast("当前无法打开保存页面");}
     }
 
     @Override protected void onActivityResult(int request,int result,Intent data){
         super.onActivityResult(request,result,data);
+        if(request==REQ_EXPORT)choosingExport=false;
         if(request!=REQ_EXPORT||result!=RESULT_OK||data==null||data.getData()==null)return;
         if(exporting){toast("正在保存上一份诊断记录");return;}
         exporting=true;
@@ -1056,12 +1093,12 @@ public final class MainActivity extends Activity {
     }
 
     private void showAbout(){
-        new AlertDialog.Builder(this).setTitle("ANB Root "+versionName())
+        showDialog(new AlertDialog.Builder(this).setTitle("ANB Root "+versionName())
                 .setMessage("荣耀 80 Pro 直屏版 · 临时 Root 助手\n适配 ANB-AN00 / MagicOS 9.0.0.230\n\n"
                         +"通过 Shizuku 提供执行环境，使用已验证的 GhostLock-H80GT 载荷与 KernelSU 管理权限。\n\n"
-                        +"本版修复兼容检查、失败处理、任务和资源管理。8 个原载荷保持不变，App 执行控制层已更新。")
+                        +"本版完善按钮、进度、弹窗与大字体适配。恢复流程与 8 个原载荷保持不变。")
                 .setPositiveButton("关闭",null)
-                .setNeutralButton("开源许可",(d,w)->showLicenses()).show();
+                .setNeutralButton("开源许可",(d,w)->{d.dismiss();main.post(()->showLicenses());}));
     }
 
     private void showLicenses(){
@@ -1076,8 +1113,8 @@ public final class MainActivity extends Activity {
             TextView view=text(content,12,cMuted,false);
             view.setTextIsSelectable(true);view.setPadding(dp(20),dp(12),dp(20),dp(12));
             ScrollView scroll=new ScrollView(this);scroll.addView(view);
-            new AlertDialog.Builder(this).setTitle("开源组件与许可").setView(scroll)
-                    .setPositiveButton("关闭",null).show();
+            showDialog(new AlertDialog.Builder(this).setTitle("开源组件与许可").setView(scroll)
+                    .setPositiveButton("关闭",null));
         }catch(Exception e){toast("暂时无法显示许可文件");}
     }
 }

@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = $PSScriptRoot
 $outputPath = Join-Path $projectRoot 'test-build'
 New-Item -ItemType Directory -Force -Path $outputPath | Out-Null
-$production = @('CommandRunner','Readiness','RunStatus','RecoveryOptions','StatusModel','FailureText','Diagnostics','DeviceProfile','TaskGate','RecoveryFailure') | ForEach-Object { Join-Path $projectRoot ('app/java/com/anb/root/' + $_ + '.java') }
+$production = @('CommandRunner','Readiness','RunStatus','RecoveryOptions','StatusModel','FailureText','Diagnostics','DeviceProfile','TaskGate','RecoveryFailure','UiState') | ForEach-Object { Join-Path $projectRoot ('app/java/com/anb/root/' + $_ + '.java') }
 $tests = @(Get-ChildItem (Join-Path $projectRoot 'tests') -Filter '*Test.java' | ForEach-Object FullName)
 & javac -encoding UTF-8 -d $outputPath $production $tests
 if ($LASTEXITCODE -ne 0) { throw 'Test compilation failed' }
@@ -35,3 +35,6 @@ $serviceFixtures = @(Get-ChildItem -Recurse (Join-Path $projectRoot 'tests/servi
 if ($LASTEXITCODE -ne 0) { throw 'Service fixture compilation failed' }
 & java -cp $serviceOutput ServiceRegressionTest
 if ($LASTEXITCODE -ne 0) { throw 'Service integration tests failed' }
+
+& java -cp $outputPath com.anb.root.UiStateTest
+if ($LASTEXITCODE -ne 0) { throw 'UI state tests failed' }

@@ -1,4 +1,4 @@
-ANB Root 2.3.3
+ANB Root 2.3.4
 
 Shizuku API 13.1.5 (api / provider / aidl / shared)
 Copyright (c) 2021 RikkaW. MIT license: licenses/Shizuku-API-MIT.txt

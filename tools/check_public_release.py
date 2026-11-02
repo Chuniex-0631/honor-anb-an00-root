@@ -40,7 +40,8 @@ if status == "released":
     assert release["sha256"] != "0" * 64
 else:
     assert status == "candidate", f"unknown release status: {status}"
-    assert not release.get("sha256"), "a candidate must not claim a signed artifact hash"
+    if release.get("sha256"):
+        assert re.fullmatch(r"[0-9a-f]{64}", release["sha256"]) and release["sha256"] != "0" * 64, "invalid signed candidate hash"
     assert release.get("requires_device_reverification") is True or release.get("device_verified") is True, \
         "a candidate must be either flagged for device reverification or already device verified"
 

@@ -1,8 +1,10 @@
 # ANB Root — HONOR 80 Pro Flat / ANB-AN00 Temporary Root
 
+**2.3.4 UI candidate:** bounded press feedback for all four preparation rows, accurate task/ticker states, single-owner dialogs, export guards, large-font and landscape layouts. Physical ANB-AN00 UI tests passed 1,277 Activity assertions across five display configurations. Recovery flow and payloads are unchanged. This branch prepares 2.3.4; the public stable release remains 2.3.3. See [UI audit and limits](docs/AUDIT_2.3.4.md).
+
 **2.3.3 audit fixes:** exact model/SDK/firmware/kernel gating, actionable failures, SELinux guidance, shared task ownership, duplicate foreground-service protection, process and UI lifecycle cleanup, asynchronous diagnostic export. Verification/progress checks cannot start a new recovery chain. The eight payload files and AIDL are unchanged; application control code has changed. See the [closure and test limits](docs/AUDIT_2.3.3.md).
 
-The control changes have passed automated and simulated execution tests, but were not reverified by performing root/reboot on a physical device in this release session. Earlier device results do not substitute for that test.
+The user subsequently reported completing on-device validation of 2.3.3, without supplying detailed steps or fresh logs. The 2.3.4 session verified UI on the physical device and did not execute root recovery or reboot. These are separate validation records.
 
 Version 2.2.0 adds **Allow debugging tools to use Root**, off by default on install or upgrade. When enabled, shell (UID 2000) tools such as ADB and Shizuku are automatically allowed to request root; ordinary apps still need KernelSU authorization. The choice is remembered and fixed when a new recovery starts. It cannot change an already loaded module: fully reboot, change the option, then restore. Existing attempts only resume monitoring with their original parameters. Turning this option off does not revoke other KernelSU grants.
 

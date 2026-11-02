@@ -45,6 +45,7 @@ public final class RecoveryEngine {
             android.os.Build.DISPLAY,System.getProperty("os.version")); }
     public boolean isBusy(){return tasks.busy();}
     public boolean isChecking(){return tasks.checking();}
+    public TaskGate.Task currentTask(){return tasks.current();}
     /** Cached binder liveness for presentation; the worker performs the real IPC probe. */
     public static boolean shizukuAlive(){android.os.IBinder binder=Shizuku.getBinder();return binder!=null&&binder.isBinderAlive();}
     public boolean installed(String pkg) {

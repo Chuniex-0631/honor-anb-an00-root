@@ -1,0 +1,56 @@
+{
+  "version": "2.3.4",
+  "date": "2026-11-02",
+  "status": "candidate",
+  "audit_base": "bf65b956d839e1d4f2dff28d89d67b3c0f3508a4",
+  "closed_ui_findings": [
+    "U01",
+    "U02",
+    "U03",
+    "U04",
+    "U05",
+    "U06",
+    "U07",
+    "U08",
+    "U09",
+    "U10"
+  ],
+  "device_ui_verified": true,
+  "physical_root_or_reboot_performed_this_round": false,
+  "previous_release_device_validation": {
+    "version": "2.3.3",
+    "source": "user reported completion in this session",
+    "detailed_steps_or_new_logs_supplied": false
+  },
+  "ui_checks": {
+    "configuration_assertions": {
+      "light_portrait": 253,
+      "dark_portrait": 253,
+      "font_2_portrait": 275,
+      "light_landscape": 247,
+      "dark_font_2_landscape": 249
+    },
+    "total_activity_assertions": 1277,
+    "page_configurations_captured": 15,
+    "preparation_rows_press_release_return": 4,
+    "preparation_rows_drag_cancel": 4,
+    "real_home_resume_modal_cleanup": "passed",
+    "document_picker_cancel_reopen": "passed",
+    "simulated_recovery_states_start_payload": false
+  },
+  "checks": {
+    "jvm_and_fixture_test_groups": 9,
+    "full_android_build": "passed",
+    "signed_apk_vs_unsigned": "identical; every entry checked",
+    "public_source_and_privacy": "passed",
+    "archive_evidence_and_links": "passed",
+    "payload_and_aidl_vs_2_1_0": "identical",
+    "recovery_engine_vs_2_3_3": "only read-only currentTask accessor added",
+    "original_signature": "verified",
+    "test_apk_uninstalled": true,
+    "display_settings_restored": true
+  },
+  "apk_sha256": "78f6287076bc33a7f07469386a9363bcb7fe2e370ba98c6ab1bce4cccb817e9c",
+  "signing_certificate_sha256": "933e0a448cd3328beb33f0cebeba6d45b3ed937bbfc1eadae2ba400782f3c408",
+  "core_manifest_sha256": "f5238c05935d80dabdc8c77a72a3fb89a6f92a09bcb05da3f577ebe59d237422"
+}
