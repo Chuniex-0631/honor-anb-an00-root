@@ -22,7 +22,13 @@ public final class UiState {
         if("FAILED".equals(phase))return "未完成";
         return "等待";
     }
+    public static final int MAX_DISPLAY_LOG_CHARS=32000;
     public static String logText(String log) {
-        return log.isEmpty()?"暂无记录。完成检查或恢复后，会显示在这里。":log;
+        if(log==null||log.isEmpty())return "暂无记录。完成检查或恢复后，会显示在这里。";
+        if(log.length()<=MAX_DISPLAY_LOG_CHARS)return log;
+        int start=log.length()-MAX_DISPLAY_LOG_CHARS;
+        // Do not split a supplementary Unicode character at the display boundary.
+        if(Character.isLowSurrogate(log.charAt(start))&&Character.isHighSurrogate(log.charAt(start-1)))start++;
+        return "（仅显示最近的记录；保存诊断可查看完整保留记录。）\n"+log.substring(start);
     }
 }

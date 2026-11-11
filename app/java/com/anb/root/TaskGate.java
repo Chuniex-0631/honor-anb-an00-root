@@ -1,5 +1,6 @@
 package com.anb.root;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -10,6 +11,7 @@ public final class TaskGate {
     public final class Lease implements AutoCloseable {
         public final Task task;
         private final AtomicBoolean closed=new AtomicBoolean();
+        private final long startedNanos=System.nanoTime();
         private Lease(Task task){this.task=task;}
         @Override public void close(){if(closed.compareAndSet(false,true))owner.compareAndSet(this,null);}
     }
@@ -20,4 +22,5 @@ public final class TaskGate {
     public boolean busy(){return owner.get()!=null;}
     public boolean checking(){Lease lease=owner.get();return lease!=null&&lease.task==Task.CHECK;}
     public Task current(){Lease lease=owner.get();return lease==null?null:lease.task;}
+    public long elapsedMillis(){Lease lease=owner.get();return lease==null?0:TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-lease.startedNanos);}
 }

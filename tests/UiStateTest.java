@@ -22,6 +22,16 @@ public final class UiStateTest {
         check(UiState.stageState(2,2,false,"FAILED").equals("未完成"),"failure does not claim the background was interrupted");
         check(!UiState.logText("").isEmpty(),"empty log is explained");
         check(UiState.logText("one\ntwo").equals("one\ntwo"),"diagnostic text preserved");
+        check(!UiState.logText(null).isEmpty(),"missing log has an explanation");
+        StringBuilder large=new StringBuilder();
+        for(int i=0;i<40000;i++)large.append('a');
+        large.append("END");
+        String display=UiState.logText(large.toString());
+        check(display.endsWith("END")&&display.length()<32100,"large log retains a bounded recent tail");
+        check(display.contains("保存诊断"),"truncated display explains how to get retained logs");
+        String unicode="prefix\uD83D\uDE00"+large.substring(0,UiState.MAX_DISPLAY_LOG_CHARS-1);
+        String unicodeDisplay=UiState.logText(unicode);
+        check(!Character.isLowSurrogate(unicodeDisplay.charAt(unicodeDisplay.indexOf('\n')+1)),"tail never begins inside a surrogate pair");
         TaskGate gate=new TaskGate();
         check(gate.current()==null,"idle owner");
         TaskGate.Lease first=gate.acquire(TaskGate.Task.MANAGER);

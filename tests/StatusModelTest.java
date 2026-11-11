@@ -70,6 +70,25 @@ public final class StatusModelTest {
         s = snap(Readiness.Gate.READY, "IDLE", false, false, true, true);
         check(s.action == StatusModel.Action.VERIFY, "an already loaded module is only verified");
 
-        System.out.println("PASS: 8 gates, precedence (device > checking > busy > current gate > phase), setup/module actions, badges");
+        int combinations=0;
+        String[] phases={"IDLE","CHECKING","PREPARING","RUNNING","LOADING","VERIFYING","WAIT_AUTH","SUCCESS","FAILED"};
+        for(Readiness.Gate gate:Readiness.Gate.values())for(String phase:phases)
+            for(FailureText.Kind failure:FailureText.Kind.values())for(int flags=0;flags<16;flags++){
+                boolean busy=(flags&1)!=0,checking=(flags&2)!=0,setup=(flags&4)!=0,module=(flags&8)!=0;
+                s=StatusModel.of(gate,phase,busy,checking,setup,module,failure);combinations++;
+                check(s.headline!=null&&s.badge!=null&&s.action!=null&&s.tone!=null,"all states render");
+                if(gate==Readiness.Gate.DEVICE)check(s.action==StatusModel.Action.NONE,"unsupported never acts");
+                if(gate!=Readiness.Gate.READY)check(s.action!=StatusModel.Action.RESTORE&&s.action!=StatusModel.Action.VERIFY
+                        &&s.action!=StatusModel.Action.CHECK_PROGRESS,"prerequisites precede recovery actions");
+                if(gate==Readiness.Gate.READY&&!busy&&!checking&&!setup)
+                    check(s.action==StatusModel.Action.FINISH_SETUP,"setup cannot be bypassed by historical state");
+                if(busy&&!checking&&gate!=Readiness.Gate.DEVICE)check(s.action==StatusModel.Action.NONE,"busy cannot start a second task");
+                if(module)check(s.action!=StatusModel.Action.RESTORE,"loaded module never offers another restore");
+                if(gate==Readiness.Gate.READY&&!busy&&!checking&&setup&&phase.equals("FAILED")
+                        &&(failure==FailureText.Kind.SECURITY_NOT_RESTORED||failure==FailureText.Kind.REBOOT_REQUIRED))
+                    check(s.action==StatusModel.Action.SAVE_DIAGNOSTICS,"unsafe failure requires diagnostics");
+                if(s.badge==StatusModel.Badge.VERIFIED)check(gate==Readiness.Gate.READY&&module&&setup&&!busy&&!checking&&phase.equals("SUCCESS"),"no false verified badge");
+            }
+        System.out.println("PASS: prerequisite precedence, actions, badges and "+combinations+" complete state combinations");
     }
 }

@@ -24,12 +24,14 @@ public final class FailureTextTest {
         expect(FailureText.Kind.PREPARE, "请先完成依赖检查。");
         expect(FailureText.Kind.PREPARE, "无法确认本次开机编号。");
         expect(FailureText.Kind.UNKNOWN, "某个尚未归类的新消息");
+        expect(FailureText.Kind.UNKNOWN, "恢复权限过程中发生未知错误");
+        expect(FailureText.Kind.UNKNOWN, "尚未授予其他应用 Root 权限");
         expect(FailureText.Kind.UNKNOWN, "");
         expect(FailureText.Kind.UNKNOWN, "   ");
         expect(FailureText.Kind.UNKNOWN, null);
 
         check(!FailureText.specific(FailureText.Kind.UNKNOWN), "unknown is not specific");
         check(FailureText.specific(FailureText.Kind.TIMEOUT), "timeout is specific");
-        System.out.println("PASS: 17 message classifications, timeout before reboot, unknown stays generic");
+        System.out.println("PASS: typed fallback message classifications, timeout before reboot, unknown stays generic");
     }
 }

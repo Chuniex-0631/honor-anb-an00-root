@@ -52,15 +52,17 @@ public final class MainActivity extends Activity {
     private View[] statusRows=new View[4];
     private View[] statusDots=new View[4];
 
-    private boolean expanded,updatingSwitch,ticking,resumed,destroyed,exporting,choosingExport,notificationResolved;
+    private boolean expanded,updatingSwitch,ticking,resumed,destroyed,choosingExport,notificationResolved;
+    // Export belongs to the process, so recreation cannot launch a second writer or lose its result.
+    private static boolean exporting;
+    private static String exportNotice;
     private AlertDialog activeDialog;
     private Boolean pendingRecovery;
     private final Runnable deferredRefresh=()->refresh();
     private int page;
     private String shownLog;
-    private long lastPrimaryTap,busySince;
+    private long lastPrimaryTap;
     private int lastAnnouncedStep=-1;
-    private RecoveryEngine.Phase lastPhase;
 
     private final Shizuku.OnBinderReceivedListener received=()->{if(destroyed)return;engine.invalidate();if(resumed){autoCheck();refresh();}};
     private final Shizuku.OnBinderDeadListener dead=()->{
@@ -81,7 +83,7 @@ public final class MainActivity extends Activity {
     private final Runnable watchTick=new Runnable(){public void run(){
         if(!resumed||destroyed||isFinishing()||isDestroyed())return;
         refresh();
-        if(engine.isChecking()||(engine.isBusy()&&!ticking))main.postDelayed(this,400);
+        if(exporting||(engine.isBusy()&&!ticking))main.postDelayed(this,400);
     }};
 
     private void watch(){ if(!resumed||destroyed)return;main.removeCallbacks(watchTick); main.postDelayed(watchTick,300); }
@@ -99,8 +101,10 @@ public final class MainActivity extends Activity {
     private final Runnable busyTick=new Runnable(){public void run(){
         if(!resumed||destroyed||isFinishing()||isDestroyed())return;
         if(!engine.isBusy()){ticking=false;refresh();return;}
-        updateProgress();
-        if(engine.phase!=lastPhase){lastPhase=engine.phase;refresh();}
+        // Logs and messages can change without a phase transition (for example while monitoring).
+        refresh();
+        // Always schedule one final observation: the worker may finish after refresh sampled busy.
+        // The next tick releases presentation state even when no completion callback reaches this Activity.
         main.postDelayed(this,1000);
     }};
 
@@ -112,6 +116,9 @@ public final class MainActivity extends Activity {
         buildUi();
         if(state!=null){
             expanded=state.getBoolean("details");
+            choosingExport=state.getBoolean("choosing_export");
+            if(state.containsKey("pending_recovery"))pendingRecovery=state.getBoolean("pending_recovery");
+            notificationResolved=state.getBoolean("notification_resolved");
             showPage(state.getInt("page",PAGE_HOME));
             for(int i=0;i<scrolls.length;i++){
                 final ScrollView scroll=scrolls[i];final int y=state.getInt("scroll_"+i);
@@ -125,6 +132,9 @@ public final class MainActivity extends Activity {
 
     @Override protected void onSaveInstanceState(Bundle state){
         super.onSaveInstanceState(state);state.putInt("page",page);state.putBoolean("details",expanded);
+        state.putBoolean("choosing_export",choosingExport);
+        if(pendingRecovery!=null)state.putBoolean("pending_recovery",pendingRecovery);
+        state.putBoolean("notification_resolved",notificationResolved);
         for(int i=0;i<scrolls.length;i++)state.putInt("scroll_"+i,scrolls[i].getScrollY());
     }
 
@@ -135,7 +145,7 @@ public final class MainActivity extends Activity {
         refresh();
         main.removeCallbacks(busyTick);
         if(engine.isBusy())main.post(busyTick);
-        if(engine.isChecking()||engine.isBusy())watch();
+        if(engine.isChecking()||engine.isBusy()||exporting)watch();
         resumePermissionAction();
     }
 
@@ -607,7 +617,7 @@ public final class MainActivity extends Activity {
         steps(reboot,new String[]{
                 "解锁手机，等待开机约 90 秒。",
                 "重新启动 Shizuku。",
-                "回到 ANB Root 点击恢复，看到“Root 已验证”才算成功。"});
+                "回到 ANB Root 点击恢复。首页显示“上次验证成功”表示已验证过本次开机的 Root；需要确认当前权限时可再次验证。"});
         gap(reboot,10);
         reboot.addView(body("Shizuku 和临时 Root 都不会跨重启保持运行。"));
 
@@ -621,7 +631,7 @@ public final class MainActivity extends Activity {
         divider(faq,20,20);
         helpRow(faq,"恢复超时，或手机重启了",()->dialog("先确认状态","不要重复运行同一次恢复。先保存诊断记录；若本次状态无法确认，请完整重启手机，再启动 Shizuku 后重试。","查看记录",()->showPage(PAGE_RECORDS)));
         divider(faq,20,20);
-        helpRow(faq,"升级系统后还能使用吗？",()->dialog("系统版本支持","本版本仅适配 ANB-AN00 的 MagicOS 9.0.0.230。升级后若内核不匹配，App 会关闭恢复入口；需要重新确认适配，不能套用旧版文件。",null,null));
+        helpRow(faq,"升级系统后还能使用吗？",()->dialog("系统版本支持","本版本仅适配 ANB-AN00 的 MagicOS 9.0.0.230。升级后若完整固件、Android 版本或内核不匹配，App 会关闭恢复入口；需要重新确认适配，不能套用旧版文件。",null,null));
         divider(faq,20,20);
         helpRow(faq,"卸载 App 会立即解除 Root 吗？",()->dialog("临时 Root 的有效期","卸载 App 不会立即卸载当前已加载的内核模块。完整重启会结束本次临时 Root；之后不再启动恢复即可。",null,null));
         divider(faq,20,20);
@@ -629,7 +639,7 @@ public final class MainActivity extends Activity {
 
         LinearLayout privacy=card(root);
         privacy.addView(section("本地运行，由你掌控"));gap(privacy,8);
-        privacy.addView(body("App 不申请联网权限，不上传运行记录。诊断文件只会保存到你选择的位置。日志可能含设备版本和运行信息，分享前可以先查看。"));
+        privacy.addView(body("App 不申请联网权限，不上传运行记录。运行日志保存在本机，环境与验证摘要也会自动保存在 App 专属目录；手动导出时由你选择位置。内容可能含设备版本和运行信息，分享前请检查。"));
         full(privacy,button("关于与开源许可",v->showAbout(),false));
     }
 
@@ -637,6 +647,7 @@ public final class MainActivity extends Activity {
 
     private void refresh(){
         if(!resumed||destroyed||isFinishing()||isDestroyed()||headline==null||primary==null)return;
+        if(exportNotice!=null){String notice=exportNotice;exportNotice=null;toast(notice);}
         Readiness.Gate gate=engine.gate();
         boolean busy=engine.isBusy(),checking=engine.isChecking(),setup=setup();
         StatusModel.Snapshot snapshot=StatusModel.of(gate,engine.phase.name(),busy,checking,setup,engine.modulePresent,engine.failureKind);
@@ -724,18 +735,17 @@ public final class MainActivity extends Activity {
         if(busy){
             if(!getWindow().getDecorView().getKeepScreenOn())
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            if(busySince==0)busySince=SystemClock.elapsedRealtime();
             if(!ticking){
                 ticking=true;
                 main.removeCallbacks(busyTick);main.post(busyTick);
             }
         }else{
-            ticking=false;busySince=0;
+            ticking=false;
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             main.removeCallbacks(busyTick);
             set(elapsedText,"");
         }
-        lastPhase=engine.phase;
+        resumePermissionAction();
     }
 
     private void updateRowDescriptions(){
@@ -767,12 +777,12 @@ public final class MainActivity extends Activity {
             stageStates[i].setTextColor(done?cBrand:active&&(busy||waiting||failed)?cWarn:cMuted);
         }
         if(busy){
-            long seconds=busySince==0?0:Math.max(0,(SystemClock.elapsedRealtime()-busySince)/1000);
+            long seconds=engine.taskElapsedMillis()/1000;
             set(elapsedText,String.format(java.util.Locale.CHINA,"已用 %d:%02d",seconds/60,seconds%60));
             if(step!=lastAnnouncedStep){
                 lastAnnouncedStep=step;
                 if(progressCard.getVisibility()==View.VISIBLE)
-                    progressCard.announceForAccessibility(STAGE_LABELS[Math.min(4,step)]+"，进行中");
+                    progressCard.announceForAccessibility(step>=5?"Root 验证完成":STAGE_LABELS[step]+"，进行中");
             }
         }else{
             set(elapsedText,"");
@@ -852,8 +862,8 @@ public final class MainActivity extends Activity {
 
     private String guidanceText(String message){
         switch(engine.failureKind){
-            case SECURITY_NOT_RESTORED:return "SELinux 尚未恢复为 Enforcing。请保存记录并完整重启手机，不要继续使用本次未完成的 Root。";
-            case REBOOT_REQUIRED:return "本次开机的记录无法安全继续。请先保存诊断并完整重启，之后重新启动 Shizuku 再恢复。";
+            case SECURITY_NOT_RESTORED:return "未能确认全部保护设置与恢复收尾已完成。请保存记录并完整重启手机，不要继续使用本次未完成的 Root。";
+            case REBOOT_REQUIRED:return "本次开机的恢复状态无法安全继续。请先保存诊断并完整重启，之后重新启动 Shizuku 再恢复。";
             case BOOT_WAIT:return "系统仍在启动。请解锁并等到桌面稳定（约 90 秒）后，再点一次。";
             case CONCURRENT_RUN:return "已有一次恢复在运行。请等待它结束，不要并发启动。";
             case REBOOTED:return "手机在恢复过程中重启了。解锁后重新启动 Shizuku，再返回检查。";
@@ -943,6 +953,7 @@ public final class MainActivity extends Activity {
             case FINISH_SETUP:
                 if(getSharedPreferences("setup",0).edit().putBoolean("completed",true).commit())
                     engine.record("首次准备完成：依赖、授权与执行环境已确认。");
+                else toast("首次准备未能保存，请确认存储空间后重试");
                 refresh();return;
             case SAVE_DIAGNOSTICS:
                 export();return;
@@ -985,7 +996,6 @@ public final class MainActivity extends Activity {
 
     private void launchService(boolean allowNewRecovery){
         if(!resumed||destroyed||engine.isBusy()||engine.isChecking()||!setup()||engine.gate()!=Readiness.Gate.READY){refresh();return;}
-        busySince=SystemClock.elapsedRealtime();
         try{startForegroundService(new Intent(this,RecoveryService.class).putExtra(RecoveryService.EXTRA_ALLOW_NEW_RECOVERY,allowNewRecovery));}
         catch(RuntimeException error){engine.serviceUnavailable(error);toast("系统未允许启动进度服务，请重新检查");refresh();return;}
         main.postDelayed(deferredRefresh,250);
@@ -995,12 +1005,18 @@ public final class MainActivity extends Activity {
     @Override public void onRequestPermissionsResult(int request,String[] names,int[] grants){
         super.onRequestPermissionsResult(request,names,grants);
         if(request!=REQ_NOTIFICATIONS||pendingRecovery==null)return;
+        if(grants.length==0||grants[0]!=PackageManager.PERMISSION_GRANTED)toast("通知未开启，可在首页查看进度");
         notificationResolved=true;resumePermissionAction();
     }
     private void resumePermissionAction(){
         if(!resumed||destroyed||!notificationResolved||pendingRecovery==null)return;
+        // Recreation reconnects Shizuku and may still be probing when the permission result arrives.
+        // Keep the user's pending action until that probe finishes; refresh() resumes it afterwards.
+        if(engine.isChecking())return;
         boolean allowNew=pendingRecovery;pendingRecovery=null;notificationResolved=false;
-        // A dialog callback must never bypass the current lifecycle/task/prerequisite checks.
+        if(engine.isBusy()||!setup()||engine.gate()!=Readiness.Gate.READY){
+            toast("准备状态已变化，请按首页提示重新检查后继续");return;
+        }
         launchService(allowNew);
     }
 
@@ -1017,7 +1033,7 @@ public final class MainActivity extends Activity {
 
     private void toast(String message){Toast.makeText(this,message,Toast.LENGTH_LONG).show();}
 
-    private boolean setup(){return getSharedPreferences("setup",0).getBoolean("completed",false);}
+    private boolean setup(){return engine.setupCompleted();}
 
     // ---------------------------------------------------------------- dialogs, export, about
 
@@ -1054,10 +1070,10 @@ public final class MainActivity extends Activity {
         if(request!=REQ_EXPORT||result!=RESULT_OK||data==null||data.getData()==null)return;
         if(exporting){toast("正在保存上一份诊断记录");return;}
         exporting=true;
+        watch();
         final Uri destination=data.getData();
         final ContentResolver resolver=getApplicationContext().getContentResolver();
         final String snapshot=report();
-        final java.lang.ref.WeakReference<MainActivity> target=new java.lang.ref.WeakReference<>(this);
         final Handler delivery=new Handler(Looper.getMainLooper());
         new Thread(()->{
             String notice;
@@ -1066,9 +1082,8 @@ public final class MainActivity extends Activity {
             }catch(Exception e){notice="保存失败，请重试";}
             final String resultText=notice;
             delivery.post(()->{
-                MainActivity activity=target.get();if(activity==null)return;
-                activity.exporting=false;
-                if(activity.resumed&&!activity.destroyed&&!activity.isFinishing()&&!activity.isDestroyed())activity.toast(resultText);
+                exporting=false;
+                exportNotice=resultText;
             });
         },"diagnostic-export").start();
     }
@@ -1102,7 +1117,7 @@ public final class MainActivity extends Activity {
         showDialog(new AlertDialog.Builder(this).setTitle("ANB Root "+versionName())
                 .setMessage("荣耀 80 Pro 直屏版 · 临时 Root 助手\n适配 ANB-AN00 / MagicOS 9.0.0.230\n\n"
                         +"通过 Shizuku 提供执行环境，使用已验证的 GhostLock-H80GT 载荷与 KernelSU 管理权限。\n\n"
-                        +"本版完善按钮、进度、弹窗与大字体适配。恢复流程与 8 个原载荷保持不变。")
+                        +"本版完善恢复状态、故障处理、进度、记录与界面提示。内置载荷的来源与校验可在仓库查看。")
                 .setPositiveButton("关闭",null)
                 .setNeutralButton("开源许可",(d,w)->{d.dismiss();main.post(()->showLicenses());}));
     }

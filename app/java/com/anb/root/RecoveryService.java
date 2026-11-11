@@ -27,7 +27,13 @@ public final class RecoveryService extends Service {
         catch(RuntimeException error){RecoveryEngine.get(this).serviceUnavailable(error);stopSelf();return START_NOT_STICKY;}
         ownsTask=true;
         boolean accepted=RecoveryEngine.get(this).start(
-                text->main.post(()->{if(!destroyed&&ownsTask)getSystemService(NotificationManager.class).notify(12,notification(text));}),
+                text->main.post(()->{
+                    if(destroyed||!ownsTask)return;
+                    // Notification permission or channel settings can change while work continues.
+                    // A presentation failure must not kill the process monitoring a live recovery.
+                    try{getSystemService(NotificationManager.class).notify(12,notification(text));}
+                    catch(RuntimeException ignored){ }
+                }),
                 ()->main.post(()->{if(destroyed||!ownsTask)return;ownsTask=false;stopForeground(STOP_FOREGROUND_REMOVE);stopSelf();}),
                 intent!=null&&intent.getBooleanExtra(EXTRA_ALLOW_NEW_RECOVERY,false));
         if(!accepted){ownsTask=false;stopForeground(STOP_FOREGROUND_REMOVE);stopSelf();}

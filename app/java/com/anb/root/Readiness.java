@@ -16,6 +16,7 @@ public final class Readiness {
         return Gate.READY;
     }
     public static boolean validEnvironment(String output) {
+        if(output==null)return false;
         boolean uid=false,seccomp=false;
         for(String line:output.replace("\r", "").split("\n")) {
             if(line.startsWith("uid=2000(shell)") && line.contains("context=u:r:shell:s0"))uid=true;

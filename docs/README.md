@@ -1,6 +1,8 @@
 # ANB Root 文档导航
 
-当前正式版：**[2.3.5](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/tag/v2.3.5)**。返回 [项目主页](../README.md) · [English](../README.en.md)。
+当前正式版：**[2.4.0](https://github.com/Chuniex-0631/honor-anb-an00-root/releases/tag/v2.4.0)**。返回 [项目主页](../README.md) · [English](../README.en.md)。
+
+2.4.0 使用新发布签名，2.3.5 及以前版本须先导出诊断，按 [签名迁移步骤](USER_GUIDE.md#从旧版迁移到-240) 完整重启并卸载重装；Shizuku 与 KernelSU 无需卸载。
 
 ## 安装与使用
 
@@ -15,6 +17,7 @@
 
 | 文档 | 内容 |
 |---|---|
+| [2.4.0 审计与验证](AUDIT_2.4.0.md) | 当前状态闭环修复、保护状态检查与实测边界 |
 | [验证摘要](VALIDATION.md) | 按版本区分实机结果、自动化测试与未覆盖场景 |
 | [2.3.5 按压反馈修复](AUDIT_2.3.5.md) | 左右贯通、颜色保持、取消手势与设备检查 |
 | [2.3.4 UI 审计](AUDIT_2.3.4.md) | 按钮、进度、弹窗、字体与横屏 |

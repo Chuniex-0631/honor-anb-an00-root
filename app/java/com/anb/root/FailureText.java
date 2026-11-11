@@ -23,7 +23,7 @@ public final class FailureText {
         if (has(m, "另一次") || has(m, "并发") || has(m, "仍在运行")) return Kind.CONCURRENT_RUN;
         if (has(m, "已重启") || has(m, "手机已重启")) return Kind.REBOOTED;
         if (has(m, "5 分钟") || has(m, "超时") || has(m, "timed out") || has(m, "未确认完成")) return Kind.TIMEOUT;
-        if (has(m, "未授予") || has(m, "权限")) return Kind.PERMISSION;
+        if (has(m,"Shizuku") && (has(m,"未授予") || has(m,"权限"))) return Kind.PERMISSION;
         if (has(m, "Shizuku") || has(m, "执行环境") || has(m, "执行服务") || has(m, "shell")) return Kind.SHIZUKU;
         if (has(m, "不在支持范围") || has(m, "不受支持") || has(m, "版本")) return Kind.COMPATIBILITY;
         if (has(m, "校验失败") || has(m, "内置文件") || has(m, "PAYLOAD")) return Kind.PAYLOAD;
