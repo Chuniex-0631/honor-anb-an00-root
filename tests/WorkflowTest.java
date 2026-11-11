@@ -21,6 +21,7 @@ public final class WorkflowTest {
         check(Readiness.gate(true,true,true,true,true,true,true,true)==Readiness.Gate.READY,"ready");
         String env="uid=2000(shell) gid=2000(shell) context=u:r:shell:s0\nSeccomp:\t0\n";
         check(Readiness.validEnvironment(env),"shell ready");
+        check(!Readiness.validEnvironment(null),"missing environment is not ready");
         check(!Readiness.validEnvironment(env.replace("Seccomp:\t0","Seccomp:\t2")),"app filter must block");
         check(!Readiness.validEnvironment(env.replace("uid=2000(shell)","uid=0(root)")),"root backend must not mask shell test");
         String path="/data/local/tmp/anb_root_runs/run_77_1000_0123456789abcdef0123456789abcdef";
@@ -28,9 +29,9 @@ public final class WorkflowTest {
         check(!Readiness.resume("77","78",path),"never use prior boot result");
         check(!Readiness.resume("77","77",path+"; id"),"reject invalid saved path");
         check(!Readiness.resume("77","77","/data/local/tmp/other"),"restrict run directory");
-        check(!RunStatus.isComplete("ANB_STATUS=1\nMODULE=1\nFINISHED=0\nENFORCE=Enforcing\nDETAILS\n"),"module alone not success");
-        check(!RunStatus.isComplete("ANB_STATUS=1\nMODULE=1\nFINISHED=1\nENFORCE=Permissive\nDETAILS\n"),"wait for enforcement");
-        check(RunStatus.isComplete("ANB_STATUS=1\nMODULE=1\nFINISHED=1\nENFORCE=Enforcing\nDETAILS\n"),"full completion");
+        check(!RunStatus.isComplete("ANB_STATUS=2\nMODULE=1\nFINISHED=0\nENFORCE=Enforcing\nCLEANUP=1\nSTAGES=1\nDETAILS\n"),"module alone not success");
+        check(!RunStatus.isComplete("ANB_STATUS=2\nMODULE=1\nFINISHED=1\nENFORCE=Permissive\nCLEANUP=1\nSTAGES=1\nDETAILS\n"),"wait for enforcement");
+        check(RunStatus.isComplete("ANB_STATUS=2\nMODULE=1\nFINISHED=1\nENFORCE=Enforcing\nCLEANUP=1\nSTAGES=1\nDETAILS\n"),"full completion");
         CommandRunner.Result r=CommandRunner.run(child("unicode"),3000);
         check(r.exitCode==0&&r.output.equals("中文输出\n"),"UTF-8 process output");
         r=CommandRunner.run(child("error"),3000);check(r.exitCode==7,"nonzero status");

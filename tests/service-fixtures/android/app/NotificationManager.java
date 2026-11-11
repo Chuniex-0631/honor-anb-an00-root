@@ -1,1 +1,1 @@
-package android.app; public class NotificationManager {public static final int IMPORTANCE_LOW=2; public void createNotificationChannel(NotificationChannel c){} public void notify(int i,Notification n){}}
+package android.app; public class NotificationManager {public static final int IMPORTANCE_LOW=2; public static boolean failNotify; public void createNotificationChannel(NotificationChannel c){} public void notify(int i,Notification n){if(failNotify)throw new SecurityException("notification permission revoked");}}

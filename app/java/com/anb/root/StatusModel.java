@@ -52,7 +52,7 @@ public final class StatusModel {
                 if ("WAIT_AUTH".equals(phase)&&modulePresent) return new Snapshot(Headline.WAIT_AUTH, Badge.WAIT_AUTH, Action.VERIFY, Tone.WARNING);
                 if ("FAILED".equals(phase)) {
                     Action action=Action.SAVE_DIAGNOSTICS;
-                    if(failure==FailureText.Kind.BOOT_WAIT)action=Action.RESTORE;
+                    if(failure==FailureText.Kind.BOOT_WAIT)action=modulePresent?Action.VERIFY:Action.RESTORE;
                     else if(failure==FailureText.Kind.CONCURRENT_RUN||failure==FailureText.Kind.TIMEOUT)action=Action.CHECK_PROGRESS;
                     else if(failure==FailureText.Kind.PREPARE||failure==FailureText.Kind.SHIZUKU||failure==FailureText.Kind.PERMISSION)action=Action.CHECK_ENVIRONMENT;
                     return new Snapshot(Headline.FAILED,Badge.ATTENTION,action,Tone.WARNING);

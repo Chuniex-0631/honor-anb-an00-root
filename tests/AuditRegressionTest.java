@@ -34,10 +34,14 @@ public final class AuditRegressionTest {
         check(FailureText.classify("KernelSU 已加载，但保护状态尚未恢复。未判定成功；请保存日志。") == FailureText.Kind.SECURITY_NOT_RESTORED,"legacy security message classified correctly");
         check(FailureText.classify("发生未知故障，请保存日志。") == FailureText.Kind.UNKNOWN,"save advice is not storage failure");
 
-        String valid="ANB_STATUS=1\nMODULE=1\nFINISHED=1\nENFORCE=Enforcing\nDETAILS\n";
+        String valid="ANB_STATUS=2\nMODULE=1\nFINISHED=1\nENFORCE=Enforcing\nCLEANUP=1\nSTAGES=1\nDETAILS\n";
         check(RunStatus.isComplete(valid),"strict completion");
         check(!RunStatus.isComplete(valid.replace("FINISHED=1","FINISHED=0")+"FINISHED=1\n"),"tail cannot complete header");
         check(!RunStatus.isComplete(valid.replace("ENFORCE=Enforcing","ENFORCE=Permissive")+"ENFORCE=Enforcing\n"),"tail cannot override security");
+        check(!RunStatus.isComplete(valid.replace("CLEANUP=1","CLEANUP=0"))&&RunStatus.cleanupFailed(valid.replace("CLEANUP=1","CLEANUP=0")),"unfinished cleanup blocks completion");
+        check(!RunStatus.isComplete(valid.replace("STAGES=1","STAGES=0"))&&RunStatus.stagesFailed(valid.replace("STAGES=1","STAGES=0")),"failed userspace stages block completion");
+        check(RunStatus.protectionVerified("uid=0(root)\nANB_PROTECTION=1\n"),"positive root protection proof");
+        check(!RunStatus.protectionVerified("uid=0(root)\n")&&!RunStatus.protectionVerified("ANB_PROTECTION=1\nANB_PROTECTION=0\n"),"missing or conflicting protection proof rejected");
         check(!RunStatus.isComplete("MODULE=1\nFINISHED=1\nENFORCE=Enforcing\n"),"unframed text rejected");
         check(!Readiness.resume("78","78","/data/local/tmp/anb_root_runs/run_77_1000_0123456789abcdef0123456789abcdef"),"directory boot must match");
         check(!Readiness.resume(null,null,null),"missing state rejected");
@@ -49,6 +53,7 @@ public final class AuditRegressionTest {
             owner.close();TaskGate.Lease next=tasks.acquire(TaskGate.Task.RECOVERY);owner.close();
             check(tasks.busy(),"old owner cannot unlock a new task");next.close();
         }
+        check(tasks.elapsedMillis()==0,"idle task age is zero");TaskGate.Lease timed=tasks.acquire(TaskGate.Task.CHECK);Thread.sleep(20);check(tasks.elapsedMillis()>=10,"task age belongs to lease, independent of activity");timed.close();check(tasks.elapsedMillis()==0,"completed task age cleared");
         AtomicInteger active=new AtomicInteger(),max=new AtomicInteger();ExecutorService pool=Executors.newFixedThreadPool(8);
         for(int i=0;i<100;i++)pool.submit(()->{TaskGate.Lease owner=tasks.acquire(TaskGate.Task.CHECK);if(owner!=null)try{max.accumulateAndGet(active.incrementAndGet(),Math::max);Thread.yield();active.decrementAndGet();}finally{owner.close();}});
         pool.shutdown();check(pool.awaitTermination(5,TimeUnit.SECONDS)&&max.get()==1&&!tasks.busy(),"concurrent ownership");

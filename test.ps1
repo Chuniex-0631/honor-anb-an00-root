@@ -38,3 +38,6 @@ if ($LASTEXITCODE -ne 0) { throw 'Service integration tests failed' }
 
 & java -cp $outputPath com.anb.root.UiStateTest
 if ($LASTEXITCODE -ne 0) { throw 'UI state tests failed' }
+
+& python (Join-Path $projectRoot 'tests/ReleaseToolsTest.py')
+if ($LASTEXITCODE -ne 0) { throw 'Release tool tests failed' }

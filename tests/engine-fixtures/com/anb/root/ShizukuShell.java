@@ -1,8 +1,8 @@
 package com.anb.root;
 import java.io.*;import java.util.*;import java.util.concurrent.*;
 public class ShizukuShell implements AutoCloseable {
- static int launches;static boolean module,locked,permissive,blockProbe;static long uptime=120;static CountDownLatch entered,release;static final List<String> commands=Collections.synchronizedList(new ArrayList<>());
- static void reset(){launches=0;module=locked=permissive=blockProbe=false;uptime=120;entered=new CountDownLatch(1);release=new CountDownLatch(1);commands.clear();}
+ static int launches;static boolean module,locked,permissive,blockProbe,badCleanup,badStages;static long uptime=120;static CountDownLatch entered,release;static final List<String> commands=Collections.synchronizedList(new ArrayList<>());
+ static void reset(){launches=0;module=locked=permissive=blockProbe=badCleanup=badStages=false;uptime=120;entered=new CountDownLatch(1);release=new CountDownLatch(1);commands.clear();}
  public static ShizukuShell open(android.content.Context c){return new ShizukuShell();}
  public String shell(String command)throws Exception {
   commands.add(command);
@@ -10,7 +10,7 @@ public class ShizukuShell implements AutoCloseable {
   if(command.startsWith("getprop ro.product.model;"))return DeviceProfile.MODEL+"\n35\n"+DeviceProfile.DISPLAY+"\n"+DeviceProfile.KERNEL+"\n";
   if(command.equals("settings get global boot_count"))return "88";
   if(command.startsWith("if grep -q '^kernelsu '"))return module?"YES":"NO";
-  if(command.startsWith("cd ")){if(!module)throw new IOException("simulation: monitor stopped");return "ANB_STATUS=1\nMODULE=1\nFINISHED=1\nENFORCE=Enforcing\nDETAILS\n";}
+  if(command.startsWith("cd ")){if(!module)throw new IOException("simulation: monitor stopped");return "ANB_STATUS=2\nMODULE=1\nFINISHED=1\nENFORCE=Enforcing\nCLEANUP="+(badCleanup?"0":"1")+"\nSTAGES="+(badStages?"0":"1")+"\nDETAILS\n";}
   if(command.startsWith("if [ -e"))return locked?"LOCKED":"CLEAR";
   if(command.equals("getprop sys.boot_completed"))return "1";
   if(command.startsWith("cut -d."))return Long.toString(uptime);

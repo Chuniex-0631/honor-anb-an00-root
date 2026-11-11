@@ -25,6 +25,7 @@ assert core_path.is_file(), f"Missing core manifest: {current['core']}"
 
 release = json.loads(metadata_path.read_text())
 assert release["version"] == version, "current.json and release metadata disagree"
+assert isinstance(release["version_code"], int) and release["version_code"] > 0, "version_code must be positive"
 assert release["model"] == "ANB-AN00"
 assert release["transport"] == "Shizuku UserService" and not release["persistent_root"]
 assert release["artifact"] == f"ANB-Root-{version}.apk", "artifact name must carry the version"
@@ -46,7 +47,12 @@ else:
         "a candidate must be either flagged for device reverification or already device verified"
 
 core = json.loads(core_path.read_text())
+# A matching subset must not silently omit a new production source or asset.
+production = {path.relative_to(root).as_posix() for path in (root / "app").rglob("*") if path.is_file()}
+assert production <= set(core), f"Production inputs missing from core manifest: {sorted(production - set(core))}"
 for name, expected in core.items():
+    assert (root / name).resolve().is_relative_to(root.resolve()), f"Core input outside repository: {name}"
+    assert re.fullmatch(r"[0-9a-f]{64}", expected), f"Invalid core hash: {name}"
     assert hashlib.sha256((root / name).read_bytes()).hexdigest() == expected, f"Core changed: {name}"
 
 baseline = json.loads((root / "release/v2.1.0-core-files.json").read_text())

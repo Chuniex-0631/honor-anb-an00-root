@@ -18,7 +18,8 @@ metadata = json.loads((root / current["metadata"]).read_text(encoding="utf-8"))
 assert args.apk.name == metadata["artifact"]
 assert hashlib.sha256(args.apk.read_bytes()).hexdigest() == metadata["sha256"]
 with zipfile.ZipFile(args.apk) as signed, zipfile.ZipFile(args.unsigned) as unsigned:
-    assert len(signed.namelist()) == len(set(signed.namelist())), "Duplicate archive entries"
+    assert len(signed.namelist()) == len(set(signed.namelist())), "Duplicate signed archive entries"
+    assert len(unsigned.namelist()) == len(set(unsigned.namelist())), "Duplicate unsigned archive entries"
     for name in unsigned.namelist():
         assert signed.read(name) == unsigned.read(name), f"Signed build changed: {name}"
     for name in set(signed.namelist()) - set(unsigned.namelist()):

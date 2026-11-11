@@ -1,0 +1,48 @@
+{
+  "version": "2.4.0",
+  "date": "2026-11-11",
+  "status": "released",
+  "audit_base": "v2.3.5",
+  "checks": {
+    "jvm_and_fixture_test_groups": 9,
+    "status_combinations": 16848,
+    "python_release_tool_tests": 3,
+    "configuration_assertions": {
+      "light-portrait": 322,
+      "dark-portrait": 322,
+      "light-portrait-font2": 346,
+      "light-landscape": 315,
+      "dark-landscape-font2": 318
+    },
+    "activity_assertions_total": 1623,
+    "real_export_success_and_failure": "passed",
+    "deterministic_completion_race": "passed",
+    "ui_configuration_restored": true,
+    "full_android_build": "passed",
+    "payload_and_aidl_vs_2_1_0": "identical",
+    "new_signing_key_owner_authorized": true,
+    "old_to_new_signing_migration": "installed after app-specific backup; preferences/logs restored",
+    "same_new_key_overwrite_install": "passed",
+    "installed_apk_matches_release_sha256": true,
+    "actual_app_existing_root_verification": {
+      "uid": 0,
+      "context": "u:r:ksu:s0",
+      "selinux": "Enforcing",
+      "cleanup": 1,
+      "stages": 1,
+      "protection": 1,
+      "manager_refresh": "passed"
+    },
+    "fresh_exploit_launch": false,
+    "full_reboot": false,
+    "private_logs_published": false
+  },
+  "apk_sha256": "955241b51eb91e5fb3e9b42312942d71a39360b8e72f2ad45eeb272158b3bdaa",
+  "core_manifest_sha256": "ba426957b3a775edc2c838f910b0ac980b3d639bb87b2dcd330e4493fdeb2e14",
+  "signing_certificate_sha256": "623049d5e0d4bb3806077181e4865836e925ad79d40b683a7f65c027ca04f3b2",
+  "limits": [
+    "No full-reboot/fresh recovery performed for 2.4.0",
+    "No arbitrary device-failure or third-party module-combination guarantee",
+    "Original native payload binaries retained, not independently re-audited in full"
+  ]
+}
