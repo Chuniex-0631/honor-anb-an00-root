@@ -38,7 +38,7 @@
     "private_logs_published": false
   },
   "apk_sha256": "955241b51eb91e5fb3e9b42312942d71a39360b8e72f2ad45eeb272158b3bdaa",
-  "core_manifest_sha256": "ba426957b3a775edc2c838f910b0ac980b3d639bb87b2dcd330e4493fdeb2e14",
+  "core_manifest_sha256": "d676b8ff4acaf1fb9d29d786c75444f6376233019d475f0c64edc240d0430689",
   "signing_certificate_sha256": "623049d5e0d4bb3806077181e4865836e925ad79d40b683a7f65c027ca04f3b2",
   "limits": [
     "No full-reboot/fresh recovery performed for 2.4.0",
